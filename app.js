@@ -21,6 +21,8 @@
     timerId: null,
     beepEnabled: true,  // sound beep
     voiceEnabled: true, // read out loud
+    selectedExercises: [],
+    currentExerciseIndex: 0,
   };
 
   // ─── Pace progression helper ───
@@ -55,6 +57,7 @@
     mediaPlaceholder: $('media-placeholder'),
     mediaDisplay: $('media-display'),
     mediaInput: $('media-input'),
+    mediaLottie: $('media-lottie'),
     mediaImg: $('media-img'),
     mediaVideo: $('media-video'),
     mediaRemove: $('media-remove'),
@@ -77,6 +80,7 @@
     paceValue: $('pace-value'),
     toggleBeep: $('toggle-beep'),
     toggleVoice: $('toggle-voice'),
+    btnAppNext: $('btn-app-next'),
   };
 
   // ─── LocalStorage Persistence ───
@@ -416,6 +420,7 @@
     }
 
     state.isRunning = true;
+    dom.mediaLottie.play?.();
     updatePlayButton();
     disableSettingsWhileRunning();
 
@@ -436,6 +441,7 @@
 
   function pauseTimer() {
     state.isRunning = false;
+    dom.mediaLottie.pause?.();
     clearTimeout(state.timerId);
     updatePlayButton();
     disableSettingsWhileRunning();
@@ -524,11 +530,15 @@
     const url = URL.createObjectURL(file);
 
     if (file.type.startsWith('video/')) {
+      dom.mediaLottie.classList.add('hidden');
+      dom.mediaLottie.pause?.();
       dom.mediaImg.classList.add('hidden');
       dom.mediaVideo.classList.remove('hidden');
       dom.mediaVideo.src = url;
       dom.mediaVideo.play().catch(() => {});
     } else {
+      dom.mediaLottie.classList.add('hidden');
+      dom.mediaLottie.pause?.();
       dom.mediaVideo.classList.add('hidden');
       dom.mediaImg.classList.remove('hidden');
       dom.mediaImg.src = url;
@@ -539,6 +549,9 @@
   }
 
   function removeMedia() {
+    dom.mediaLottie.pause?.();
+    dom.mediaLottie.removeAttribute('src');
+    dom.mediaLottie.classList.add('hidden');
     if (dom.mediaImg.src) URL.revokeObjectURL(dom.mediaImg.src);
     if (dom.mediaVideo.src) URL.revokeObjectURL(dom.mediaVideo.src);
     dom.mediaImg.src = '';
@@ -605,26 +618,54 @@
       saveExerciseSettings();
       renderExerciseSettings();
     });
-    dom.btnStartNow.addEventListener('click', () => {
-      const firstSelectedId = Object.keys(exerciseSettings).find((id) => exerciseSettings[id].selected);
-      if (!firstSelectedId) return;
+    function loadCurrentExercise() {
+      const exerciseId = state.selectedExercises[state.currentExerciseIndex];
+      const config = exerciseSettings[exerciseId];
+      state.totalSets = config.sets;
+      state.totalReps = config.reps;
 
-      const firstSelected = exerciseSettings[firstSelectedId];
-      state.totalSets = firstSelected.sets;
-      state.totalReps = firstSelected.reps;
-
-      // Auto-load image for the selected exercise
-      dom.mediaImg.src = `assets/${firstSelectedId}.png`;
-      dom.mediaImg.classList.remove('hidden');
+      // Auto-load the locally bundled Lottie for the selected exercise.
+      const animationByExercise = {
+        'extensor-stretch': 'assets/lottie/forearm-stretch.lottie',
+        'wrist-extension': 'assets/lottie/wrist-extension.lottie',
+        'forearm-rotation': 'assets/lottie/forearm-stretch.lottie',
+        'grip-squeeze': 'assets/lottie/grip-squeeze.lottie',
+      };
+      dom.mediaLottie.setAttribute('src', animationByExercise[exerciseId]);
+      dom.mediaLottie.classList.remove('hidden');
+      dom.mediaLottie.play?.();
+      dom.mediaImg.classList.add('hidden');
       dom.mediaVideo.classList.add('hidden');
       dom.mediaVideo.pause();
       dom.mediaPlaceholder.classList.add('hidden');
       dom.mediaDisplay.classList.remove('hidden');
+      
+      resetAll();
+    }
+
+    dom.btnStartNow.addEventListener('click', () => {
+      state.selectedExercises = Object.keys(exerciseSettings).filter((id) => exerciseSettings[id].selected);
+      if (state.selectedExercises.length === 0) return;
+      
+      state.currentExerciseIndex = 0;
+      loadCurrentExercise();
 
       dom.exercisePage.classList.remove('is-active');
       dom.exercisePage.setAttribute('aria-hidden', 'true');
       dom.app.setAttribute('aria-hidden', 'false');
-      resetAll();
+    });
+
+    dom.btnAppNext.addEventListener('click', () => {
+      if (state.currentExerciseIndex < state.selectedExercises.length - 1) {
+        state.currentExerciseIndex++;
+        loadCurrentExercise();
+      } else {
+        // Reached the end of selected exercises, go back to exercise list
+        resetAll();
+        dom.app.setAttribute('aria-hidden', 'true');
+        dom.exercisePage.classList.add('is-active');
+        dom.exercisePage.setAttribute('aria-hidden', 'false');
+      }
     });
 
     dom.btnAppBack.addEventListener('click', () => {
