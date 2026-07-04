@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Exercise Clock - A mobile exercise timer with configurable sets, reps, and pace control." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Exercise Clock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="landing-page" aria-labelledby="landing-title">
+    <div class="landing-hero">
+      <img
+        class="landing-artwork"
+        src="assets/stretching.png"
+        alt="Vitruvian figure with arms and legs extended"
+      />
+      <h1 id="landing-title">STRETCHING</h1>
+    </div>
+    <button id="btn-start-here" type="button" aria-label="Start stretching workout">
+      <span>START HERE</span>
+      <span class="start-arrow" aria-hidden="true">&#8594;</span>
+    </button>
+  </main>
+
+  <main id="routine-page" aria-label="Stretching routines" aria-hidden="true">
+    <div class="routine-list">
+      <button id="btn-tennis-elbow" class="routine-pill routine-pill--named" type="button">TENNIS ELBOW</button>
+      <button class="routine-pill" type="button" aria-label="Empty routine slot 2"></button>
+      <button class="routine-pill" type="button" aria-label="Empty routine slot 3"></button>
+      <button class="routine-pill" type="button" aria-label="Empty routine slot 4"></button>
+      <button id="btn-routine-back" class="routine-pill routine-pill--named" type="button">BACK</button>
+    </div>
+  </main>
+
+  <main id="exercise-page" aria-labelledby="exercise-page-title" aria-hidden="true">
+    <header class="exercise-page-header">
+      <div></div>
+      <div>
+        <p class="exercise-page-kicker">ROUTINE</p>
+        <h1 id="exercise-page-title">TENNIS ELBOW</h1>
+      </div>
+      <label class="select-all-control">
+        <input id="select-all-exercises" type="checkbox" />
+        <span>ALL</span>
+      </label>
+    </header>
+
+    <section class="exercise-options" aria-label="Available exercises">
+      <article class="exercise-card" data-exercise-id="extensor-stretch">
+        <label class="exercise-select">
+          <input class="exercise-checkbox" type="checkbox" />
+          <span class="exercise-checkmark" aria-hidden="true"></span>
+          <span class="sr-only">Select wrist extensor stretch</span>
+        </label>
+        <div class="exercise-animation-placeholder" aria-hidden="true"><span>01</span></div>
+        <div class="exercise-copy">
+          <h2>WRIST EXTENSOR STRETCH</h2>
+          <p>Gently lower the wrist to stretch the top of the forearm.</p>
+          <div class="exercise-dosage">
+            <div class="exercise-dose">
+              <span>SETS</span>
+              <button class="exercise-step-btn" type="button" data-field="sets" data-dir="-1">−</button>
+              <strong data-value="sets">2</strong>
+              <button class="exercise-step-btn" type="button" data-field="sets" data-dir="1">+</button>
+            </div>
+            <div class="exercise-dose">
+              <span>REPS</span>
+              <button class="exercise-step-btn" type="button" data-field="reps" data-dir="-1">−</button>
+              <strong data-value="reps">8</strong>
+              <button class="exercise-step-btn" type="button" data-field="reps" data-dir="1">+</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="exercise-card" data-exercise-id="wrist-extension">
+        <label class="exercise-select">
+          <input class="exercise-checkbox" type="checkbox" />
+          <span class="exercise-checkmark" aria-hidden="true"></span>
+          <span class="sr-only">Select wrist extension strengthening</span>
+        </label>
+        <div class="exercise-animation-placeholder" aria-hidden="true"><span>02</span></div>
+        <div class="exercise-copy">
+          <h2>WRIST EXTENSION</h2>
+          <p>Raise the wrist, then lower it slowly with the forearm supported.</p>
+          <div class="exercise-dosage">
+            <div class="exercise-dose">
+              <span>SETS</span>
+              <button class="exercise-step-btn" type="button" data-field="sets" data-dir="-1">−</button>
+              <strong data-value="sets">3</strong>
+              <button class="exercise-step-btn" type="button" data-field="sets" data-dir="1">+</button>
+            </div>
+            <div class="exercise-dose">
+              <span>REPS</span>
+              <button class="exercise-step-btn" type="button" data-field="reps" data-dir="-1">−</button>
+              <strong data-value="reps">10</strong>
+              <button class="exercise-step-btn" type="button" data-field="reps" data-dir="1">+</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="exercise-card" data-exercise-id="forearm-rotation">
+        <label class="exercise-select">
+          <input class="exercise-checkbox" type="checkbox" />
+          <span class="exercise-checkmark" aria-hidden="true"></span>
+          <span class="sr-only">Select forearm rotation</span>
+        </label>
+        <div class="exercise-animation-placeholder" aria-hidden="true"><span>03</span></div>
+        <div class="exercise-copy">
+          <h2>FOREARM ROTATION</h2>
+          <p>Turn the palm slowly upward and downward with the elbow bent.</p>
+          <div class="exercise-dosage">
+            <div class="exercise-dose">
+              <span>SETS</span>
+              <button class="exercise-step-btn" type="button" data-field="sets" data-dir="-1">−</button>
+              <strong data-value="sets">2</strong>
+              <button class="exercise-step-btn" type="button" data-field="sets" data-dir="1">+</button>
+            </div>
+            <div class="exercise-dose">
+              <span>REPS</span>
+              <button class="exercise-step-btn" type="button" data-field="reps" data-dir="-1">−</button>
+              <strong data-value="reps">10</strong>
+              <button class="exercise-step-btn" type="button" data-field="reps" data-dir="1">+</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="exercise-card" data-exercise-id="grip-squeeze">
+        <label class="exercise-select">
+          <input class="exercise-checkbox" type="checkbox" />
+          <span class="exercise-checkmark" aria-hidden="true"></span>
+          <span class="sr-only">Select grip squeeze</span>
+        </label>
+        <div class="exercise-animation-placeholder" aria-hidden="true"><span>04</span></div>
+        <div class="exercise-copy">
+          <h2>GRIP SQUEEZE</h2>
+          <p>Squeeze a soft ball, hold briefly, then release with control.</p>
+          <div class="exercise-dosage">
+            <div class="exercise-dose">
+              <span>SETS</span>
+              <button class="exercise-step-btn" type="button" data-field="sets" data-dir="-1">−</button>
+              <strong data-value="sets">3</strong>
+              <button class="exercise-step-btn" type="button" data-field="sets" data-dir="1">+</button>
+            </div>
+            <div class="exercise-dose">
+              <span>REPS</span>
+              <button class="exercise-step-btn" type="button" data-field="reps" data-dir="-1">−</button>
+              <strong data-value="reps">10</strong>
+              <button class="exercise-step-btn" type="button" data-field="reps" data-dir="1">+</button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <footer class="exercise-page-footer">
+      <p id="selection-summary">SELECT AT LEAST ONE EXERCISE</p>
+      <div class="footer-buttons">
+        <button id="btn-exercise-back-pill" type="button" class="nav-back-btn-pill">BACK</button>
+        <button id="btn-start-now" type="button" disabled>START NOW <span aria-hidden="true">&#8594;</span></button>
+      </div>
+    </footer>
+  </main>
+
+  <div id="app" aria-hidden="true">
+
+    <!-- ===== TOP TWO-THIRDS: Exercise Media ===== -->
+    <section id="media-section">
+      <div id="media-placeholder">
+        <div id="media-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </div>
+        <p id="media-label">Tap to add video or image</p>
+        <input type="file" id="media-input" accept="image/*,video/*" />
+      </div>
+      <div id="media-display" class="hidden">
+        <img id="media-img" class="hidden" alt="Exercise media" />
+        <video id="media-video" class="hidden" loop playsinline muted></video>
+        <button id="media-remove" title="Remove media" aria-label="Remove media">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== Counter + Controls ===== -->
+    <section id="counter-section">
+
+      <!-- Rep Dots Visualization -->
+      <div id="rep-dots-container">
+        <!-- Generated dynamically -->
+      </div>
+
+      <!-- Set Progress Bar -->
+      <div id="set-bar-container">
+        <div id="set-bar-track">
+          <!-- Generated dynamically -->
+        </div>
+      </div>
+
+      <!-- Transport Controls + Quick Toggles -->
+      <div id="action-row">
+        <div id="transport-controls">
+          <button id="btn-reset" class="transport-btn" title="Reset">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 4 1 10 7 10"></polyline>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            </svg>
+          </button>
+          <button id="btn-play" class="transport-btn transport-btn--primary" title="Play">
+            <svg id="icon-play" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <polygon points="6 3 20 12 6 21 6 3"></polygon>
+            </svg>
+            <svg id="icon-pause" class="hidden" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <rect x="5" y="3" width="4" height="18"></rect>
+              <rect x="15" y="3" width="4" height="18"></rect>
+            </svg>
+          </button>
+          <button id="btn-skip" class="transport-btn" title="Skip to next set">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 4 15 12 5 20 5 4"></polygon>
+              <line x1="19" y1="5" x2="19" y2="19"></line>
+            </svg>
+          </button>
+        </div>
+        <div id="quick-toggles">
+          <div class="quick-toggle">
+            <label for="toggle-beep" class="setting-label">Beep</label>
+            <label class="switch switch--compact">
+              <input type="checkbox" id="toggle-beep" checked />
+              <span class="slider-switch"></span>
+            </label>
+          </div>
+          <div class="quick-toggle">
+            <label for="toggle-voice" class="setting-label">Voice Guide</label>
+            <label class="switch switch--compact">
+              <input type="checkbox" id="toggle-voice" checked />
+              <span class="slider-switch"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Panel -->
+      <div id="settings-panel">
+        <div class="setting-counts-row" style="width: 100%;">
+          <div class="setting-row setting-row--wide">
+            <label for="input-set-rest" class="setting-label">Set Rest <span id="set-rest-value" class="pace-badge">1.5s</span></label>
+            <input type="range" id="input-set-rest" class="setting-slider" min="1" max="3" step="0.1" value="1.5" />
+          </div>
+          <div class="setting-row setting-row--wide">
+            <label for="input-pace" class="setting-label">Rep Pace <span id="pace-value" class="pace-badge">1.2s</span></label>
+            <input type="range" id="input-pace" class="setting-slider" min="1" max="3" step="0.1" value="1.2" />
+          </div>
+          <button id="btn-app-back" class="app-back-btn" type="button">BACK</button>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
