@@ -12,8 +12,6 @@
   const state = {
     totalSets: 8,
     totalReps: 8,
-    pace: 1.2,          // seconds per rep
-    setRest: 1.5,       // seconds between sets
     currentSet: 0,      // 0-indexed
     currentRep: 0,      // 0-indexed, 0 = not started
     isRunning: false,
@@ -36,19 +34,19 @@
   function getCurrentPace() {
     const config = getCurrentExerciseConfig();
     if (!config || !config.progressiveReps) {
-      return state.pace;
+      return config ? config.pace : 1.2;
     }
     // Reps are constant within a set, but increase by 10% per set.
-    return state.pace * Math.pow(1.1, state.currentSet);
+    return config.pace * Math.pow(1.1, state.currentSet);
   }
 
   function getCurrentSetRest() {
     const config = getCurrentExerciseConfig();
     if (!config || !config.progressiveSets) {
-      return state.setRest;
+      return config ? config.setRest : 1.5;
     }
     // Rest increases by 10% per set.
-    return state.setRest * Math.pow(1.1, state.currentSet);
+    return config.setRest * Math.pow(1.1, state.currentSet);
   }
 
   // ─── DOM refs ───
@@ -110,12 +108,6 @@
       const savedReps = localStorage.getItem('ec_totalReps');
       if (savedReps !== null) state.totalReps = parseInt(savedReps, 10);
 
-      const savedSetRest = localStorage.getItem('ec_setRest');
-      if (savedSetRest !== null) state.setRest = parseFloat(savedSetRest);
-
-      const savedPace = localStorage.getItem('ec_pace');
-      if (savedPace !== null) state.pace = parseFloat(savedPace);
-
       const savedBeep = localStorage.getItem('ec_beepEnabled');
       if (savedBeep !== null) state.beepEnabled = savedBeep === 'true';
 
@@ -136,8 +128,6 @@
     try {
       localStorage.setItem('ec_totalSets', state.totalSets);
       localStorage.setItem('ec_totalReps', state.totalReps);
-      localStorage.setItem('ec_setRest', state.setRest);
-      localStorage.setItem('ec_pace', state.pace);
       localStorage.setItem('ec_beepEnabled', state.beepEnabled);
       localStorage.setItem('ec_voiceEnabled', state.voiceEnabled);
       localStorage.setItem('ec_globalDarkMode', state.globalDarkMode);
@@ -149,10 +139,10 @@
 
   // ─── Tennis elbow exercise selection ───
   const exerciseDefaults = {
-    'extensor-stretch': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false },
-    'wrist-extension': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false },
-    'forearm-rotation': { selected: false, sets: 2, reps: 10, progressiveSets: false, progressiveReps: false },
-    'grip-squeeze': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false },
+    'extensor-stretch': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
+    'wrist-extension': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
+    'forearm-rotation': { selected: false, sets: 2, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
+    'grip-squeeze': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
   };
 
   let exerciseSettings = JSON.parse(JSON.stringify(exerciseDefaults));
@@ -175,6 +165,12 @@
           
           const savedReps = parseInt(saved[id].reps, 10);
           if (!isNaN(savedReps)) exerciseSettings[id].reps = savedReps;
+
+          const savedSetRest = parseFloat(saved[id].setRest);
+          if (!isNaN(savedSetRest)) exerciseSettings[id].setRest = savedSetRest;
+
+          const savedPace = parseFloat(saved[id].pace);
+          if (!isNaN(savedPace)) exerciseSettings[id].pace = savedPace;
         }
       });
     } catch (e) {
@@ -599,9 +595,13 @@
   function showCompletionOverlay() {
     const overlay = document.getElementById('completion-overlay');
     const summary = document.getElementById('done-summary');
-    const startPace = state.pace;
-    const endPace = state.totalSets > 1 ? (state.pace + 0.2) : state.pace;
-    const paceText = state.totalSets > 1
+    const config = getCurrentExerciseConfig() || { pace: 1.2, progressiveReps: false };
+    const startPace = config.pace;
+    const endPace = config.progressiveReps && state.totalSets > 1 
+      ? startPace * Math.pow(1.1, state.totalSets - 1)
+      : startPace;
+      
+    const paceText = endPace > startPace
       ? `${startPace.toFixed(1)}s–${endPace.toFixed(1)}s pace`
       : `${startPace.toFixed(1)}s pace`;
     summary.textContent = `${state.totalSets} sets × ${state.totalReps} reps at ${paceText}`;
@@ -658,23 +658,29 @@
   // ─── Settings handlers ───
   function onSetRestChange() {
     const val = parseFloat(dom.inputSetRest.value);
-    state.setRest = val;
+    const config = getCurrentExerciseConfig();
+    if (config) {
+      config.setRest = val;
+      saveExerciseSettings();
+    }
     dom.setRestValue.textContent = val.toFixed(1) + 's';
 
     const pct = ((val - 0.5) / 4.5) * 100;
     dom.inputSetRest.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, var(--bg-card) ${pct}%)`;
-    saveState();
   }
 
   function onPaceChange() {
     const val = parseFloat(dom.inputPace.value);
-    state.pace = val;
+    const config = getCurrentExerciseConfig();
+    if (config) {
+      config.pace = val;
+      saveExerciseSettings();
+    }
     dom.paceValue.textContent = val.toFixed(1) + 's';
 
     // Update slider gradient
     const pct = ((val - 0.5) / 4.5) * 100;
     dom.inputPace.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, var(--bg-card) ${pct}%)`;
-    saveState();
   }
 
   // Steppers removed
@@ -717,6 +723,12 @@
       const config = exerciseSettings[exerciseId];
       state.totalSets = config.sets;
       state.totalReps = config.reps;
+
+      // Sync sliders to current exercise settings
+      dom.inputSetRest.value = config.setRest;
+      onSetRestChange();
+      dom.inputPace.value = config.pace;
+      onPaceChange();
 
       // Reset the previous exercise before mounting the next autoplaying guide.
       resetAll();
