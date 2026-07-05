@@ -76,7 +76,7 @@
       title: 'BIRD-DOG',
       description: 'From all fours, slowly extend your right arm forward and your left leg backward simultaneously. Keep your back completely flat and your core engaged. Hold for a moment, return to start, and switch sides.',
       alert: 'If you feel unsteady, extend *only* your arm or *only* your leg until you build more balance.',
-      images: ['assets/images/bird_dog_2_1783254387590.png', 'assets/images/bird_dog_1783254153480.png']
+      images: ['assets/images/bird_dog_1783254153480.png']
     },
     'sphinx-pose': {
       title: 'SPHINX POSE',
@@ -1081,6 +1081,36 @@
       dom.mediaVideo.pause();
       dom.mediaPlaceholder.classList.add('hidden');
       dom.mediaDisplay.classList.remove('hidden');
+
+      updateNavButtons();
+    }
+
+    function updateNavButtons() {
+      if (!state.selectedExercises || state.selectedExercises.length === 0) return;
+
+      if (state.currentExerciseIndex === state.selectedExercises.length - 1) {
+        dom.btnAppNext.style.backgroundColor = "#ff453a";
+        dom.btnAppNext.style.color = "white";
+        dom.btnAppNext.style.borderColor = "#ff453a";
+        dom.btnAppNext.textContent = "LAST";
+      } else {
+        dom.btnAppNext.style.backgroundColor = "";
+        dom.btnAppNext.style.color = "";
+        dom.btnAppNext.style.borderColor = "";
+        dom.btnAppNext.textContent = "NEXT";
+      }
+
+      if (state.currentExerciseIndex === 0) {
+        dom.btnAppBack.style.backgroundColor = "#ff453a";
+        dom.btnAppBack.style.color = "white";
+        dom.btnAppBack.style.borderColor = "#ff453a";
+        dom.btnAppBack.textContent = "FIRST";
+      } else {
+        dom.btnAppBack.style.backgroundColor = "";
+        dom.btnAppBack.style.color = "";
+        dom.btnAppBack.style.borderColor = "";
+        dom.btnAppBack.textContent = "BACK";
+      }
     }
 
     dom.btnStartNow.addEventListener('click', () => {
@@ -1096,15 +1126,15 @@
     });
 
     dom.btnAppNext.addEventListener('click', () => {
-      if (state.selectedExercises.length > 0) {
-        state.currentExerciseIndex = (state.currentExerciseIndex + 1) % state.selectedExercises.length;
+      if (state.selectedExercises.length > 0 && state.currentExerciseIndex < state.selectedExercises.length - 1) {
+        state.currentExerciseIndex++;
         loadCurrentExercise();
       }
     });
 
     dom.btnAppBack.addEventListener('click', () => {
-      if (state.selectedExercises.length > 0) {
-        state.currentExerciseIndex = (state.currentExerciseIndex - 1 + state.selectedExercises.length) % state.selectedExercises.length;
+      if (state.selectedExercises.length > 0 && state.currentExerciseIndex > 0) {
+        state.currentExerciseIndex--;
         loadCurrentExercise();
       }
     });
