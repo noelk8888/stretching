@@ -27,14 +27,28 @@
     globalSoundMode: true,
   };
 
-  // ─── Pace progression helper ───
+  function getCurrentExerciseConfig() {
+    const exerciseId = state.selectedExercises[state.currentExerciseIndex];
+    if (!exerciseId) return null;
+    return exerciseSettings[exerciseId];
+  }
+
   function getCurrentPace() {
-    if (state.totalSets <= 1) {
+    const config = getCurrentExerciseConfig();
+    if (!config || !config.progressiveReps) {
       return state.pace;
     }
-    // Slowly progress to state.pace + 0.2 from 1st set (index 0) to last set (index totalSets - 1)
-    const progress = state.currentSet / (state.totalSets - 1);
-    return state.pace + (0.2 * progress);
+    // Reps are constant within a set, but increase by 10% per set.
+    return state.pace * Math.pow(1.1, state.currentSet);
+  }
+
+  function getCurrentSetRest() {
+    const config = getCurrentExerciseConfig();
+    if (!config || !config.progressiveSets) {
+      return state.setRest;
+    }
+    // Rest increases by 10% per set.
+    return state.setRest * Math.pow(1.1, state.currentSet);
   }
 
   // ─── DOM refs ───
@@ -135,10 +149,10 @@
 
   // ─── Tennis elbow exercise selection ───
   const exerciseDefaults = {
-    'extensor-stretch': { selected: false, sets: 2, reps: 8 },
-    'wrist-extension': { selected: false, sets: 3, reps: 10 },
-    'forearm-rotation': { selected: false, sets: 2, reps: 10 },
-    'grip-squeeze': { selected: false, sets: 3, reps: 10 },
+    'extensor-stretch': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false },
+    'wrist-extension': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false },
+    'forearm-rotation': { selected: false, sets: 2, reps: 10, progressiveSets: false, progressiveReps: false },
+    'grip-squeeze': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false },
   };
 
   let exerciseSettings = JSON.parse(JSON.stringify(exerciseDefaults));
@@ -152,6 +166,9 @@
         if (saved[id] && typeof saved[id] === 'object') {
           // Explicitly coerce to ensure we don't accidentally load strings or NaNs
           exerciseSettings[id].selected = Boolean(saved[id].selected);
+          
+          if (saved[id].progressiveSets !== undefined) exerciseSettings[id].progressiveSets = Boolean(saved[id].progressiveSets);
+          if (saved[id].progressiveReps !== undefined) exerciseSettings[id].progressiveReps = Boolean(saved[id].progressiveReps);
           
           const savedSets = parseInt(saved[id].sets, 10);
           if (!isNaN(savedSets)) exerciseSettings[id].sets = savedSets;
@@ -184,6 +201,13 @@
       card.classList.toggle('is-selected', config.selected);
       card.querySelector('[data-value="sets"]').textContent = config.sets;
       card.querySelector('[data-value="reps"]').textContent = config.reps;
+      
+      const setToggle = card.querySelector('.progressive-toggle-btn[data-type="sets"]');
+      if (setToggle) setToggle.classList.toggle('is-active', config.progressiveSets);
+      
+      const repToggle = card.querySelector('.progressive-toggle-btn[data-type="reps"]');
+      if (repToggle) repToggle.classList.toggle('is-active', config.progressiveReps);
+      
       if (config.selected) selectedCount++;
     });
 
@@ -226,6 +250,23 @@
     const field = btn.dataset.field;
     const maximum = field === 'sets' ? 10 : 99;
     config[field] = Math.min(maximum, Math.max(1, config[field] + parseInt(btn.dataset.dir, 10)));
+    saveExerciseSettings();
+    renderExerciseSettings();
+  }
+
+  function handleProgressiveToggle(e) {
+    const btn = e.target.closest('.progressive-toggle-btn');
+    if (!btn) return;
+    const card = btn.closest('.exercise-card');
+    const config = exerciseSettings[card.dataset.exerciseId];
+    const type = btn.dataset.type;
+    
+    if (type === 'sets') {
+      config.progressiveSets = !config.progressiveSets;
+    } else if (type === 'reps') {
+      config.progressiveReps = !config.progressiveReps;
+    }
+    
     saveExerciseSettings();
     renderExerciseSettings();
   }
@@ -421,7 +462,7 @@
       state.timerId = setTimeout(() => {
         if (!state.isRunning) return;
         tick();
-      }, state.setRest * 1000);
+      }, getCurrentSetRest() * 1000);
       return;
     }
 
@@ -454,7 +495,7 @@
       state.timerId = setTimeout(() => {
         if (!state.isRunning) return;
         tick();
-      }, state.setRest * 1000);
+      }, getCurrentSetRest() * 1000);
     } else {
       // Resuming mid-set: tick immediately
       tick();
@@ -632,7 +673,10 @@
     dom.btnTennisElbow.addEventListener('click', openExercisePage);
     dom.btnExerciseBackPill.addEventListener('click', closeExercisePage);
     dom.exercisePage.addEventListener('change', handleExerciseSelection);
-    dom.exercisePage.addEventListener('click', handleExerciseStepper);
+    dom.exercisePage.addEventListener('click', (e) => {
+      handleExerciseStepper(e);
+      handleProgressiveToggle(e);
+    });
     dom.selectAllExercises.addEventListener('change', (e) => {
       Object.values(exerciseSettings).forEach((config) => {
         config.selected = e.target.checked;

@@ -320,12 +320,24 @@ html, body {
   background: var(--bg-surface);
 }
 
-.exercise-dose > span {
+.progressive-toggle-btn {
   padding-left: 7px;
+  text-align: left;
   font-size: 7px;
   font-weight: 800;
   letter-spacing: 0.08em;
   color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  height: 30px;
+  font-family: inherit;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.progressive-toggle-btn.is-active {
+  color: #fff;
+  background: var(--accent);
 }
 
 .exercise-dose strong {
