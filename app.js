@@ -436,17 +436,25 @@
       updateSetBar();
 
       if (state.currentSet >= state.totalSets) {
-        // All done!
-        state.isRunning = false;
-        state.isFinished = true;
-        updatePlayButton();
-        disableSettingsWhileRunning();
-        updateCounterDisplay();
-        updateSetBar();
-        playDoneBeep();
-        speak("Workout Complete!");
-        showCompletionOverlay();
-        return;
+        if (state.currentExerciseIndex < state.selectedExercises.length - 1) {
+          // Go to next exercise
+          state.currentExerciseIndex++;
+          loadCurrentExercise();
+          startTimer();
+          return;
+        } else {
+          // All done!
+          state.isRunning = false;
+          state.isFinished = true;
+          updatePlayButton();
+          disableSettingsWhileRunning();
+          updateCounterDisplay();
+          updateSetBar();
+          playDoneBeep();
+          speak("Workout Complete!");
+          showCompletionOverlay();
+          return;
+        }
       }
 
       // Brief pause between sets, then start next
@@ -529,13 +537,24 @@
     state.currentRep = 0;
 
     if (state.currentSet >= state.totalSets) {
-      state.currentSet = state.totalSets;
-      state.isFinished = true;
-      state.isRunning = false;
-      fullRender();
-      playDoneBeep();
-      showCompletionOverlay();
-      return;
+      if (state.currentExerciseIndex < state.selectedExercises.length - 1) {
+        state.currentExerciseIndex++;
+        loadCurrentExercise();
+        if (wasRunning) {
+          startTimer();
+        } else {
+          fullRender();
+        }
+        return;
+      } else {
+        state.currentSet = state.totalSets;
+        state.isFinished = true;
+        state.isRunning = false;
+        fullRender();
+        playDoneBeep();
+        showCompletionOverlay();
+        return;
+      }
     }
 
     fullRender();
