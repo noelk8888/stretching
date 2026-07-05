@@ -161,6 +161,32 @@ html, body {
   border-bottom: 1px solid var(--border);
 }
 
+.global-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.global-close-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.app-close-btn {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top, 16px));
+  left: 16px;
+  z-index: 50;
+}
+
 .text-back-button {
   border: 0;
   background: transparent;

@@ -317,6 +317,12 @@
     dom.routinePage.setAttribute('aria-hidden', 'false');
   }
 
+  function returnToMainMenu() {
+    resetAll();
+    dom.app.setAttribute('aria-hidden', 'true');
+    closeExercisePage();
+  }
+
   function handleExerciseSelection(e) {
     const checkbox = e.target.closest('.exercise-checkbox');
     if (!checkbox) return;
@@ -1212,6 +1218,15 @@
         speak("Voice Guide on");
       }
     });
+
+    const btnExerciseClose = $('btn-exercise-close');
+    if (btnExerciseClose) {
+      btnExerciseClose.addEventListener('click', returnToMainMenu);
+    }
+    const btnAppCloseGlobal = $('btn-app-close-global');
+    if (btnAppCloseGlobal) {
+      btnAppCloseGlobal.addEventListener('click', returnToMainMenu);
+    }
 
     // Prevent number inputs from scrolling the page
     // Initial render
