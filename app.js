@@ -23,6 +23,8 @@
     voiceEnabled: true, // read out loud
     selectedExercises: [],
     currentExerciseIndex: 0,
+    globalDarkMode: true,
+    globalSoundMode: true,
   };
 
   // ─── Pace progression helper ───
@@ -42,6 +44,8 @@
     // Landing page
     landingPage: $('landing-page'),
     btnStartHere: $('btn-start-here'),
+    btnDarkMode: $('btn-dark-mode'),
+    btnSoundMode: $('btn-sound-mode'),
     routinePage: $('routine-page'),
     btnRoutineBack: $('btn-routine-back'),
     btnTennisElbow: $('btn-tennis-elbow'),
@@ -103,6 +107,12 @@
 
       const savedVoice = localStorage.getItem('ec_voiceEnabled');
       if (savedVoice !== null) state.voiceEnabled = savedVoice === 'true';
+
+      const savedDarkMode = localStorage.getItem('ec_globalDarkMode');
+      if (savedDarkMode !== null) state.globalDarkMode = savedDarkMode === 'true';
+
+      const savedSoundMode = localStorage.getItem('ec_globalSoundMode');
+      if (savedSoundMode !== null) state.globalSoundMode = savedSoundMode === 'true';
     } catch (e) {
       /* ignore storage access errors */
     }
@@ -116,6 +126,8 @@
       localStorage.setItem('ec_pace', state.pace);
       localStorage.setItem('ec_beepEnabled', state.beepEnabled);
       localStorage.setItem('ec_voiceEnabled', state.voiceEnabled);
+      localStorage.setItem('ec_globalDarkMode', state.globalDarkMode);
+      localStorage.setItem('ec_globalSoundMode', state.globalSoundMode);
     } catch (e) {
       /* ignore storage access errors */
     }
@@ -628,12 +640,20 @@
       const animationByExercise = {
         'extensor-stretch': 'assets/lottie/forearm-stretch.lottie',
         'wrist-extension': 'assets/lottie/wrist-extension.lottie',
-        'forearm-rotation': 'assets/lottie/forearm-stretch.lottie',
-        'grip-squeeze': 'assets/lottie/grip-squeeze.lottie',
+        'forearm-rotation': 'assets/lottie/forearm-rotation.json?v=1',
+        'grip-squeeze': 'assets/lottie/grip-squeeze.json?v=2',
       };
-      dom.mediaLottie.setAttribute('src', animationByExercise[exerciseId]);
-      dom.mediaLottie.classList.remove('hidden');
-      dom.mediaLottie.play?.();
+
+      // The player component does not reliably reload when only its src changes.
+      // Replace it so each guide screen renders the selected exercise animation.
+      const nextMediaLottie = document.createElement('dotlottie-player');
+      nextMediaLottie.id = 'media-lottie';
+      nextMediaLottie.setAttribute('src', animationByExercise[exerciseId]);
+      nextMediaLottie.setAttribute('autoplay', '');
+      nextMediaLottie.setAttribute('loop', '');
+      nextMediaLottie.setAttribute('aria-label', 'Exercise demonstration animation');
+      dom.mediaLottie.replaceWith(nextMediaLottie);
+      dom.mediaLottie = nextMediaLottie;
       dom.mediaImg.classList.add('hidden');
       dom.mediaVideo.classList.add('hidden');
       dom.mediaVideo.pause();
@@ -680,6 +700,47 @@
 
     // Load saved settings
     loadState();
+
+    function applyGlobalDarkMode() {
+      if (state.globalDarkMode) {
+        document.body.classList.remove('light-mode');
+        dom.btnDarkMode.classList.add('is-active');
+      } else {
+        document.body.classList.add('light-mode');
+        dom.btnDarkMode.classList.remove('is-active');
+      }
+    }
+    applyGlobalDarkMode();
+
+    function applyGlobalSoundMode() {
+      if (state.globalSoundMode) {
+        dom.btnSoundMode.classList.add('is-active');
+      } else {
+        dom.btnSoundMode.classList.remove('is-active');
+      }
+    }
+    applyGlobalSoundMode();
+
+    dom.btnDarkMode.addEventListener('click', () => {
+      state.globalDarkMode = !state.globalDarkMode;
+      applyGlobalDarkMode();
+      saveState();
+    });
+
+    dom.btnSoundMode.addEventListener('click', () => {
+      state.globalSoundMode = !state.globalSoundMode;
+      if (state.globalSoundMode) {
+        state.beepEnabled = true;
+        state.voiceEnabled = true;
+      } else {
+        state.beepEnabled = false;
+        state.voiceEnabled = false;
+      }
+      dom.toggleBeep.checked = state.beepEnabled;
+      dom.toggleVoice.checked = state.voiceEnabled;
+      applyGlobalSoundMode();
+      saveState();
+    });
 
     // Sync state values with HTML inputs
     dom.inputSetRest.value = state.setRest;

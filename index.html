@@ -22,10 +22,15 @@
       />
       <h1 id="landing-title">STRETCHING</h1>
     </div>
-    <button id="btn-start-here" type="button" aria-label="Start stretching workout">
-      <span>START HERE</span>
-      <span class="start-arrow" aria-hidden="true">&#8594;</span>
-    </button>
+    <div class="landing-controls-grid">
+      <button id="btn-start-here" class="landing-btn-pill" type="button" aria-label="Start stretching workout">
+        START HERE
+      </button>
+      <div class="landing-toggles-row">
+        <button id="btn-dark-mode" class="landing-btn-pill is-active" type="button">DARK</button>
+        <button id="btn-sound-mode" class="landing-btn-pill is-active" type="button">SOUND</button>
+      </div>
+    </div>
   </main>
 
   <main id="routine-page" aria-label="Stretching routines" aria-hidden="true">
@@ -117,7 +122,7 @@
           <span class="sr-only">Select forearm rotation</span>
         </label>
         <div class="exercise-animation-placeholder" aria-hidden="true">
-          <dotlottie-player class="exercise-lottie" src="assets/lottie/forearm-stretch.lottie" autoplay loop></dotlottie-player>
+          <dotlottie-player class="exercise-lottie" src="assets/lottie/forearm-rotation.json?v=1" autoplay loop></dotlottie-player>
         </div>
         <div class="exercise-copy">
           <h2>FOREARM ROTATION</h2>
@@ -146,7 +151,7 @@
           <span class="sr-only">Select grip squeeze</span>
         </label>
         <div class="exercise-animation-placeholder" aria-hidden="true">
-          <dotlottie-player class="exercise-lottie" src="assets/lottie/grip-squeeze.lottie" autoplay loop></dotlottie-player>
+          <dotlottie-player class="exercise-lottie" src="assets/lottie/grip-squeeze.json?v=2" autoplay loop></dotlottie-player>
         </div>
         <div class="exercise-copy">
           <h2>GRIP SQUEEZE</h2>
@@ -281,6 +286,6 @@
   </div>
 
   <script type="module" src="assets/lottie/dotlottie-player.mjs"></script>
-  <script src="app.js"></script>
+  <script src="app.js?v=20260705-3"></script>
 </body>
 </html>
