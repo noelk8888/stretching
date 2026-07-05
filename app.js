@@ -1077,10 +1077,15 @@
     });
 
     dom.btnAppBack.addEventListener('click', () => {
-      resetAll();
-      dom.app.setAttribute('aria-hidden', 'true');
-      dom.exercisePage.classList.add('is-active');
-      dom.exercisePage.setAttribute('aria-hidden', 'false');
+      if (state.currentExerciseIndex > 0) {
+        state.currentExerciseIndex--;
+        loadCurrentExercise();
+      } else {
+        resetAll();
+        dom.app.setAttribute('aria-hidden', 'true');
+        dom.exercisePage.classList.add('is-active');
+        dom.exercisePage.setAttribute('aria-hidden', 'false');
+      }
     });
 
     loadExerciseSettings();
