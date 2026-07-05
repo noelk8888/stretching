@@ -407,13 +407,19 @@
       <div id="settings-panel">
         <div class="setting-counts-row" style="width: 100%;">
           <button id="btn-app-back" class="app-back-btn" type="button">BACK</button>
-          <div class="setting-row setting-row--wide">
-            <label for="input-set-rest" class="setting-label">Set Rest <span id="set-rest-value" class="pace-badge">1.5s</span></label>
-            <input type="range" id="input-set-rest" class="setting-slider" min="0.5" max="5" step="0.1" value="1.5" />
-          </div>
-          <div class="setting-row setting-row--wide">
-            <label for="input-pace" class="setting-label">Rep Pace <span id="pace-value" class="pace-badge">1.2s</span></label>
-            <input type="range" id="input-pace" class="setting-slider" min="0.5" max="5" step="0.1" value="1.2" />
+          <div class="setting-row setting-row--wide" style="justify-content: center; gap: 12px; margin-bottom: 0;">
+            <div class="dose-group" style="margin: 0;">
+              <div class="progressive-toggle-btn" style="pointer-events: none; display: flex; align-items: center; justify-content: center; padding: 0 12px; font-size: 10px; font-weight: 800; color: var(--text-secondary); letter-spacing: 1px;">REST</div>
+              <button id="btn-set-rest-dec" class="exercise-step-btn" type="button">−</button>
+              <strong id="set-rest-value" style="width: 48px; text-align: center; font-size: 16px; font-weight: 700;">1.5s</strong>
+              <button id="btn-set-rest-inc" class="exercise-step-btn" type="button">+</button>
+            </div>
+            <div class="dose-group" style="margin: 0;">
+              <div class="progressive-toggle-btn" style="pointer-events: none; display: flex; align-items: center; justify-content: center; padding: 0 12px; font-size: 10px; font-weight: 800; color: var(--text-secondary); letter-spacing: 1px;">PACE</div>
+              <button id="btn-pace-dec" class="exercise-step-btn" type="button">−</button>
+              <strong id="pace-value" style="width: 48px; text-align: center; font-size: 16px; font-weight: 700;">1.2s</strong>
+              <button id="btn-pace-inc" class="exercise-step-btn" type="button">+</button>
+            </div>
           </div>
           <button id="btn-app-next" class="app-back-btn" type="button">NEXT</button>
         </div>

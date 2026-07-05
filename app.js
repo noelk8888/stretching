@@ -149,9 +149,11 @@
     iconPause: $('icon-pause'),
 
     // Settings
-    inputSetRest: $('input-set-rest'),
+    btnSetRestDec: $('btn-set-rest-dec'),
+    btnSetRestInc: $('btn-set-rest-inc'),
     setRestValue: $('set-rest-value'),
-    inputPace: $('input-pace'),
+    btnPaceDec: $('btn-pace-dec'),
+    btnPaceInc: $('btn-pace-inc'),
     paceValue: $('pace-value'),
     toggleBeep: $('toggle-beep'),
     toggleVoice: $('toggle-voice'),
@@ -507,8 +509,10 @@
 
   function disableSettingsWhileRunning() {
     const disable = state.isRunning;
-    dom.inputSetRest.disabled = disable;
-    dom.inputPace.disabled = disable;
+    dom.btnSetRestDec.disabled = disable;
+    dom.btnSetRestInc.disabled = disable;
+    dom.btnPaceDec.disabled = disable;
+    dom.btnPaceInc.disabled = disable;
   }
 
   function fullRender() {
@@ -763,33 +767,60 @@
   }
 
   // ─── Settings handlers ───
-  function onSetRestChange() {
-    const val = parseFloat(dom.inputSetRest.value);
+  // ─── Settings handlers ───
+  function updateSetRestUI() {
     const config = getCurrentExerciseConfig();
     if (config) {
-      config.setRest = val;
-      saveExerciseSettings();
+      dom.setRestValue.textContent = config.setRest.toFixed(1) + 's';
     }
-    dom.setRestValue.textContent = val.toFixed(1) + 's';
-
-    const pct = ((val - 0.5) / 4.5) * 100;
-    dom.inputSetRest.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, var(--bg-card) ${pct}%)`;
   }
 
-  function onPaceChange() {
-    const val = parseFloat(dom.inputPace.value);
+  function updatePaceUI() {
     const config = getCurrentExerciseConfig();
     if (config) {
-      config.pace = val;
-      saveExerciseSettings();
+      dom.paceValue.textContent = config.pace.toFixed(1) + 's';
     }
-    dom.paceValue.textContent = val.toFixed(1) + 's';
-
-    // Update slider gradient
-    const pct = ((val - 0.5) / 4.5) * 100;
-    dom.inputPace.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, var(--bg-card) ${pct}%)`;
   }
 
+  dom.btnSetRestDec.addEventListener('click', () => {
+    if (state.isRunning) return;
+    const config = getCurrentExerciseConfig();
+    if (config && config.setRest > 0.5) {
+      config.setRest = Math.max(0.5, config.setRest - 0.25);
+      saveExerciseSettings();
+      updateSetRestUI();
+    }
+  });
+
+  dom.btnSetRestInc.addEventListener('click', () => {
+    if (state.isRunning) return;
+    const config = getCurrentExerciseConfig();
+    if (config && config.setRest < 5.0) {
+      config.setRest = Math.min(5.0, config.setRest + 0.25);
+      saveExerciseSettings();
+      updateSetRestUI();
+    }
+  });
+
+  dom.btnPaceDec.addEventListener('click', () => {
+    if (state.isRunning) return;
+    const config = getCurrentExerciseConfig();
+    if (config && config.pace > 0.5) {
+      config.pace = Math.max(0.5, config.pace - 0.25);
+      saveExerciseSettings();
+      updatePaceUI();
+    }
+  });
+
+  dom.btnPaceInc.addEventListener('click', () => {
+    if (state.isRunning) return;
+    const config = getCurrentExerciseConfig();
+    if (config && config.pace < 5.0) {
+      config.pace = Math.min(5.0, config.pace + 0.25);
+      saveExerciseSettings();
+      updatePaceUI();
+    }
+  });
   // Steppers removed
 
   // ─── Init ───
@@ -993,25 +1024,40 @@
         'grip-squeeze': 'assets/lottie/grip-squeeze.json?v=2',
       };
 
-      // The player component does not reliably reload when only its src changes.
-      // Replace it so each guide screen renders the selected exercise animation.
-      const nextMediaLottie = document.createElement('dotlottie-player');
-      nextMediaLottie.id = 'media-lottie';
-      nextMediaLottie.setAttribute('src', animationByExercise[exerciseId]);
-      nextMediaLottie.setAttribute('autoplay', '');
-      nextMediaLottie.setAttribute('loop', '');
-      nextMediaLottie.setAttribute('aria-label', 'Exercise demonstration animation');
-      nextMediaLottie.dataset.exercise = exerciseId;
-      const playGuideAnimation = () => nextMediaLottie.play?.();
-      nextMediaLottie.addEventListener('ready', playGuideAnimation, { once: true });
-      nextMediaLottie.addEventListener('load', playGuideAnimation, { once: true });
-      nextMediaLottie.addEventListener('data_ready', playGuideAnimation, { once: true });
-      dom.mediaLottie.replaceWith(nextMediaLottie);
-      dom.mediaLottie = nextMediaLottie;
-      requestAnimationFrame(playGuideAnimation);
-      setTimeout(playGuideAnimation, 400);
-      setTimeout(playGuideAnimation, 1000);
-      dom.mediaImg.classList.add('hidden');
+      const lottieAnim = animationByExercise[exerciseId];
+      
+      if (lottieAnim) {
+        // The player component does not reliably reload when only its src changes.
+        // Replace it so each guide screen renders the selected exercise animation.
+        const nextMediaLottie = document.createElement('dotlottie-player');
+        nextMediaLottie.id = 'media-lottie';
+        nextMediaLottie.setAttribute('src', lottieAnim);
+        nextMediaLottie.setAttribute('autoplay', '');
+        nextMediaLottie.setAttribute('loop', '');
+        nextMediaLottie.setAttribute('aria-label', 'Exercise demonstration animation');
+        nextMediaLottie.dataset.exercise = exerciseId;
+        const playGuideAnimation = () => nextMediaLottie.play?.();
+        nextMediaLottie.addEventListener('ready', playGuideAnimation, { once: true });
+        nextMediaLottie.addEventListener('load', playGuideAnimation, { once: true });
+        nextMediaLottie.addEventListener('data_ready', playGuideAnimation, { once: true });
+        dom.mediaLottie.replaceWith(nextMediaLottie);
+        dom.mediaLottie = nextMediaLottie;
+        nextMediaLottie.classList.remove('hidden');
+        requestAnimationFrame(playGuideAnimation);
+        setTimeout(playGuideAnimation, 400);
+        setTimeout(playGuideAnimation, 1000);
+        dom.mediaImg.classList.add('hidden');
+      } else {
+        // Hide Lottie and show Image
+        dom.mediaLottie.classList.add('hidden');
+        const details = exerciseDetails[exerciseId];
+        if (details && details.images && details.images.length > 0) {
+          dom.mediaImg.src = details.images[0];
+          dom.mediaImg.classList.remove('hidden');
+        } else {
+          dom.mediaImg.classList.add('hidden');
+        }
+      }
       dom.mediaVideo.classList.add('hidden');
       dom.mediaVideo.pause();
       dom.mediaPlaceholder.classList.add('hidden');
