@@ -861,17 +861,6 @@
     const btnNext = document.getElementById('btn-carousel-next');
     let currentCarouselIndex = 0;
     let currentCarouselImages = [];
-    let carouselAutoPlayTimer = null;
-
-    function resetAutoPlay() {
-      if (carouselAutoPlayTimer) clearInterval(carouselAutoPlayTimer);
-      if (currentCarouselImages.length > 1) {
-        carouselAutoPlayTimer = setInterval(() => {
-          currentCarouselIndex = (currentCarouselIndex + 1) % currentCarouselImages.length;
-          updateCarousel();
-        }, 3000);
-      }
-    }
 
     function updateCarousel() {
       track.style.transform = `translateX(-${currentCarouselIndex * 100}%)`;
@@ -891,7 +880,6 @@
       if (currentCarouselIndex > 0) {
         currentCarouselIndex--;
         updateCarousel();
-        resetAutoPlay();
       }
     });
 
@@ -899,7 +887,6 @@
       if (currentCarouselIndex < currentCarouselImages.length - 1) {
         currentCarouselIndex++;
         updateCarousel();
-        resetAutoPlay();
       }
     });
 
@@ -950,7 +937,6 @@
               dotsContainer.appendChild(dot);
             });
             updateCarousel();
-            resetAutoPlay();
             document.getElementById('exercise-carousel-container').style.display = 'block';
           } else {
             document.getElementById('exercise-carousel-container').style.display = 'none';
@@ -963,7 +949,6 @@
 
     detailsClose.addEventListener('click', () => {
       detailsModal.setAttribute('aria-hidden', 'true');
-      if (carouselAutoPlayTimer) clearInterval(carouselAutoPlayTimer);
     });
 
     // Handle dummy auth options (proceeds to routine menu for now)
