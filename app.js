@@ -1164,10 +1164,7 @@
     dom.btnReset.addEventListener('click', resetAll);
     dom.btnSkip.addEventListener('click', skipToNextSet);
 
-    // Settings
-    dom.inputSetRest.addEventListener('input', onSetRestChange);
-    dom.inputPace.addEventListener('input', onPaceChange);
-
+    // (Old Settings slider listeners removed)
     // Sound Beep and Voice Guide toggles
     dom.toggleBeep.addEventListener('change', (e) => {
       state.beepEnabled = e.target.checked;
