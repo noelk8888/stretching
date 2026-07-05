@@ -1007,11 +1007,9 @@
       state.totalSets = config.sets;
       state.totalReps = config.reps;
 
-      // Sync sliders to current exercise settings
-      dom.inputSetRest.value = config.setRest;
-      onSetRestChange();
-      dom.inputPace.value = config.pace;
-      onPaceChange();
+      // Sync stepper UI to current exercise settings
+      updateSetRestUI();
+      updatePaceUI();
 
       // Reset the previous exercise before mounting the next autoplaying guide.
       resetAll();
