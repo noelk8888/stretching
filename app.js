@@ -88,25 +88,25 @@
       title: 'WRIST EXTENSOR STRETCH',
       description: 'Extend your arm in front of you with your palm facing down. Use your other hand to gently bend your wrist downward until you feel a stretch along the top of your forearm. Hold the stretch.',
       alert: 'Keep your elbow straight but do not lock it forcefully.',
-      images: [] 
+      images: ['assets/images/extensor_stretch_1.png', 'assets/images/extensor_stretch_2.png']
     },
     'wrist-extension': {
       title: 'WRIST EXTENSION',
       description: 'Hold a light weight (or just use the weight of your hand). Support your forearm on a table or your thigh with your hand hanging off the edge, palm facing down. Slowly lift your wrist up, then slowly lower it back down.',
       alert: 'Perform this movement slowly. If you feel sharp pain, stop immediately.',
-      images: []
+      images: ['assets/images/wrist_extension_1.png', 'assets/images/wrist_extension_2.png']
     },
     'forearm-rotation': {
       title: 'FOREARM ROTATION',
       description: 'Bend your elbow to 90 degrees, keeping it tucked close to your side. Slowly turn your palm to face up, hold for a moment, then slowly turn your palm to face down.',
       alert: 'Keep your upper arm completely still; all the movement should come from your forearm.',
-      images: []
+      images: ['assets/images/forearm_rotation_1.png', 'assets/images/forearm_rotation_2.png']
     },
     'grip-squeeze': {
       title: 'GRIP SQUEEZE',
       description: 'Hold a soft stress ball or a rolled-up towel in your hand. Squeeze it firmly, hold for a few seconds, then release with control.',
       alert: 'Do not squeeze so hard that it causes pain in your elbow.',
-      images: []
+      images: ['assets/images/grip_squeeze_1.png', 'assets/images/grip_squeeze_2.png']
     }
   };
 
