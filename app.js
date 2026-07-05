@@ -146,12 +146,22 @@
   function loadExerciseSettings() {
     try {
       const saved = JSON.parse(localStorage.getItem('ec_tennisElbowExercises'));
-      if (!saved) return;
+      if (!saved || typeof saved !== 'object') return;
+      
       Object.keys(exerciseSettings).forEach((id) => {
-        if (saved[id]) exerciseSettings[id] = { ...exerciseSettings[id], ...saved[id] };
+        if (saved[id] && typeof saved[id] === 'object') {
+          // Explicitly coerce to ensure we don't accidentally load strings or NaNs
+          exerciseSettings[id].selected = Boolean(saved[id].selected);
+          
+          const savedSets = parseInt(saved[id].sets, 10);
+          if (!isNaN(savedSets)) exerciseSettings[id].sets = savedSets;
+          
+          const savedReps = parseInt(saved[id].reps, 10);
+          if (!isNaN(savedReps)) exerciseSettings[id].reps = savedReps;
+        }
       });
     } catch (e) {
-      /* keep defaults when saved data is unavailable */
+      console.warn('Could not load exercise settings', e);
     }
   }
 
@@ -159,7 +169,7 @@
     try {
       localStorage.setItem('ec_tennisElbowExercises', JSON.stringify(exerciseSettings));
     } catch (e) {
-      /* ignore storage access errors */
+      console.warn('Could not save exercise settings', e);
     }
   }
 
