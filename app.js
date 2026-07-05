@@ -498,7 +498,7 @@
       dom.paceValue.textContent = currentPace.toFixed(2) + 's';
     } else {
       const config = getCurrentExerciseConfig() || { pace: 1.2 };
-      dom.paceValue.textContent = config.pace.toFixed(1) + 's';
+      dom.paceValue.textContent = config.pace.toFixed(2) + 's';
     }
   }
 
@@ -1142,8 +1142,7 @@
 
     // Initial setup of toggles
 
-    onSetRestChange();
-    onPaceChange();
+    // Settings initialized during loadCurrentExercise
     dom.toggleBeep.checked = state.beepEnabled;
     dom.toggleVoice.checked = state.voiceEnabled;
 
@@ -1181,7 +1180,6 @@
 
     // Prevent number inputs from scrolling the page
     // Initial render
-    onPaceChange();
     fullRender();
 
     // Initialize drag-and-drop sorting for routines
