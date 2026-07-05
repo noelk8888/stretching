@@ -824,30 +824,6 @@ body.light-mode .landing-btn-pill.is-active {
   }
 }
 
-#media-remove {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 2;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: 50%;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(8px);
-  cursor: pointer;
-  transition: background var(--transition-fast), transform var(--transition-fast);
-}
-
-#media-remove:hover,
-#media-remove:active {
-  background: rgba(255, 107, 138, 0.7);
-  transform: scale(1.1);
-}
 
 /* ============================================
    COUNTER SECTION (Bottom one-third)

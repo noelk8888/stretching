@@ -137,7 +137,6 @@
     mediaLottie: $('media-lottie'),
     mediaImg: $('media-img'),
     mediaVideo: $('media-video'),
-    mediaRemove: $('media-remove'),
 
     // Visuals
     repDots: $('rep-dots-container'),
@@ -1097,27 +1096,16 @@
     });
 
     dom.btnAppNext.addEventListener('click', () => {
-      if (state.currentExerciseIndex < state.selectedExercises.length - 1) {
-        state.currentExerciseIndex++;
+      if (state.selectedExercises.length > 0) {
+        state.currentExerciseIndex = (state.currentExerciseIndex + 1) % state.selectedExercises.length;
         loadCurrentExercise();
-      } else {
-        // Reached the end of selected exercises, go back to exercise list
-        resetAll();
-        dom.app.setAttribute('aria-hidden', 'true');
-        dom.exercisePage.classList.add('is-active');
-        dom.exercisePage.setAttribute('aria-hidden', 'false');
       }
     });
 
     dom.btnAppBack.addEventListener('click', () => {
-      if (state.currentExerciseIndex > 0) {
-        state.currentExerciseIndex--;
+      if (state.selectedExercises.length > 0) {
+        state.currentExerciseIndex = (state.currentExerciseIndex - 1 + state.selectedExercises.length) % state.selectedExercises.length;
         loadCurrentExercise();
-      } else {
-        resetAll();
-        dom.app.setAttribute('aria-hidden', 'true');
-        dom.exercisePage.classList.add('is-active');
-        dom.exercisePage.setAttribute('aria-hidden', 'false');
       }
     });
 
@@ -1175,7 +1163,6 @@
 
     // Media
     dom.mediaInput.addEventListener('change', handleMediaUpload);
-    dom.mediaRemove.addEventListener('click', removeMedia);
     dom.mediaImg.addEventListener('click', () => {
       const exerciseId = state.selectedExercises[state.currentExerciseIndex];
       const details = exerciseDetails[exerciseId];
