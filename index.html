@@ -347,78 +347,85 @@
         <!-- Generated dynamically -->
       </div>
 
-      <!-- Set Progress Bar -->
-      <div id="set-bar-container">
-        <div id="set-bar-track">
-          <!-- Generated dynamically -->
-        </div>
-      </div>
-
-      <!-- Transport Controls + Quick Toggles -->
-      <div id="action-row">
-        <div id="transport-controls">
-          <button id="btn-reset" class="transport-btn" title="Reset">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="1 4 1 10 7 10"></polyline>
-              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-            </svg>
-          </button>
-          <button id="btn-play" class="transport-btn transport-btn--primary" title="Play">
-            <svg id="icon-play" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-              <polygon points="6 3 20 12 6 21 6 3"></polygon>
-            </svg>
-            <svg id="icon-pause" class="hidden" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-              <rect x="5" y="3" width="4" height="18"></rect>
-              <rect x="15" y="3" width="4" height="18"></rect>
-            </svg>
-          </button>
-          <button id="btn-skip" class="transport-btn" title="Skip to next set">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="5 4 15 12 5 20 5 4"></polygon>
-              <line x1="19" y1="5" x2="19" y2="19"></line>
-            </svg>
-          </button>
-        </div>
-        <div id="quick-toggles">
-          <div class="quick-toggle">
-            <label for="toggle-beep" class="setting-label">Beep</label>
-            <label class="switch switch--compact">
-              <input type="checkbox" id="toggle-beep" checked />
-              <span class="slider-switch"></span>
-            </label>
-          </div>
-          <div class="quick-toggle">
-            <label for="toggle-voice" class="setting-label">Voice Guide</label>
-            <label class="switch switch--compact">
-              <input type="checkbox" id="toggle-voice" checked />
-              <span class="slider-switch"></span>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <div id="settings-panel">
-        <div class="setting-counts-row" style="width: 100%; display: grid; grid-template-columns: 70px 1fr 70px; gap: 8px; padding: 6px 10px;">
-          <div></div>
-          <div class="setting-row setting-row--wide" style="justify-content: center; gap: 12px; margin-bottom: 0;">
-            <div class="exercise-dose" style="margin: 0; grid-template-columns: 1fr 30px 56px 30px;">
-              <div class="progressive-toggle-btn" style="pointer-events: none; display: flex; align-items: center; justify-content: center; padding: 0 12px; font-size: 10px; font-weight: 800; color: var(--text-secondary); letter-spacing: 1px;">REST</div>
-              <button id="btn-set-rest-dec" class="exercise-step-btn" type="button">−</button>
-              <strong id="set-rest-value" style="text-align: center; font-size: 16px; font-weight: 700;">1.50s</strong>
-              <button id="btn-set-rest-inc" class="exercise-step-btn" type="button">+</button>
+      <div class="timer-bottom-controls" style="display: flex; flex-direction: column; gap: 16px; padding: 0 10px 10px;">
+        
+        <!-- Row 1: Toggles, Transport, Nav -->
+        <div style="display: grid; grid-template-columns: 140px 1fr 140px; gap: 16px; align-items: end;">
+          
+          <!-- Left: Toggles -->
+          <div id="quick-toggles" style="width: 100%; height: auto; padding: 6px 10px; gap: 6px; border-radius: var(--radius-md);">
+            <div class="quick-toggle" style="padding: 0;">
+              <label for="toggle-beep" class="setting-label" style="font-size: 10px; letter-spacing: 1px;">BEEP</label>
+              <label class="switch switch--compact">
+                <input type="checkbox" id="toggle-beep" checked />
+                <span class="slider-switch"></span>
+              </label>
             </div>
-            <div class="exercise-dose" style="margin: 0; grid-template-columns: 1fr 30px 56px 30px;">
-              <div class="progressive-toggle-btn" style="pointer-events: none; display: flex; align-items: center; justify-content: center; padding: 0 12px; font-size: 10px; font-weight: 800; color: var(--text-secondary); letter-spacing: 1px;">PACE</div>
-              <button id="btn-pace-dec" class="exercise-step-btn" type="button">−</button>
-              <strong id="pace-value" style="text-align: center; font-size: 16px; font-weight: 700;">1.20s</strong>
-              <button id="btn-pace-inc" class="exercise-step-btn" type="button">+</button>
+            <hr style="border: none; border-top: 1px solid var(--border); margin: 0;">
+            <div class="quick-toggle" style="padding: 0;">
+              <label for="toggle-voice" class="setting-label" style="font-size: 10px; letter-spacing: 1px;">VOICE GUIDE</label>
+              <label class="switch switch--compact">
+                <input type="checkbox" id="toggle-voice" checked />
+                <span class="slider-switch"></span>
+              </label>
             </div>
           </div>
-          <div style="display: flex; flex-direction: column; gap: 12px; justify-content: center;">
-            <button id="btn-app-next" class="app-back-btn" type="button" style="flex: none; height: 30px; width: 70px; padding: 0;">NEXT</button>
-            <button id="btn-app-back" class="app-back-btn" type="button" style="flex: none; height: 30px; width: 70px; padding: 0;">BACK</button>
+          
+          <!-- Center: Progress + Transport -->
+          <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+            <div id="set-bar-container" style="width: 100%; margin: 0;">
+              <div id="set-bar-track">
+                <!-- Generated dynamically -->
+              </div>
+            </div>
+            <div id="transport-controls" style="display: flex; gap: 12px; align-items: center; justify-content: center; width: 100%;">
+              <button id="btn-reset" class="transport-btn" title="Reset">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="1 4 1 10 7 10"></polyline>
+                  <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                </svg>
+              </button>
+              <button id="btn-play" class="transport-btn transport-btn--primary" title="Play" style="width: 60px; height: 60px;">
+                <svg id="icon-play" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                </svg>
+                <svg id="icon-pause" class="hidden" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <rect x="5" y="3" width="4" height="18"></rect>
+                  <rect x="15" y="3" width="4" height="18"></rect>
+                </svg>
+              </button>
+              <button id="btn-skip" class="transport-btn" title="Skip to next set">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                  <line x1="19" y1="5" x2="19" y2="19"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Right: Navigation (NEXT/BACK) -->
+          <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end; justify-content: flex-end; padding-bottom: 2px;">
+            <button id="btn-app-next" class="app-back-btn" type="button" style="flex: none; height: 32px; width: 76px; padding: 0;">NEXT</button>
+            <button id="btn-app-back" class="app-back-btn" type="button" style="flex: none; height: 32px; width: 76px; padding: 0;">BACK</button>
           </div>
         </div>
+
+        <!-- Row 2: REST / PACE -->
+        <div id="settings-panel" style="display: flex; justify-content: center; gap: 16px; padding-top: 4px;">
+          <div class="exercise-dose" style="margin: 0; grid-template-columns: 1fr 30px 56px 30px; border-radius: var(--radius-md);">
+            <div class="progressive-toggle-btn" style="pointer-events: none; display: flex; align-items: center; justify-content: center; padding: 0 16px; font-size: 11px; font-weight: 800; color: var(--text-secondary); letter-spacing: 1px;">REST</div>
+            <button id="btn-set-rest-dec" class="exercise-step-btn" type="button">−</button>
+            <strong id="set-rest-value" style="text-align: center; font-size: 16px; font-weight: 700;">1.50s</strong>
+            <button id="btn-set-rest-inc" class="exercise-step-btn" type="button">+</button>
+          </div>
+          <div class="exercise-dose" style="margin: 0; grid-template-columns: 1fr 30px 56px 30px; border-radius: var(--radius-md);">
+            <div class="progressive-toggle-btn" style="pointer-events: none; display: flex; align-items: center; justify-content: center; padding: 0 16px; font-size: 11px; font-weight: 800; color: var(--text-secondary); letter-spacing: 1px;">PACE</div>
+            <button id="btn-pace-dec" class="exercise-step-btn" type="button">−</button>
+            <strong id="pace-value" style="text-align: center; font-size: 16px; font-weight: 700;">1.20s</strong>
+            <button id="btn-pace-inc" class="exercise-step-btn" type="button">+</button>
+          </div>
+        </div>
+
       </div>
     </section>
   </div>

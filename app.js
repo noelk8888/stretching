@@ -975,7 +975,19 @@
         openExercisePage(routineName, routineId);
       });
     });
-    dom.btnExerciseBackPill.addEventListener('click', closeExercisePage);
+    dom.btnExerciseBackPill.addEventListener('click', () => {
+      const ROUTINES = [
+        { name: 'TENNIS ELBOW', id: 'tennis-elbow' },
+        { name: 'CAT & COW', id: 'cat-cow' },
+        { name: 'NECK RELIEF', id: 'neck-relief' },
+        { name: 'LOWER BACK', id: 'lower-back' }
+      ];
+      const currentTitle = document.getElementById('exercise-page-title').innerText;
+      let currentIndex = ROUTINES.findIndex(r => currentTitle.includes(r.name));
+      if (currentIndex === -1) currentIndex = 0;
+      const prevIndex = (currentIndex - 1 + ROUTINES.length) % ROUTINES.length;
+      openExercisePage(ROUTINES[prevIndex].name, ROUTINES[prevIndex].id);
+    });
     dom.btnExerciseNextPill.addEventListener('click', () => {
       const ROUTINES = [
         { name: 'TENNIS ELBOW', id: 'tennis-elbow' },
