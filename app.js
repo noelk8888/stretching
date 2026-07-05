@@ -557,14 +557,23 @@
       </div>
       <div class="done-text">Workout Complete!</div>
       <div class="done-sub" id="done-summary"></div>
-      <button id="btn-restart">Restart</button>
+      <div class="done-actions">
+        <button id="btn-done-repeat">Repeat</button>
+        <button id="btn-done-restart">Restart</button>
+      </div>
     `;
     document.body.appendChild(overlay);
-    document.getElementById('btn-restart').addEventListener('click', () => {
+
+    document.getElementById('btn-done-repeat').addEventListener('click', () => {
+      resetAll();
+    });
+
+    document.getElementById('btn-done-restart').addEventListener('click', () => {
       resetAll();
       dom.app.setAttribute('aria-hidden', 'true');
-      dom.landingPage.classList.remove('is-leaving');
-      dom.landingPage.setAttribute('aria-hidden', 'false');
+      dom.routinePage.classList.remove('is-leaving');
+      dom.routinePage.classList.add('is-active');
+      dom.routinePage.setAttribute('aria-hidden', 'false');
     });
   }
 

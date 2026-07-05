@@ -1239,8 +1239,14 @@ body.light-mode .landing-btn-pill.is-active {
   color: var(--text-secondary);
 }
 
+#completion-overlay .done-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
 #completion-overlay button {
-  margin-top: 10px;
+  margin-top: 0;
   padding: 12px 36px;
   border: none;
   border-radius: var(--radius-full);
