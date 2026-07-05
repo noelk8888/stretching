@@ -350,12 +350,12 @@
       <div class="timer-bottom-controls" style="display: flex; flex-direction: column; gap: 16px; padding: 0 10px 10px;">
         
         <!-- Row 1: Toggles, Transport, Nav -->
-        <div style="display: grid; grid-template-columns: 140px 1fr 140px; gap: 16px; align-items: end;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%;">
           
           <!-- Left: Toggles -->
-          <div id="quick-toggles" style="width: 100%; height: auto; padding: 6px 10px; gap: 6px; border-radius: var(--radius-md);">
+          <div id="quick-toggles" style="width: auto; min-width: 90px; height: auto; padding: 6px 8px; gap: 6px; border-radius: var(--radius-md); margin-bottom: 2px;">
             <div class="quick-toggle" style="padding: 0;">
-              <label for="toggle-beep" class="setting-label" style="font-size: 10px; letter-spacing: 1px;">BEEP</label>
+              <label for="toggle-beep" class="setting-label" style="font-size: 9px; letter-spacing: 0.5px;">BEEP</label>
               <label class="switch switch--compact">
                 <input type="checkbox" id="toggle-beep" checked />
                 <span class="slider-switch"></span>
@@ -363,7 +363,7 @@
             </div>
             <hr style="border: none; border-top: 1px solid var(--border); margin: 0;">
             <div class="quick-toggle" style="padding: 0;">
-              <label for="toggle-voice" class="setting-label" style="font-size: 10px; letter-spacing: 1px;">VOICE GUIDE</label>
+              <label for="toggle-voice" class="setting-label" style="font-size: 9px; letter-spacing: 0.5px; white-space: nowrap;">VOICE</label>
               <label class="switch switch--compact">
                 <input type="checkbox" id="toggle-voice" checked />
                 <span class="slider-switch"></span>
@@ -372,30 +372,30 @@
           </div>
           
           <!-- Center: Progress + Transport -->
-          <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+          <div style="display: flex; flex-direction: column; gap: 12px; align-items: center; flex: 1 1 auto; padding: 0 10px;">
             <div id="set-bar-container" style="width: 100%; margin: 0;">
               <div id="set-bar-track">
                 <!-- Generated dynamically -->
               </div>
             </div>
-            <div id="transport-controls" style="display: flex; gap: 12px; align-items: center; justify-content: center; width: 100%;">
+            <div id="transport-controls" style="display: flex; gap: 8px; align-items: center; justify-content: center; width: 100%;">
               <button id="btn-reset" class="transport-btn" title="Reset">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="1 4 1 10 7 10"></polyline>
                   <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
                 </svg>
               </button>
-              <button id="btn-play" class="transport-btn transport-btn--primary" title="Play" style="width: 60px; height: 60px;">
-                <svg id="icon-play" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+              <button id="btn-play" class="transport-btn transport-btn--primary" title="Play" style="width: 56px; height: 56px;">
+                <svg id="icon-play" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none">
                   <polygon points="6 3 20 12 6 21 6 3"></polygon>
                 </svg>
-                <svg id="icon-pause" class="hidden" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                <svg id="icon-pause" class="hidden" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none">
                   <rect x="5" y="3" width="4" height="18"></rect>
                   <rect x="15" y="3" width="4" height="18"></rect>
                 </svg>
               </button>
               <button id="btn-skip" class="transport-btn" title="Skip to next set">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polygon points="5 4 15 12 5 20 5 4"></polygon>
                   <line x1="19" y1="5" x2="19" y2="19"></line>
                 </svg>
@@ -404,9 +404,9 @@
           </div>
           
           <!-- Right: Navigation (NEXT/BACK) -->
-          <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end; justify-content: flex-end; padding-bottom: 2px;">
-            <button id="btn-app-next" class="app-back-btn" type="button" style="flex: none; height: 32px; width: 76px; padding: 0;">NEXT</button>
-            <button id="btn-app-back" class="app-back-btn" type="button" style="flex: none; height: 32px; width: 76px; padding: 0;">BACK</button>
+          <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end; margin-bottom: 2px;">
+            <button id="btn-app-next" class="app-back-btn" type="button" style="flex: none; height: 32px; width: 70px; padding: 0;">NEXT</button>
+            <button id="btn-app-back" class="app-back-btn" type="button" style="flex: none; height: 32px; width: 70px; padding: 0;">BACK</button>
           </div>
         </div>
 
