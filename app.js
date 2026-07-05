@@ -956,6 +956,7 @@
 
     detailsClose.addEventListener('click', () => {
       detailsModal.setAttribute('aria-hidden', 'true');
+      returnToMainMenu();
     });
 
     // Handle dummy auth options (proceeds to routine menu for now)
