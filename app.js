@@ -1049,34 +1049,13 @@
       } else {
         // Hide Lottie and show Image
         dom.mediaLottie.classList.add('hidden');
-        if (state.imageCyclerTimerId) {
-          clearInterval(state.imageCyclerTimerId);
-          state.imageCyclerTimerId = null;
-        }
 
         const details = exerciseDetails[exerciseId];
         if (details && details.images && details.images.length > 0) {
+          state.currentImageIndex = 0;
           dom.mediaImg.style.opacity = '1';
           dom.mediaImg.src = details.images[0];
           dom.mediaImg.classList.remove('hidden');
-
-          if (details.images.length > 1) {
-            let imgIndex = 0;
-            state.imageCyclerTimerId = setInterval(() => {
-              if (state.isRunning) {
-                // Fade out
-                dom.mediaImg.style.opacity = '0';
-                setTimeout(() => {
-                  if (state.isRunning) {
-                    imgIndex = (imgIndex + 1) % details.images.length;
-                    dom.mediaImg.src = details.images[imgIndex];
-                    // Fade in
-                    dom.mediaImg.style.opacity = '1';
-                  }
-                }, 300); // Wait for CSS transition (0.3s) before swapping src
-              }
-            }, 2500); // Swap image every 2.5s when running
-          }
         } else {
           dom.mediaImg.classList.add('hidden');
         }
@@ -1174,6 +1153,21 @@
     // Media
     dom.mediaInput.addEventListener('change', handleMediaUpload);
     dom.mediaRemove.addEventListener('click', removeMedia);
+    dom.mediaImg.addEventListener('click', () => {
+      const exerciseId = state.selectedExercises[state.currentExerciseIndex];
+      const details = exerciseDetails[exerciseId];
+      if (details && details.images && details.images.length > 1) {
+        state.currentImageIndex = ((state.currentImageIndex || 0) + 1) % details.images.length;
+        
+        // Fade out
+        dom.mediaImg.style.opacity = '0';
+        setTimeout(() => {
+          dom.mediaImg.src = details.images[state.currentImageIndex];
+          // Fade in
+          dom.mediaImg.style.opacity = '1';
+        }, 300);
+      }
+    });
 
     // Transport
     dom.btnPlay.addEventListener('click', () => {
