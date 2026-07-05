@@ -400,8 +400,8 @@
           
           <!-- Right: Navigation (NEXT/BACK) -->
           <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end; margin-bottom: 2px;">
-            <button id="btn-app-next" class="app-back-btn" type="button" style="flex: none; height: 32px; width: 70px; padding: 0;">NEXT</button>
             <button id="btn-app-back" class="app-back-btn" type="button" style="flex: none; height: 32px; width: 70px; padding: 0;">BACK</button>
+            <button id="btn-app-next" class="app-back-btn" type="button" style="flex: none; height: 32px; width: 70px; padding: 0;">NEXT</button>
           </div>
         </div>
 
@@ -432,7 +432,6 @@
   <!-- Login Modal (Hidden by default) -->
   <div id="login-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-content">
-      <button id="btn-close-modal" class="modal-close" aria-label="Close modal">×</button>
       <h2>Sign In</h2>
       <p style="margin-bottom: 24px; color: var(--text-muted);">Save your personalized stretch pacing and access it anywhere.</p>
       <div class="modal-actions">
@@ -440,11 +439,11 @@
         <button id="btn-login-google" class="landing-btn-pill">Sign in with Google</button>
         <button id="btn-login-apple" class="landing-btn-pill">Sign in with Apple</button>
       </div>
+      <button id="btn-close-modal" class="app-back-btn" style="width: 100%; height: 48px; margin-top: 16px;">CLOSE</button>
     </div>
   </div>
   <!-- Exercise Details Modal -->
   <div id="exercise-details-modal" class="modal-overlay" aria-hidden="true">
-    <button id="btn-close-details" class="global-close-btn app-close-btn" aria-label="Close to main menu">×</button>
     <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
       <div id="exercise-carousel-container" style="position: relative; width: 100%; height: 250px; border-radius: 12px; margin-bottom: 16px; overflow: hidden; background: var(--bg-card);">
         <div id="exercise-carousel-track" style="display: flex; width: 100%; height: 100%; transition: transform 0.3s ease;">
@@ -462,6 +461,7 @@
         <strong style="color: #ff453a; display: block; margin-bottom: 4px;">⚠️ Safety Alert</strong>
         <span id="exercise-details-alert-text" style="color: var(--text-primary); font-size: 14px;"></span>
       </div>
+      <button id="btn-close-details" class="app-back-btn" style="width: 100%; height: 48px; margin-top: 16px;">CLOSE</button>
     </div>
   </div>
 </body>
