@@ -69,7 +69,7 @@
       title: 'THREAD THE NEEDLE',
       description: 'From all fours, slide your right arm under your left arm, dropping your right shoulder and the right side of your head gently to the floor. Keep your hips high and your left hand planted for support. Hold, then switch sides.',
       alert: 'Do not force the twist. Keep the weight gently on your shoulder, not your neck.',
-      images: ['assets/images/thread_needle_2_1783254378821.png', 'assets/images/thread_needle_1783254145200.png']
+      images: ['assets/images/thread_needle_2_1783254378821.png', 'assets/images/thread_needle_correct_1783256295828.png']
     },
     'bird-dog': {
       title: 'BIRD-DOG',
