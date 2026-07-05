@@ -393,7 +393,8 @@
     if (state.isRunning && !state.isFinished) {
       dom.paceValue.textContent = currentPace.toFixed(2) + 's';
     } else {
-      dom.paceValue.textContent = state.pace.toFixed(1) + 's';
+      const config = getCurrentExerciseConfig() || { pace: 1.2 };
+      dom.paceValue.textContent = config.pace.toFixed(1) + 's';
     }
   }
 
@@ -845,9 +846,7 @@
       saveState();
     });
 
-    // Sync state values with HTML inputs
-    dom.inputSetRest.value = state.setRest;
-    dom.inputPace.value = state.pace;
+    // Initial setup of toggles
 
     onSetRestChange();
     onPaceChange();
