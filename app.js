@@ -592,7 +592,7 @@
     state.setRest = val;
     dom.setRestValue.textContent = val.toFixed(1) + 's';
 
-    const pct = ((val - 1) / 2) * 100;
+    const pct = ((val - 0.5) / 4.5) * 100;
     dom.inputSetRest.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, var(--bg-card) ${pct}%)`;
     saveState();
   }
@@ -603,7 +603,7 @@
     dom.paceValue.textContent = val.toFixed(1) + 's';
 
     // Update slider gradient
-    const pct = ((val - 1) / 2) * 100;
+    const pct = ((val - 0.5) / 4.5) * 100;
     dom.inputPace.style.background = `linear-gradient(90deg, var(--accent) ${pct}%, var(--bg-card) ${pct}%)`;
     saveState();
   }
