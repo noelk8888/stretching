@@ -41,10 +41,12 @@
 
   <main id="routine-page" aria-label="Stretching routines" aria-hidden="true">
     <div class="routine-list">
-      <button id="btn-tennis-elbow" class="routine-pill routine-pill--named" type="button">TENNIS ELBOW</button>
-      <button class="routine-pill" type="button" aria-label="Empty routine slot 2"></button>
-      <button class="routine-pill" type="button" aria-label="Empty routine slot 3"></button>
-      <button class="routine-pill" type="button" aria-label="Empty routine slot 4"></button>
+      <div id="sortable-routines" class="sortable-routines-container">
+        <button id="btn-tennis-elbow" class="routine-pill routine-pill--named" type="button">TENNIS ELBOW</button>
+        <button class="routine-pill" type="button" aria-label="Empty routine slot 2"></button>
+        <button class="routine-pill" type="button" aria-label="Empty routine slot 3"></button>
+        <button class="routine-pill" type="button" aria-label="Empty routine slot 4"></button>
+      </div>
       <button id="btn-routine-back" class="routine-pill routine-pill--named" type="button">BACK</button>
     </div>
   </main>
@@ -290,8 +292,9 @@
     </section>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <script type="module" src="assets/lottie/dotlottie-player.mjs"></script>
-  <script src="app.js?v=20260705-11"></script>
+  <script src="app.js?v=20260705-12"></script>
 
   <!-- Login Modal (Hidden by default) -->
   <div id="login-modal" class="modal-overlay" aria-hidden="true">

@@ -60,6 +60,7 @@
     btnDarkMode: $('btn-dark-mode'),
     btnSoundMode: $('btn-sound-mode'),
     routinePage: $('routine-page'),
+    sortableRoutines: $('sortable-routines'),
     btnRoutineBack: $('btn-routine-back'),
     btnTennisElbow: $('btn-tennis-elbow'),
     exercisePage: $('exercise-page'),
@@ -918,6 +919,16 @@
     // Initial render
     onPaceChange();
     fullRender();
+
+    // Initialize drag-and-drop sorting for routines
+    if (typeof Sortable !== 'undefined' && dom.sortableRoutines) {
+      new Sortable(dom.sortableRoutines, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        delay: 150, // Delay for mobile touch friendliness
+        delayOnTouchOnly: true
+      });
+    }
   }
 
   // Wait for DOM

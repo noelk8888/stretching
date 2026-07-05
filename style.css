@@ -494,6 +494,18 @@ html, body {
   gap: clamp(18px, 3.4vh, 28px);
 }
 
+.sortable-routines-container {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  width: 100%;
+}
+
+.sortable-ghost {
+  opacity: 0.4;
+  border-style: dashed;
+}
+
 .routine-pill {
   width: 100%;
   height: clamp(66px, 10vh, 84px);
