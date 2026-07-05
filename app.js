@@ -636,6 +636,9 @@
       state.totalSets = config.sets;
       state.totalReps = config.reps;
 
+      // Reset the previous exercise before mounting the next autoplaying guide.
+      resetAll();
+
       // Auto-load the locally bundled Lottie for the selected exercise.
       const animationByExercise = {
         'extensor-stretch': 'assets/lottie/forearm-stretch.lottie',
@@ -652,15 +655,21 @@
       nextMediaLottie.setAttribute('autoplay', '');
       nextMediaLottie.setAttribute('loop', '');
       nextMediaLottie.setAttribute('aria-label', 'Exercise demonstration animation');
+      nextMediaLottie.dataset.exercise = exerciseId;
+      const playGuideAnimation = () => nextMediaLottie.play?.();
+      nextMediaLottie.addEventListener('ready', playGuideAnimation, { once: true });
+      nextMediaLottie.addEventListener('load', playGuideAnimation, { once: true });
+      nextMediaLottie.addEventListener('data_ready', playGuideAnimation, { once: true });
       dom.mediaLottie.replaceWith(nextMediaLottie);
       dom.mediaLottie = nextMediaLottie;
+      requestAnimationFrame(playGuideAnimation);
+      setTimeout(playGuideAnimation, 400);
+      setTimeout(playGuideAnimation, 1000);
       dom.mediaImg.classList.add('hidden');
       dom.mediaVideo.classList.add('hidden');
       dom.mediaVideo.pause();
       dom.mediaPlaceholder.classList.add('hidden');
       dom.mediaDisplay.classList.remove('hidden');
-      
-      resetAll();
     }
 
     dom.btnStartNow.addEventListener('click', () => {

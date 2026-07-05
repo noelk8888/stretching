@@ -701,6 +701,52 @@ body.light-mode .landing-btn-pill.is-active {
   object-fit: cover;
 }
 
+#media-lottie {
+  will-change: transform;
+}
+
+#media-lottie[data-exercise="extensor-stretch"] {
+  animation: guide-stretch 1.6s ease-in-out infinite alternate;
+}
+
+#media-lottie[data-exercise="wrist-extension"] {
+  animation: guide-lift 1.4s ease-in-out infinite alternate;
+}
+
+#media-lottie[data-exercise="forearm-rotation"] {
+  animation: guide-rotate 1.2s ease-in-out infinite alternate;
+}
+
+#media-lottie[data-exercise="grip-squeeze"] {
+  animation: guide-squeeze 1s ease-in-out infinite alternate;
+}
+
+@keyframes guide-stretch {
+  from { transform: translateY(0); }
+  to { transform: translateY(5px); }
+}
+
+@keyframes guide-lift {
+  from { transform: translateY(5px); }
+  to { transform: translateY(-5px); }
+}
+
+@keyframes guide-rotate {
+  from { transform: rotate(-3deg); }
+  to { transform: rotate(3deg); }
+}
+
+@keyframes guide-squeeze {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0.94); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #media-lottie {
+    animation: none;
+  }
+}
+
 #media-remove {
   position: absolute;
   top: 12px;
