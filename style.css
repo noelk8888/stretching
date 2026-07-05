@@ -748,6 +748,10 @@ body.light-mode .landing-btn-pill.is-active {
   object-fit: cover;
 }
 
+#media-display img {
+  transition: opacity 0.3s ease;
+}
+
 #media-lottie {
   will-change: transform;
 }

@@ -1056,6 +1056,7 @@
 
         const details = exerciseDetails[exerciseId];
         if (details && details.images && details.images.length > 0) {
+          dom.mediaImg.style.opacity = '1';
           dom.mediaImg.src = details.images[0];
           dom.mediaImg.classList.remove('hidden');
 
@@ -1063,10 +1064,18 @@
             let imgIndex = 0;
             state.imageCyclerTimerId = setInterval(() => {
               if (state.isRunning) {
-                imgIndex = (imgIndex + 1) % details.images.length;
-                dom.mediaImg.src = details.images[imgIndex];
+                // Fade out
+                dom.mediaImg.style.opacity = '0';
+                setTimeout(() => {
+                  if (state.isRunning) {
+                    imgIndex = (imgIndex + 1) % details.images.length;
+                    dom.mediaImg.src = details.images[imgIndex];
+                    // Fade in
+                    dom.mediaImg.style.opacity = '1';
+                  }
+                }, 300); // Wait for CSS transition (0.3s) before swapping src
               }
-            }, 1500); // Swap image every 1.5s when running
+            }, 2500); // Swap image every 2.5s when running
           }
         } else {
           dom.mediaImg.classList.add('hidden');
