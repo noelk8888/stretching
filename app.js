@@ -23,6 +23,7 @@
     currentExerciseIndex: 0,
     globalDarkMode: true,
     globalSoundMode: true,
+    imageCyclerTimerId: null,
   };
 
   function getCurrentExerciseConfig() {
@@ -1048,10 +1049,25 @@
       } else {
         // Hide Lottie and show Image
         dom.mediaLottie.classList.add('hidden');
+        if (state.imageCyclerTimerId) {
+          clearInterval(state.imageCyclerTimerId);
+          state.imageCyclerTimerId = null;
+        }
+
         const details = exerciseDetails[exerciseId];
         if (details && details.images && details.images.length > 0) {
           dom.mediaImg.src = details.images[0];
           dom.mediaImg.classList.remove('hidden');
+
+          if (details.images.length > 1) {
+            let imgIndex = 0;
+            state.imageCyclerTimerId = setInterval(() => {
+              if (state.isRunning) {
+                imgIndex = (imgIndex + 1) % details.images.length;
+                dom.mediaImg.src = details.images[imgIndex];
+              }
+            }, 1500); // Swap image every 1.5s when running
+          }
         } else {
           dom.mediaImg.classList.add('hidden');
         }
