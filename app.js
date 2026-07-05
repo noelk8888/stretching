@@ -276,6 +276,11 @@
         // Speak an empty string to unlock/prime TTS engine on mobile/iOS
         const u = new SpeechSynthesisUtterance('');
         window.speechSynthesis.speak(u);
+        // Pre-fetch voices
+        window.speechSynthesis.getVoices();
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+          window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+        }
       }
     } catch (e) {}
   }
@@ -286,7 +291,20 @@
       if (window.speechSynthesis) {
         window.speechSynthesis.cancel(); // Cancel ongoing to speak immediately
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.1; // Slightly faster for responsiveness
+        utterance.rate = 1.0; // Normal speed for natural voices
+        
+        // Try to pick a natural-sounding voice
+        const voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+          // Look for premium/enhanced voices or specific known good ones
+          let bestVoice = voices.find(v => v.name.includes('Premium') || v.name.includes('Enhanced')) ||
+                          voices.find(v => v.name.includes('Samantha') || v.name.includes('Google US English') || v.name.includes('Daniel') || v.name.includes('Karen')) ||
+                          voices.find(v => v.lang.startsWith('en-'));
+          if (bestVoice) {
+            utterance.voice = bestVoice;
+          }
+        }
+        
         window.speechSynthesis.speak(utterance);
       }
     } catch (e) {
