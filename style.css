@@ -688,6 +688,7 @@ body.light-mode .landing-btn-pill.is-active {
 
 /* ---------- App Shell ---------- */
 #app {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100dvh;          /* dynamic viewport height for mobile */
