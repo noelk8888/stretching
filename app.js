@@ -582,6 +582,10 @@
 
     document.getElementById('btn-done-repeat').addEventListener('click', () => {
       resetAll();
+      dom.app.setAttribute('aria-hidden', 'true');
+      dom.exercisePage.classList.remove('is-leaving');
+      dom.exercisePage.classList.add('is-active');
+      dom.exercisePage.setAttribute('aria-hidden', 'false');
     });
 
     document.getElementById('btn-done-restart').addEventListener('click', () => {
