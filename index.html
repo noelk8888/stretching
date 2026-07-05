@@ -26,9 +26,12 @@
       <h1 id="landing-title">STRETCHING</h1>
     </div>
     <div class="landing-controls-grid">
-      <button id="btn-start-here" class="landing-btn-pill" type="button" aria-label="Start stretching workout">
-        START HERE
-      </button>
+      <div class="landing-login-group">
+        <button id="btn-guest-mode" class="landing-text-btn" type="button">Guest Mode</button>
+        <button id="btn-login" class="landing-btn-pill" type="button" aria-label="Log in to your account">
+          LOG IN
+        </button>
+      </div>
       <div class="landing-toggles-row">
         <button id="btn-dark-mode" class="landing-btn-pill is-active" type="button">DARK</button>
         <button id="btn-sound-mode" class="landing-btn-pill is-active" type="button">SOUND</button>
@@ -284,11 +287,24 @@
           <button id="btn-app-next" class="app-back-btn" type="button">NEXT</button>
         </div>
       </div>
-
     </section>
   </div>
 
   <script type="module" src="assets/lottie/dotlottie-player.mjs"></script>
   <script src="app.js?v=20260705-11"></script>
+
+  <!-- Login Modal (Hidden by default) -->
+  <div id="login-modal" class="modal-overlay" aria-hidden="true">
+    <div class="modal-content">
+      <button id="btn-close-modal" class="modal-close" aria-label="Close modal">×</button>
+      <h2>Sign In</h2>
+      <p style="margin-bottom: 24px; color: var(--text-muted);">Save your personalized stretch pacing and access it anywhere.</p>
+      <div class="modal-actions">
+        <button id="btn-login-email" class="landing-btn-pill">Email / Password</button>
+        <button id="btn-login-google" class="landing-btn-pill">Sign in with Google</button>
+        <button id="btn-login-apple" class="landing-btn-pill">Sign in with Apple</button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

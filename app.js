@@ -55,7 +55,8 @@
   const dom = {
     // Landing page
     landingPage: $('landing-page'),
-    btnStartHere: $('btn-start-here'),
+    btnGuestMode: $('btn-guest-mode'),
+    btnLogin: $('btn-login'),
     btnDarkMode: $('btn-dark-mode'),
     btnSoundMode: $('btn-sound-mode'),
     routinePage: $('routine-page'),
@@ -695,12 +696,33 @@
     createCompletionOverlay();
 
     // Landing page
-    dom.btnStartHere.addEventListener('click', () => {
+    const goToRoutineMenu = () => {
+      dom.landingPage.classList.remove('is-active');
+      dom.landingPage.setAttribute('aria-hidden', 'true');
       dom.routinePage.classList.add('is-active');
       dom.routinePage.setAttribute('aria-hidden', 'false');
-      dom.landingPage.classList.add('is-leaving');
-      dom.landingPage.setAttribute('aria-hidden', 'true');
+      
+      // Close modal if open
+      const loginModal = document.getElementById('login-modal');
+      if (loginModal) loginModal.setAttribute('aria-hidden', 'true');
+    };
+
+    dom.btnGuestMode.addEventListener('click', goToRoutineMenu);
+    
+    // Open login modal
+    dom.btnLogin.addEventListener('click', () => {
+      document.getElementById('login-modal').setAttribute('aria-hidden', 'false');
     });
+
+    // Close modal
+    document.getElementById('btn-close-modal').addEventListener('click', () => {
+      document.getElementById('login-modal').setAttribute('aria-hidden', 'true');
+    });
+
+    // Handle dummy auth options (proceeds to routine menu for now)
+    document.getElementById('btn-login-email').addEventListener('click', goToRoutineMenu);
+    document.getElementById('btn-login-google').addEventListener('click', goToRoutineMenu);
+    document.getElementById('btn-login-apple').addEventListener('click', goToRoutineMenu);
 
     dom.btnRoutineBack.addEventListener('click', () => {
       dom.landingPage.classList.remove('is-leaving');
