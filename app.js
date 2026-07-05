@@ -52,6 +52,63 @@
   // ─── DOM refs ───
   const $ = (id) => document.getElementById(id);
 
+  const exerciseDetails = {
+    'cat-cow': {
+      title: 'CAT & COW',
+      description: 'Start on your hands and knees. Inhale and let your belly drop towards the floor, lifting your chest and tailbone towards the ceiling (Cow Pose). Exhale and arch your back towards the ceiling, tucking your chin to your chest (Cat Pose). Move slowly and breathe deeply with each movement.',
+      alert: 'If you experience wrist pain, you can perform this stretch resting on your forearms instead of your hands.',
+      images: ['assets/images/cat_cow_stretch_1783253633631.png', 'assets/images/cow_pose_proper_1783254613686.png']
+    },
+    'childs-pose': {
+      title: "CHILD'S POSE",
+      description: 'Kneel on the floor with your toes together and your knees hip-width apart. Slowly sit back on your heels, walk your hands forward, and gently rest your forehead on the floor. Allow your spine to lengthen and your shoulders to relax.',
+      alert: 'If you have knee pain, place a rolled-up towel behind your knees or skip this stretch if it causes sharp discomfort.',
+      images: ['assets/images/childs_pose_2_1783254371842.png', 'assets/images/childs_pose_1783254135860.png']
+    },
+    'thread-needle': {
+      title: 'THREAD THE NEEDLE',
+      description: 'From all fours, slide your right arm under your left arm, dropping your right shoulder and the right side of your head gently to the floor. Keep your hips high and your left hand planted for support. Hold, then switch sides.',
+      alert: 'Do not force the twist. Keep the weight gently on your shoulder, not your neck.',
+      images: ['assets/images/thread_needle_2_1783254378821.png', 'assets/images/thread_needle_1783254145200.png']
+    },
+    'bird-dog': {
+      title: 'BIRD-DOG',
+      description: 'From all fours, slowly extend your right arm forward and your left leg backward simultaneously. Keep your back completely flat and your core engaged. Hold for a moment, return to start, and switch sides.',
+      alert: 'If you feel unsteady, extend *only* your arm or *only* your leg until you build more balance.',
+      images: ['assets/images/bird_dog_2_1783254387590.png', 'assets/images/bird_dog_1783254153480.png']
+    },
+    'sphinx-pose': {
+      title: 'SPHINX POSE',
+      description: 'Lie flat on your stomach. Prop yourself up on your forearms, keeping your elbows directly under your shoulders. Press your forearms into the floor and gently lift your chest to create a mild lower back arch. Relax your shoulders away from your ears.',
+      alert: 'If you feel any pinching in your lower spine, lower your chest slightly or skip the movement.',
+      images: ['assets/images/sphinx_pose_2_1783254395595.png', 'assets/images/sphinx_pose_1783254161258.png']
+    },
+    'extensor-stretch': {
+      title: 'WRIST EXTENSOR STRETCH',
+      description: 'Extend your arm in front of you with your palm facing down. Use your other hand to gently bend your wrist downward until you feel a stretch along the top of your forearm. Hold the stretch.',
+      alert: 'Keep your elbow straight but do not lock it forcefully.',
+      images: [] 
+    },
+    'wrist-extension': {
+      title: 'WRIST EXTENSION',
+      description: 'Hold a light weight (or just use the weight of your hand). Support your forearm on a table or your thigh with your hand hanging off the edge, palm facing down. Slowly lift your wrist up, then slowly lower it back down.',
+      alert: 'Perform this movement slowly. If you feel sharp pain, stop immediately.',
+      images: []
+    },
+    'forearm-rotation': {
+      title: 'FOREARM ROTATION',
+      description: 'Bend your elbow to 90 degrees, keeping it tucked close to your side. Slowly turn your palm to face up, hold for a moment, then slowly turn your palm to face down.',
+      alert: 'Keep your upper arm completely still; all the movement should come from your forearm.',
+      images: []
+    },
+    'grip-squeeze': {
+      title: 'GRIP SQUEEZE',
+      description: 'Hold a soft stress ball or a rolled-up towel in your hand. Squeeze it firmly, hold for a few seconds, then release with control.',
+      alert: 'Do not squeeze so hard that it causes pain in your elbow.',
+      images: []
+    }
+  };
+
   const dom = {
     // Landing page
     landingPage: $('landing-page'),
@@ -139,12 +196,19 @@
     }
   }
 
-  // ─── Tennis elbow exercise selection ───
+  // ─── Exercise selection defaults ───
   const exerciseDefaults = {
+    // Tennis Elbow
     'extensor-stretch': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
     'wrist-extension': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
     'forearm-rotation': { selected: false, sets: 2, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
     'grip-squeeze': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
+    // Cat & Cow
+    'cat-cow': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
+    'childs-pose': { selected: false, sets: 2, reps: 6, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
+    'thread-needle': { selected: false, sets: 2, reps: 5, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
+    'bird-dog': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
+    'sphinx-pose': { selected: false, sets: 2, reps: 6, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
   };
 
   let exerciseSettings = JSON.parse(JSON.stringify(exerciseDefaults));
@@ -189,35 +253,53 @@
   }
 
   function renderExerciseSettings() {
-    const cards = document.querySelectorAll('.exercise-card');
     let selectedCount = 0;
-
+    let visibleCardsCount = 0;
+    const cards = Array.from(document.querySelectorAll('.exercise-card'));
+    
     cards.forEach((card) => {
-      const config = exerciseSettings[card.dataset.exerciseId];
+      if (card.style.display === 'none') return;
+      visibleCardsCount++;
+      const id = card.dataset.exerciseId;
+      if (!exerciseSettings[id]) return;
+      
+      const config = exerciseSettings[id];
       const checkbox = card.querySelector('.exercise-checkbox');
-      checkbox.checked = config.selected;
-      card.classList.toggle('is-selected', config.selected);
-      card.querySelector('[data-value="sets"]').textContent = config.sets;
-      card.querySelector('[data-value="reps"]').textContent = config.reps;
       
-      const setToggle = card.querySelector('.progressive-toggle-btn[data-type="sets"]');
-      if (setToggle) setToggle.classList.toggle('is-active', config.progressiveSets);
-      
-      const repToggle = card.querySelector('.progressive-toggle-btn[data-type="reps"]');
-      if (repToggle) repToggle.classList.toggle('is-active', config.progressiveReps);
-      
-      if (config.selected) selectedCount++;
+      if (checkbox) checkbox.checked = config.selected;
+      if (config.selected) {
+        card.classList.add('is-selected');
+        selectedCount++;
+      } else {
+        card.classList.remove('is-selected');
+      }
+
+      const setsEl = card.querySelector('[data-value="sets"]');
+      const repsEl = card.querySelector('[data-value="reps"]');
+      if (setsEl) setsEl.textContent = config.sets;
+      if (repsEl) repsEl.textContent = config.reps;
     });
 
-    dom.selectAllExercises.checked = selectedCount === cards.length;
-    dom.selectAllExercises.indeterminate = selectedCount > 0 && selectedCount < cards.length;
+    dom.selectAllExercises.checked = visibleCardsCount > 0 && selectedCount === visibleCardsCount;
+    dom.selectAllExercises.indeterminate = selectedCount > 0 && selectedCount < visibleCardsCount;
     dom.btnStartNow.disabled = selectedCount === 0;
     dom.selectionSummary.textContent = selectedCount === 0
       ? 'SELECT AT LEAST ONE EXERCISE'
       : `${selectedCount} EXERCISE${selectedCount === 1 ? '' : 'S'} SELECTED`;
   }
 
-  function openExercisePage() {
+  function openExercisePage(routineName, routineId) {
+    document.getElementById('exercise-page-title').innerText = routineName;
+    const cards = Array.from(document.querySelectorAll('.exercise-card'));
+    cards.forEach(card => {
+      if (card.dataset.routine === routineId) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+    renderExerciseSettings();
+    
     dom.routinePage.classList.remove('is-active');
     dom.routinePage.setAttribute('aria-hidden', 'true');
     dom.exercisePage.classList.add('is-active');
@@ -733,9 +815,123 @@
       document.getElementById('login-modal').setAttribute('aria-hidden', 'false');
     });
 
-    // Close modal
+    // Close login modal
     document.getElementById('btn-close-modal').addEventListener('click', () => {
       document.getElementById('login-modal').setAttribute('aria-hidden', 'true');
+    });
+
+    // Exercise Details Modal Logic
+    const detailsModal = document.getElementById('exercise-details-modal');
+    const detailsClose = document.getElementById('btn-close-details');
+    const track = document.getElementById('exercise-carousel-track');
+    const dotsContainer = document.getElementById('exercise-carousel-dots');
+    const btnPrev = document.getElementById('btn-carousel-prev');
+    const btnNext = document.getElementById('btn-carousel-next');
+    let currentCarouselIndex = 0;
+    let currentCarouselImages = [];
+    let carouselAutoPlayTimer = null;
+
+    function resetAutoPlay() {
+      if (carouselAutoPlayTimer) clearInterval(carouselAutoPlayTimer);
+      if (currentCarouselImages.length > 1) {
+        carouselAutoPlayTimer = setInterval(() => {
+          currentCarouselIndex = (currentCarouselIndex + 1) % currentCarouselImages.length;
+          updateCarousel();
+        }, 3000);
+      }
+    }
+
+    function updateCarousel() {
+      track.style.transform = `translateX(-${currentCarouselIndex * 100}%)`;
+      Array.from(dotsContainer.children).forEach((dot, i) => {
+        dot.style.background = i === currentCarouselIndex ? 'var(--accent)' : 'rgba(255,255,255,0.3)';
+      });
+      btnPrev.style.display = currentCarouselIndex === 0 ? 'none' : 'flex';
+      btnNext.style.display = currentCarouselIndex === currentCarouselImages.length - 1 ? 'none' : 'flex';
+      
+      if (currentCarouselImages.length <= 1) {
+        btnPrev.style.display = 'none';
+        btnNext.style.display = 'none';
+      }
+    }
+
+    btnPrev.addEventListener('click', () => {
+      if (currentCarouselIndex > 0) {
+        currentCarouselIndex--;
+        updateCarousel();
+        resetAutoPlay();
+      }
+    });
+
+    btnNext.addEventListener('click', () => {
+      if (currentCarouselIndex < currentCarouselImages.length - 1) {
+        currentCarouselIndex++;
+        updateCarousel();
+        resetAutoPlay();
+      }
+    });
+
+    document.querySelectorAll('.exercise-animation-placeholder').forEach(el => {
+      el.addEventListener('click', (e) => {
+        // Prevent click if clicking the checkbox wrapper, but here it's on the placeholder specifically
+        const card = e.target.closest('.exercise-card');
+        const id = card.dataset.exerciseId;
+        const details = exerciseDetails[id];
+        
+        if (details) {
+          document.getElementById('exercise-details-title').innerText = details.title;
+          document.getElementById('exercise-details-desc').innerText = details.description;
+          
+          if (details.alert) {
+            document.getElementById('exercise-details-alert').style.display = 'block';
+            document.getElementById('exercise-details-alert-text').innerText = details.alert;
+          } else {
+            document.getElementById('exercise-details-alert').style.display = 'none';
+          }
+
+          currentCarouselImages = details.images || [];
+          currentCarouselIndex = 0;
+          track.innerHTML = '';
+          dotsContainer.innerHTML = '';
+
+          if (currentCarouselImages.length > 0) {
+            currentCarouselImages.forEach((src, i) => {
+              const slide = document.createElement('div');
+              slide.style.minWidth = '100%';
+              slide.style.height = '100%';
+              slide.style.backgroundImage = `url('${src}')`;
+              slide.style.backgroundSize = 'contain';
+              slide.style.backgroundRepeat = 'no-repeat';
+              slide.style.backgroundPosition = 'center';
+              track.appendChild(slide);
+
+              const dot = document.createElement('div');
+              dot.style.width = '8px';
+              dot.style.height = '8px';
+              dot.style.borderRadius = '50%';
+              dot.style.background = 'rgba(255,255,255,0.3)';
+              dot.style.cursor = 'pointer';
+              dot.addEventListener('click', () => {
+                currentCarouselIndex = i;
+                updateCarousel();
+              });
+              dotsContainer.appendChild(dot);
+            });
+            updateCarousel();
+            resetAutoPlay();
+            document.getElementById('exercise-carousel-container').style.display = 'block';
+          } else {
+            document.getElementById('exercise-carousel-container').style.display = 'none';
+          }
+          
+          detailsModal.setAttribute('aria-hidden', 'false');
+        }
+      });
+    });
+
+    detailsClose.addEventListener('click', () => {
+      detailsModal.setAttribute('aria-hidden', 'true');
+      if (carouselAutoPlayTimer) clearInterval(carouselAutoPlayTimer);
     });
 
     // Handle dummy auth options (proceeds to routine menu for now)
@@ -750,7 +946,17 @@
       dom.routinePage.setAttribute('aria-hidden', 'true');
     });
 
-    dom.btnTennisElbow.addEventListener('click', openExercisePage);
+    // Routine menu: clicking any routine pill (except back) goes to exercise page
+    const routinePills = dom.sortableRoutines.querySelectorAll('.routine-pill');
+    routinePills.forEach(pill => {
+      pill.addEventListener('click', (e) => {
+        let routineName = e.target.innerText;
+        let routineId = '';
+        if (routineName.includes('TENNIS ELBOW')) routineId = 'tennis-elbow';
+        else if (routineName.includes('CAT & COW')) routineId = 'cat-cow';
+        openExercisePage(routineName, routineId);
+      });
+    });
     dom.btnExerciseBackPill.addEventListener('click', closeExercisePage);
     dom.exercisePage.addEventListener('change', handleExerciseSelection);
     dom.exercisePage.addEventListener('click', (e) => {
@@ -846,7 +1052,6 @@
 
     loadExerciseSettings();
     renderExerciseSettings();
-
     // Load saved settings
     loadState();
 
