@@ -771,14 +771,14 @@
   function updateSetRestUI() {
     const config = getCurrentExerciseConfig();
     if (config) {
-      dom.setRestValue.textContent = config.setRest.toFixed(1) + 's';
+      dom.setRestValue.textContent = config.setRest.toFixed(2) + 's';
     }
   }
 
   function updatePaceUI() {
     const config = getCurrentExerciseConfig();
     if (config) {
-      dom.paceValue.textContent = config.pace.toFixed(1) + 's';
+      dom.paceValue.textContent = config.pace.toFixed(2) + 's';
     }
   }
 
