@@ -1041,8 +1041,14 @@
       handleProgressiveToggle(e);
     });
     dom.selectAllExercises.addEventListener('change', (e) => {
-      Object.values(exerciseSettings).forEach((config) => {
-        config.selected = e.target.checked;
+      const cards = Array.from(document.querySelectorAll('.exercise-card'));
+      cards.forEach((card) => {
+        if (card.style.display !== 'none') {
+          const id = card.dataset.exerciseId;
+          if (exerciseSettings[id]) {
+            exerciseSettings[id].selected = e.target.checked;
+          }
+        }
       });
       saveExerciseSettings();
       renderExerciseSettings();
