@@ -50,6 +50,34 @@
     return config.setRest * Math.pow(1.1, state.currentSet);
   }
 
+  // ─── Wake Lock ───
+  let wakeLock = null;
+  async function requestWakeLock() {
+    try {
+      if ('wakeLock' in navigator) {
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release', () => {
+          console.log('Screen Wake Lock released:', wakeLock.released);
+        });
+        console.log('Screen Wake Lock acquired');
+      }
+    } catch (err) {
+      console.error(`${err.name}, ${err.message}`);
+    }
+  }
+  function releaseWakeLock() {
+    if (wakeLock !== null) {
+      wakeLock.release().then(() => {
+        wakeLock = null;
+      });
+    }
+  }
+  document.addEventListener('visibilitychange', async () => {
+    if (wakeLock !== null && document.visibilityState === 'visible') {
+      await requestWakeLock();
+    }
+  });
+
   // ─── DOM refs ───
   const $ = (id) => document.getElementById(id);
 
@@ -320,6 +348,7 @@
     resetAll();
     dom.app.setAttribute('aria-hidden', 'true');
     closeExercisePage();
+    releaseWakeLock();
   }
 
   function handleExerciseSelection(e) {
@@ -1122,6 +1151,8 @@
       dom.exercisePage.classList.remove('is-active');
       dom.exercisePage.setAttribute('aria-hidden', 'true');
       dom.app.setAttribute('aria-hidden', 'false');
+      
+      requestWakeLock();
     });
 
     dom.btnAppNext.addEventListener('click', () => {
