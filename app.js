@@ -303,6 +303,26 @@
     return totalSeconds;
   }
 
+  // ─── Update exercise duration display in timer page ───
+  function updateTimerDuration() {
+    const el = document.getElementById('timer-duration-text');
+    if (!el) return;
+    const config = getCurrentExerciseConfig();
+    if (!config) { el.textContent = '—'; return; }
+
+    const secs = config.sets * config.reps * config.pace
+               + Math.max(0, config.sets - 1) * config.setRest;
+
+    let label;
+    if (secs < 60) {
+      label = `This exercise · ~${Math.round(secs)}s`;
+    } else {
+      const mins = Math.round(secs / 60);
+      label = `This exercise · ~${mins} min`;
+    }
+    el.textContent = label;
+  }
+
   function renderExerciseSettings() {
     let selectedCount = 0;
     let visibleCardsCount = 0;
@@ -1146,6 +1166,7 @@
       }
 
       updateNavButtons();
+      updateTimerDuration();
     }
 
     function updateNavButtons() {

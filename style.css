@@ -1103,6 +1103,22 @@ body.light-mode .landing-btn-pill.is-active {
   flex-shrink: 0;
 }
 
+/* ---------- Exercise Duration Bar ---------- */
+#timer-duration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px 2px;
+}
+
+#timer-duration-text {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
 /* ---------- Settings Panel ---------- */
 #settings-panel {
   display: flex;
