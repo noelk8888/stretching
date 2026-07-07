@@ -1022,7 +1022,7 @@ body.light-mode .landing-btn-pill.is-active {
 .timer-setting-row {
   display: flex;
   align-items: center;
-  height: 52px;
+  height: 64px;
   background: var(--bg-surface);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
@@ -1031,31 +1031,32 @@ body.light-mode .landing-btn-pill.is-active {
 
 .timer-setting-label {
   flex: 1;
-  padding-left: 18px;
-  font-size: 11px;
+  padding-left: 20px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.14em;
   color: var(--text-secondary);
 }
 
 .timer-setting-value {
-  width: 64px;
+  width: 80px;
   text-align: center;
   font-family: var(--font-mono);
-  font-size: 17px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 .timer-step-btn {
-  width: 52px;
-  height: 52px;
+  width: 64px;
+  height: 64px;
   flex-shrink: 0;
   border: none;
   background: var(--bg-elevated);
   color: var(--text-primary);
-  font-size: 22px;
-  font-weight: 400;
+  font-size: 28px;
+  font-weight: 300;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1072,11 +1073,11 @@ body.light-mode .landing-btn-pill.is-active {
 #timer-toggles-row {
   display: flex;
   align-items: center;
-  height: 48px;
+  height: 56px;
   background: var(--bg-surface);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 0 20px;
+  padding: 0 22px;
   gap: 0;
 }
 
@@ -1089,7 +1090,7 @@ body.light-mode .landing-btn-pill.is-active {
 }
 
 .timer-toggle-label {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: 0.14em;
   color: var(--text-secondary);
@@ -1112,11 +1113,11 @@ body.light-mode .landing-btn-pill.is-active {
 }
 
 #timer-duration-text {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   color: var(--text-muted);
-  text-transform: uppercase;
 }
 
 /* ---------- Settings Panel ---------- */

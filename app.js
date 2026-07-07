@@ -315,10 +315,10 @@
 
     let label;
     if (secs < 60) {
-      label = `This exercise · ~${Math.round(secs)}s`;
+      label = `ESTIMATED TIME · ~${Math.round(secs)}s`;
     } else {
       const mins = Math.round(secs / 60);
-      label = `This exercise · ~${mins} min`;
+      label = `ESTIMATED TIME · ~${mins} min`;
     }
     el.textContent = label;
   }
