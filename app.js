@@ -147,7 +147,6 @@
     btnSoundMode: $('btn-sound-mode'),
     routinePage: $('routine-page'),
     sortableRoutines: $('sortable-routines'),
-    btnRoutineBack: $('btn-routine-back'),
     btnTennisElbow: $('btn-tennis-elbow'),
     exercisePage: $('exercise-page'),
     btnExerciseBackPill: $('btn-exercise-back-pill'),
@@ -877,10 +876,8 @@
 
     dom.btnGuestMode.addEventListener('click', goToRoutineMenu);
     
-    // Open login modal
-    dom.btnLogin.addEventListener('click', () => {
-      document.getElementById('login-modal').setAttribute('aria-hidden', 'false');
-    });
+    // Proceed to menu page directly
+    dom.btnLogin.addEventListener('click', goToRoutineMenu);
 
     // Close login modal
     document.getElementById('btn-close-modal').addEventListener('click', () => {
@@ -991,12 +988,7 @@
     document.getElementById('btn-login-google').addEventListener('click', goToRoutineMenu);
     document.getElementById('btn-login-apple').addEventListener('click', goToRoutineMenu);
 
-    dom.btnRoutineBack.addEventListener('click', () => {
-      dom.landingPage.classList.remove('is-leaving');
-      dom.landingPage.setAttribute('aria-hidden', 'false');
-      dom.routinePage.classList.remove('is-active');
-      dom.routinePage.setAttribute('aria-hidden', 'true');
-    });
+    // btnRoutineBack logic removed
 
     // Routine menu: clicking any routine pill (except back) goes to exercise page
     const routinePills = dom.sortableRoutines.querySelectorAll('.routine-pill');
