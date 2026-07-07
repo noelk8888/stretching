@@ -86,7 +86,7 @@
       title: 'CAT & COW',
       description: 'Start on your hands and knees. Inhale and let your belly drop towards the floor, lifting your chest and tailbone towards the ceiling (Cow Pose). Exhale and arch your back towards the ceiling, tucking your chin to your chest (Cat Pose). Move slowly and breathe deeply with each movement.',
       alert: 'If you experience wrist pain, you can perform this stretch resting on your forearms instead of your hands.',
-      images: ['assets/images/cat_cow_stretch_1783253633631.png', 'assets/images/cow_pose_proper_1783254613686.png']
+      images: ['assets/images/cat_cow_stretch_1783253633631.png', 'assets/images/cat_cow_pose_v2.png']
     },
     'childs-pose': {
       title: "CHILD'S POSE",
@@ -135,6 +135,24 @@
       description: 'Hold a soft stress ball or a rolled-up towel in your hand. Squeeze it firmly, hold for a few seconds, then release with control.',
       alert: 'Do not squeeze so hard that it causes pain in your elbow.',
       images: ['assets/images/grip_squeeze_1.png', 'assets/images/grip_squeeze_2.png']
+    },
+    'ward-off': {
+      title: 'WARD OFF',
+      description: 'Shift your weight onto one leg and raise both arms in a gentle rounded arc, as if you are holding a large ball. Turn your waist slowly as you complete the movement. Return to centre and repeat on the other side.',
+      alert: 'Keep a slight bend in your knees at all times. Never lock your joints.',
+      images: []
+    },
+    'cloud-hands': {
+      title: 'CLOUD HANDS',
+      description: 'Stand with feet shoulder-width apart. Shift your weight from side to side while sweeping both hands in slow, overlapping horizontal circles at chest height. Let your waist lead the movement, eyes following your top hand.',
+      alert: 'Move slowly and breathe continuously. Avoid holding your breath.',
+      images: []
+    },
+    'golden-rooster': {
+      title: 'GOLDEN ROOSTER',
+      description: 'Stand tall, shift your weight to one leg, then slowly lift the opposite knee to hip height while raising the same-side arm upward. Hold for a breath, then lower with control and switch sides.',
+      alert: 'Use a wall or chair nearby if you need extra support while building your balance.',
+      images: []
     }
   };
 
@@ -239,6 +257,10 @@
     'thread-needle': { selected: false, sets: 2, reps: 5, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
     'bird-dog': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
     'sphinx-pose': { selected: false, sets: 2, reps: 6, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
+    // Tai-Chi
+    'ward-off':       { selected: false, sets: 3, reps: 8,  progressiveSets: false, progressiveReps: false, setRest: 2.0, pace: 1.8 },
+    'cloud-hands':    { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 2.0, pace: 1.8 },
+    'golden-rooster': { selected: false, sets: 2, reps: 6,  progressiveSets: false, progressiveReps: false, setRest: 2.0, pace: 1.8 },
   };
 
   let exerciseSettings = JSON.parse(JSON.stringify(exerciseDefaults));
@@ -1047,16 +1069,18 @@
         let routineName = e.target.innerText;
         let routineId = '';
         if (routineName.includes('TENNIS ELBOW')) routineId = 'tennis-elbow';
-        else if (routineName.includes('CAT & COW')) routineId = 'cat-cow';
+        else if (routineName.includes('CAT & COW') || routineName.includes('CAT & COW')) routineId = 'cat-cow';
+        else if (routineName.includes('TAI-CHI')) routineId = 'tai-chi';
         openExercisePage(routineName, routineId);
       });
     });
     dom.btnExerciseBackPill.addEventListener('click', () => {
       const ROUTINES = [
         { name: 'TENNIS ELBOW', id: 'tennis-elbow' },
-        { name: 'CAT & COW', id: 'cat-cow' },
-        { name: 'NECK RELIEF', id: 'neck-relief' },
-        { name: 'LOWER BACK', id: 'lower-back' }
+        { name: 'CAT & COW',    id: 'cat-cow' },
+        { name: 'TAI-CHI',      id: 'tai-chi' },
+        { name: 'NECK RELIEF',  id: 'neck-relief' },
+        { name: 'LOWER BACK',   id: 'lower-back' }
       ];
       const currentTitle = document.getElementById('exercise-page-title').innerText;
       let currentIndex = ROUTINES.findIndex(r => currentTitle.includes(r.name));
@@ -1067,9 +1091,10 @@
     dom.btnExerciseNextPill.addEventListener('click', () => {
       const ROUTINES = [
         { name: 'TENNIS ELBOW', id: 'tennis-elbow' },
-        { name: 'CAT & COW', id: 'cat-cow' },
-        { name: 'NECK RELIEF', id: 'neck-relief' },
-        { name: 'LOWER BACK', id: 'lower-back' }
+        { name: 'CAT & COW',    id: 'cat-cow' },
+        { name: 'TAI-CHI',      id: 'tai-chi' },
+        { name: 'NECK RELIEF',  id: 'neck-relief' },
+        { name: 'LOWER BACK',   id: 'lower-back' }
       ];
       const currentTitle = document.getElementById('exercise-page-title').innerText;
       let currentIndex = ROUTINES.findIndex(r => currentTitle.includes(r.name));
