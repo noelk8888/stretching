@@ -705,7 +705,7 @@ body.light-mode .landing-btn-pill.is-active {
    MEDIA SECTION (Top one-third)
    ============================================ */
 #media-section {
-  flex: 0 0 33%;
+  flex: 0 0 36.3%;
   position: relative;
   overflow: hidden;
   background: var(--bg-surface);
@@ -990,15 +990,15 @@ body.light-mode .landing-btn-pill.is-active {
 
 .timer-nav-btn {
   flex: 1;
-  height: 52px;
+  height: 60px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-full);
   background: var(--bg-surface);
   color: var(--text-primary);
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   cursor: pointer;
   transition: all var(--transition-fast);
   display: flex;
@@ -1032,9 +1032,10 @@ body.light-mode .landing-btn-pill.is-active {
 .timer-setting-label {
   flex: 1;
   padding-left: 20px;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   color: var(--text-secondary);
 }
 
@@ -1090,9 +1091,10 @@ body.light-mode .landing-btn-pill.is-active {
 }
 
 .timer-toggle-label {
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.14em;
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   color: var(--text-secondary);
 }
 
