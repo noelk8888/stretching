@@ -282,6 +282,27 @@
     }
   }
 
+  // ─── Estimate total workout time ───
+  function calculateTotalTime() {
+    const selectedIds = Object.keys(exerciseSettings).filter(id => exerciseSettings[id].selected);
+    if (selectedIds.length === 0) return 0;
+
+    let totalSeconds = 0;
+    selectedIds.forEach(id => {
+      const config = exerciseSettings[id];
+      // sets × reps × pace + rest intervals between sets
+      totalSeconds += config.sets * config.reps * config.pace
+                    + Math.max(0, config.sets - 1) * config.setRest;
+    });
+
+    // 60-second break between each exercise (if 2 or more selected)
+    if (selectedIds.length >= 2) {
+      totalSeconds += (selectedIds.length - 1) * 60;
+    }
+
+    return totalSeconds;
+  }
+
   function renderExerciseSettings() {
     let selectedCount = 0;
     let visibleCardsCount = 0;
@@ -316,6 +337,15 @@
     dom.selectionSummary.textContent = selectedCount === 0
       ? 'SELECT AT LEAST ONE EXERCISE'
       : `${selectedCount} EXERCISE${selectedCount === 1 ? '' : 'S'} SELECTED`;
+
+    // Update START button label with estimated time
+    if (selectedCount === 0) {
+      dom.btnStartNow.textContent = 'START';
+    } else {
+      const totalSecs = calculateTotalTime();
+      const totalMins = Math.max(1, Math.round(totalSecs / 60));
+      dom.btnStartNow.textContent = `START — ${totalMins} min`;
+    }
   }
 
   function openExercisePage(routineName, routineId) {
