@@ -1108,6 +1108,13 @@
       dom.mediaPlaceholder.classList.add('hidden');
       dom.mediaDisplay.classList.remove('hidden');
 
+      // Update exercise name overlay
+      const nameOverlay = document.getElementById('timer-exercise-name');
+      if (nameOverlay) {
+        const details = exerciseDetails[exerciseId];
+        nameOverlay.textContent = details ? details.title : '';
+      }
+
       updateNavButtons();
     }
 

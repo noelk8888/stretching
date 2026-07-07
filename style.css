@@ -702,14 +702,13 @@ body.light-mode .landing-btn-pill.is-active {
 }
 
 /* ============================================
-   MEDIA SECTION (Top two-thirds)
+   MEDIA SECTION (Top one-third)
    ============================================ */
 #media-section {
-  flex: 0 0 66.66%;
+  flex: 0 0 33%;
   position: relative;
   overflow: hidden;
   background: var(--bg-surface);
-  border-bottom: 1px solid var(--border);
 }
 
 #media-placeholder {
@@ -827,15 +826,15 @@ body.light-mode .landing-btn-pill.is-active {
 
 
 /* ============================================
-   COUNTER SECTION (Bottom one-third)
+   COUNTER SECTION (Bottom two-thirds)
    ============================================ */
 #counter-section {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 8px 14px;
-  gap: 6px;
+  padding: 10px 16px max(12px, env(safe-area-inset-bottom));
+  gap: 8px;
   overflow: hidden;
   background: var(--bg-primary);
 }
@@ -846,14 +845,14 @@ body.light-mode .landing-btn-pill.is-active {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  flex-wrap: nowrap;
-  padding: 0;
-  min-height: 26px;
+  flex-wrap: wrap;
+  padding: 2px 0;
+  min-height: 34px;
 }
 
 .rep-dot {
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   flex-shrink: 0;
   border-radius: 50%;
   background: var(--bg-card);
@@ -862,8 +861,8 @@ body.light-mode .landing-btn-pill.is-active {
   align-items: center;
   justify-content: center;
   font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 700;
   color: var(--text-muted);
   transition: all var(--transition-med);
 }
@@ -917,28 +916,19 @@ body.light-mode .landing-btn-pill.is-active {
 }
 
 /* ---------- Transport Controls ---------- */
-#action-row {
-  height: 60px;
-  display: flex;
-  align-items: stretch;
-  gap: 8px;
-}
-
 #transport-controls {
-  flex: 1;
-  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 14px;
   padding: 0;
 }
 
 .transport-btn {
-  width: 44px;
-  height: 44px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   background: var(--bg-surface);
   color: var(--text-secondary);
   display: flex;
@@ -946,6 +936,7 @@ body.light-mode .landing-btn-pill.is-active {
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .transport-btn:hover,
@@ -953,15 +944,16 @@ body.light-mode .landing-btn-pill.is-active {
   background: var(--bg-elevated);
   color: var(--text-primary);
   border-color: var(--border-active);
+  transform: scale(1.05);
 }
 
 .transport-btn--primary {
-  width: 60px;
-  height: 60px;
+  width: 80px;
+  height: 80px;
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
-  box-shadow: 0 4px 24px var(--accent-glow);
+  box-shadow: 0 4px 28px var(--accent-glow);
 }
 
 .transport-btn--primary:hover,
@@ -970,38 +962,145 @@ body.light-mode .landing-btn-pill.is-active {
   border-color: #5a8bef;
   color: #fff;
   transform: scale(1.06);
-  box-shadow: 0 6px 32px var(--accent-glow);
+  box-shadow: 0 6px 36px var(--accent-glow);
 }
 
-#quick-toggles {
-  width: 138px;
-  flex-shrink: 0;
+/* ---------- Exercise Name Overlay ---------- */
+#timer-exercise-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 20px 18px 12px;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: #fff;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* ---------- BACK / NEXT Nav Row ---------- */
+#timer-nav-row {
+  display: flex;
+  gap: 10px;
+}
+
+.timer-nav-btn {
+  flex: 1;
+  height: 52px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-nav-btn:hover,
+.timer-nav-btn:active {
+  background: var(--bg-elevated);
+  border-color: var(--border-active);
+}
+
+/* ---------- REST / PACE Settings ---------- */
+#settings-panel {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  gap: 8px;
 }
 
-.quick-toggle {
+.timer-setting-row {
+  display: flex;
+  align-items: center;
+  height: 52px;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.timer-setting-label {
   flex: 1;
-  min-height: 0;
+  padding-left: 18px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--text-secondary);
+}
+
+.timer-setting-value {
+  width: 64px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.timer-step-btn {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border: none;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: 22px;
+  font-weight: 400;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.timer-step-btn:hover,
+.timer-step-btn:active {
+  background: var(--bg-card);
+}
+
+/* ---------- BEEP / VOICE Toggles ---------- */
+#timer-toggles-row {
+  display: flex;
+  align-items: center;
+  height: 48px;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0 20px;
+  gap: 0;
+}
+
+.timer-toggle-item {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  padding: 2px 8px;
+  gap: 10px;
 }
 
-.quick-toggle + .quick-toggle {
-  border-top: 1px solid var(--border);
+.timer-toggle-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--text-secondary);
 }
 
-.quick-toggle .setting-label {
-  font-size: 9px;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
+.timer-toggle-divider {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+  margin: 0 16px;
+  flex-shrink: 0;
 }
 
 /* ---------- Settings Panel ---------- */

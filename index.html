@@ -313,10 +313,15 @@
   </main>
 
   <div id="app" aria-hidden="true">
-    <button class="global-close-btn app-close-btn" id="btn-app-close-global" aria-label="Close timer to main menu">×</button>
 
-    <!-- ===== TOP TWO-THIRDS: Exercise Media ===== -->
+    <!-- ===== TOP 1/3: Exercise Media with overlays ===== -->
     <section id="media-section">
+      <!-- Close button overlay -->
+      <button class="global-close-btn app-close-btn" id="btn-app-close-global" aria-label="Close timer to main menu">×</button>
+
+      <!-- Exercise name overlay at bottom of image -->
+      <div id="timer-exercise-name"></div>
+
       <div id="media-placeholder">
         <div id="media-icon">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -333,94 +338,83 @@
       </div>
     </section>
 
-    <!-- ===== Counter + Controls ===== -->
+    <!-- ===== BOTTOM 2/3: All Controls ===== -->
     <section id="counter-section">
 
-      <!-- Rep Dots Visualization -->
-      <div id="rep-dots-container">
-        <!-- Generated dynamically -->
+      <!-- Rep Dots -->
+      <div id="rep-dots-container"></div>
+
+      <!-- Set Progress Bar -->
+      <div id="set-bar-container">
+        <div id="set-bar-track"></div>
       </div>
 
-      <div class="timer-bottom-controls" style="display: flex; flex-direction: column; gap: 16px; padding: 0 10px 10px;">
-        
-        <!-- Row 1: Toggles, Transport, Nav -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%;">
-          
-          <!-- Left: Toggles -->
-          <div id="quick-toggles" style="width: auto; min-width: 90px; height: auto; padding: 6px 8px; gap: 6px; border-radius: var(--radius-md); margin-bottom: 2px;">
-            <div class="quick-toggle" style="padding: 0;">
-              <label for="toggle-beep" class="setting-label" style="font-size: 9px; letter-spacing: 0.5px;">BEEP</label>
-              <label class="switch switch--compact">
-                <input type="checkbox" id="toggle-beep" checked />
-                <span class="slider-switch"></span>
-              </label>
-            </div>
-            <hr style="border: none; border-top: 1px solid var(--border); margin: 0;">
-            <div class="quick-toggle" style="padding: 0;">
-              <label for="toggle-voice" class="setting-label" style="font-size: 9px; letter-spacing: 0.5px; white-space: nowrap;">VOICE</label>
-              <label class="switch switch--compact">
-                <input type="checkbox" id="toggle-voice" checked />
-                <span class="slider-switch"></span>
-              </label>
-            </div>
-          </div>
-          
-          <!-- Center: Progress + Transport -->
-          <div style="display: flex; flex-direction: column; gap: 12px; align-items: center; flex: 1 1 auto; padding: 0 10px;">
-            <div id="set-bar-container" style="width: 100%; margin: 0;">
-              <div id="set-bar-track">
-                <!-- Generated dynamically -->
-              </div>
-            </div>
-            <div id="transport-controls" style="display: flex; gap: 8px; align-items: center; justify-content: center; width: 100%;">
-              <button id="btn-reset" class="transport-btn" title="Reset">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="1 4 1 10 7 10"></polyline>
-                  <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-                </svg>
-              </button>
-              <button id="btn-play" class="transport-btn transport-btn--primary" title="Play" style="width: 56px; height: 56px;">
-                <svg id="icon-play" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                  <polygon points="6 3 20 12 6 21 6 3"></polygon>
-                </svg>
-                <svg id="icon-pause" class="hidden" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none">
-                  <rect x="5" y="3" width="4" height="18"></rect>
-                  <rect x="15" y="3" width="4" height="18"></rect>
-                </svg>
-              </button>
-              <button id="btn-skip" class="transport-btn" title="Skip to next set">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polygon points="5 4 15 12 5 20 5 4"></polygon>
-                  <line x1="19" y1="5" x2="19" y2="19"></line>
-                </svg>
-              </button>
-            </div>
-          </div>
-          
-          <!-- Right: Navigation (NEXT/BACK) -->
-          <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end; margin-bottom: 2px;">
-            <button id="btn-app-back" class="app-back-btn" type="button" style="flex: none; height: 32px; width: 70px; padding: 0;">BACK</button>
-            <button id="btn-app-next" class="app-back-btn" type="button" style="flex: none; height: 32px; width: 70px; padding: 0;">NEXT</button>
-          </div>
-        </div>
-
-        <!-- Row 2: REST / PACE -->
-        <div id="settings-panel" style="display: flex; justify-content: center; gap: 16px; padding-top: 4px;">
-          <div class="exercise-dose" style="margin: 0; grid-template-columns: 1fr 30px 56px 30px; border-radius: var(--radius-md);">
-            <div class="progressive-toggle-btn" style="pointer-events: none; display: flex; align-items: center; justify-content: center; padding: 0 16px; font-size: 11px; font-weight: 800; color: var(--text-secondary); letter-spacing: 1px;">REST</div>
-            <button id="btn-set-rest-dec" class="exercise-step-btn" type="button">−</button>
-            <strong id="set-rest-value" style="text-align: center; font-size: 16px; font-weight: 700;">1.50s</strong>
-            <button id="btn-set-rest-inc" class="exercise-step-btn" type="button">+</button>
-          </div>
-          <div class="exercise-dose" style="margin: 0; grid-template-columns: 1fr 30px 56px 30px; border-radius: var(--radius-md);">
-            <div class="progressive-toggle-btn" style="pointer-events: none; display: flex; align-items: center; justify-content: center; padding: 0 16px; font-size: 11px; font-weight: 800; color: var(--text-secondary); letter-spacing: 1px;">PACE</div>
-            <button id="btn-pace-dec" class="exercise-step-btn" type="button">−</button>
-            <strong id="pace-value" style="text-align: center; font-size: 16px; font-weight: 700;">1.20s</strong>
-            <button id="btn-pace-inc" class="exercise-step-btn" type="button">+</button>
-          </div>
-        </div>
-
+      <!-- Transport Controls -->
+      <div id="transport-controls">
+        <button id="btn-reset" class="transport-btn" title="Reset">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+          </svg>
+        </button>
+        <button id="btn-play" class="transport-btn transport-btn--primary" title="Play/Pause">
+          <svg id="icon-play" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <polygon points="6 3 20 12 6 21 6 3"></polygon>
+          </svg>
+          <svg id="icon-pause" class="hidden" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <rect x="5" y="3" width="4" height="18"></rect>
+            <rect x="15" y="3" width="4" height="18"></rect>
+          </svg>
+        </button>
+        <button id="btn-skip" class="transport-btn" title="Skip set">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 4 15 12 5 20 5 4"></polygon>
+            <line x1="19" y1="5" x2="19" y2="19"></line>
+          </svg>
+        </button>
       </div>
+
+      <!-- BACK / NEXT Navigation -->
+      <div id="timer-nav-row">
+        <button id="btn-app-back" class="timer-nav-btn" type="button">BACK</button>
+        <button id="btn-app-next" class="timer-nav-btn" type="button">NEXT</button>
+      </div>
+
+      <!-- REST / PACE Settings -->
+      <div id="settings-panel">
+        <div class="timer-setting-row">
+          <span class="timer-setting-label">REST</span>
+          <button id="btn-set-rest-dec" class="timer-step-btn" type="button">−</button>
+          <strong id="set-rest-value" class="timer-setting-value">1.50s</strong>
+          <button id="btn-set-rest-inc" class="timer-step-btn" type="button">+</button>
+        </div>
+        <div class="timer-setting-row">
+          <span class="timer-setting-label">PACE</span>
+          <button id="btn-pace-dec" class="timer-step-btn" type="button">−</button>
+          <strong id="pace-value" class="timer-setting-value">1.20s</strong>
+          <button id="btn-pace-inc" class="timer-step-btn" type="button">+</button>
+        </div>
+      </div>
+
+      <!-- BEEP / VOICE Toggles -->
+      <div id="timer-toggles-row">
+        <div class="timer-toggle-item">
+          <label for="toggle-beep" class="timer-toggle-label">BEEP</label>
+          <label class="switch switch--compact">
+            <input type="checkbox" id="toggle-beep" checked />
+            <span class="slider-switch"></span>
+          </label>
+        </div>
+        <div class="timer-toggle-divider"></div>
+        <div class="timer-toggle-item">
+          <label for="toggle-voice" class="timer-toggle-label">VOICE</label>
+          <label class="switch switch--compact">
+            <input type="checkbox" id="toggle-voice" checked />
+            <span class="slider-switch"></span>
+          </label>
+        </div>
+      </div>
+
     </section>
   </div>
 
