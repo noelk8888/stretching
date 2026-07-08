@@ -106,7 +106,7 @@ html, body {
   align-items: center;
   justify-content: center;
   padding: max(48px, env(safe-area-inset-top)) 28px max(48px, env(safe-area-inset-bottom));
-  background: var(--bg-primary) url('assets/images/menu_bg_vitruvian.png') center center / cover no-repeat;
+  background: var(--bg-primary);
   color: var(--text-primary);
   opacity: 0;
   visibility: hidden;
@@ -777,7 +777,7 @@ body.light-mode .landing-btn-pill.is-active {
    MEDIA SECTION (Top one-third)
    ============================================ */
 #media-section {
-  flex: 0 0 36.3%;
+  flex: 0 0 50%;
   position: relative;
   overflow: hidden;
   background: var(--bg-surface);
@@ -905,8 +905,8 @@ body.light-mode .landing-btn-pill.is-active {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  padding: 10px 16px max(12px, env(safe-area-inset-bottom));
-  gap: 8px;
+  padding: 6px 16px max(6px, env(safe-area-inset-bottom));
+  gap: 5px;
   overflow: hidden;
   background: var(--bg-primary);
 }
@@ -919,12 +919,12 @@ body.light-mode .landing-btn-pill.is-active {
   gap: 6px;
   flex-wrap: wrap;
   padding: 2px 0;
-  min-height: 34px;
+  min-height: 26px;
 }
 
 .rep-dot {
-  width: 32px;
-  height: 32px;
+  width: 25px;
+  height: 25px;
   flex-shrink: 0;
   border-radius: 50%;
   background: var(--bg-card);
@@ -967,7 +967,7 @@ body.light-mode .landing-btn-pill.is-active {
 #set-bar-track {
   display: flex;
   gap: 4px;
-  height: 8px;
+  height: 5px;
 }
 
 .set-bar-segment {
@@ -997,8 +997,8 @@ body.light-mode .landing-btn-pill.is-active {
 }
 
 .transport-btn {
-  width: 60px;
-  height: 60px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   border: 1.5px solid var(--border);
   background: var(--bg-surface);
@@ -1020,8 +1020,8 @@ body.light-mode .landing-btn-pill.is-active {
 }
 
 .transport-btn--primary {
-  width: 80px;
-  height: 80px;
+  width: 58px;
+  height: 58px;
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
@@ -1044,7 +1044,7 @@ body.light-mode .landing-btn-pill.is-active {
   left: 0;
   right: 0;
   z-index: 10;
-  padding: 20px 18px 12px;
+  padding: 20px 18px 10px;
   background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, transparent 100%);
   font-size: 13px;
   font-weight: 800;
@@ -1062,13 +1062,13 @@ body.light-mode .landing-btn-pill.is-active {
 
 .timer-nav-btn {
   flex: 1;
-  height: 60px;
+  height: 46px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-full);
   background: var(--bg-surface);
   color: var(--text-primary);
   font-family: var(--font-mono);
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -1088,13 +1088,13 @@ body.light-mode .landing-btn-pill.is-active {
 #settings-panel {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 5px;
 }
 
 .timer-setting-row {
   display: flex;
   align-items: center;
-  height: 64px;
+  height: 40px;
   background: var(--bg-surface);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
@@ -1103,32 +1103,32 @@ body.light-mode .landing-btn-pill.is-active {
 
 .timer-setting-label {
   flex: 1;
-  padding-left: 20px;
+  padding-left: 16px;
   font-family: var(--font-mono);
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--text-secondary);
 }
 
 .timer-setting-value {
-  width: 80px;
+  width: 72px;
   text-align: center;
   font-family: var(--font-mono);
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.01em;
 }
 
 .timer-step-btn {
-  width: 64px;
-  height: 64px;
+  width: 48px;
+  height: 40px;
   flex-shrink: 0;
   border: none;
   background: var(--bg-elevated);
   color: var(--text-primary);
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 300;
   cursor: pointer;
   display: flex;
@@ -1146,11 +1146,11 @@ body.light-mode .landing-btn-pill.is-active {
 #timer-toggles-row {
   display: flex;
   align-items: center;
-  height: 56px;
+  height: 40px;
   background: var(--bg-surface);
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 0 22px;
+  padding: 0 16px;
   gap: 0;
 }
 
@@ -1164,7 +1164,7 @@ body.light-mode .landing-btn-pill.is-active {
 
 .timer-toggle-label {
   font-family: var(--font-mono);
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--text-secondary);
@@ -1183,12 +1183,12 @@ body.light-mode .landing-btn-pill.is-active {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 16px 2px;
+  padding: 2px 16px 0;
 }
 
 #timer-duration-text {
   font-family: var(--font-mono);
-  font-size: 22px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--text-muted);
@@ -1197,8 +1197,8 @@ body.light-mode .landing-btn-pill.is-active {
 /* ---------- Settings Panel ---------- */
 #settings-panel {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-direction: column;
+  gap: 5px;
   padding: 0;
 }
 

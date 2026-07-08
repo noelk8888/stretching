@@ -35,7 +35,7 @@
   function getCurrentPace() {
     const config = getCurrentExerciseConfig();
     if (!config || !config.progressiveReps) {
-      return config ? config.pace : 1.2;
+      return config ? config.pace : 1.0;
     }
     // Reps are constant within a set, but increase by 10% per set.
     return config.pace * Math.pow(1.1, state.currentSet);
@@ -44,7 +44,7 @@
   function getCurrentSetRest() {
     const config = getCurrentExerciseConfig();
     if (!config || !config.progressiveSets) {
-      return config ? config.setRest : 1.5;
+      return config ? config.setRest : 1.0;
     }
     // Rest increases by 10% per set.
     return config.setRest * Math.pow(1.1, state.currentSet);
@@ -98,7 +98,7 @@
       title: 'THREAD THE NEEDLE',
       description: 'From all fours, slide your right arm under your left arm, dropping your right shoulder and the right side of your head gently to the floor. Keep your hips high and your left hand planted for support. Hold, then switch sides.',
       alert: 'Do not force the twist. Keep the weight gently on your shoulder, not your neck.',
-      images: ['assets/images/thread_needle_2_1783254378821.png', 'assets/images/thread_needle_correct_1783256295828.png']
+      images: ['assets/images/thread_needle_pose.jpg']
     },
     'bird-dog': {
       title: 'BIRD-DOG',
@@ -110,7 +110,7 @@
       title: 'SPHINX POSE',
       description: 'Lie flat on your stomach. Prop yourself up on your forearms, keeping your elbows directly under your shoulders. Press your forearms into the floor and gently lift your chest to create a mild lower back arch. Relax your shoulders away from your ears.',
       alert: 'If you feel any pinching in your lower spine, lower your chest slightly or skip the movement.',
-      images: ['assets/images/sphinx_pose_2_1783254395595.png', 'assets/images/sphinx_pose_1783254161258.png']
+      images: ['assets/images/sphinx_pose_prone.jpg', 'assets/images/sphinx_pose_lift.jpg']
     },
     'extensor-stretch': {
       title: 'WRIST EXTENSOR STRETCH',
@@ -244,23 +244,79 @@
     }
   }
 
+  const ROUTINE_ORDER_STORAGE_KEY = 'ec_routineOrder';
+  const routineNameToId = {
+    'TENNIS ELBOW': 'tennis-elbow',
+    'CAT & COW': 'cat-cow',
+    'TAI-CHI': 'tai-chi',
+    'NECK RELIEF': 'neck-relief',
+    'LOWER BACK': 'lower-back'
+  };
+
+  function getRoutineIdFromPill(pill) {
+    if (!pill) return '';
+    if (pill.id === 'btn-tennis-elbow') return 'tennis-elbow';
+    if (pill.id === 'btn-cat-cow') return 'cat-cow';
+    if (pill.id === 'btn-tai-chi') return 'tai-chi';
+    return routineNameToId[pill.innerText.trim()] || '';
+  }
+
+  function getOrderedRoutines() {
+    if (!dom.sortableRoutines) return [];
+    return Array.from(dom.sortableRoutines.querySelectorAll('.routine-pill')).map((pill) => ({
+      name: pill.innerText.trim(),
+      id: getRoutineIdFromPill(pill)
+    }));
+  }
+
+  function saveRoutineOrder() {
+    if (!dom.sortableRoutines) return;
+    try {
+      const order = getOrderedRoutines().map((routine) => routine.id).filter(Boolean);
+      localStorage.setItem(ROUTINE_ORDER_STORAGE_KEY, JSON.stringify(order));
+    } catch (e) {
+      console.warn('Could not save routine order', e);
+    }
+  }
+
+  function loadRoutineOrder() {
+    if (!dom.sortableRoutines) return;
+    try {
+      const savedOrder = JSON.parse(localStorage.getItem(ROUTINE_ORDER_STORAGE_KEY));
+      if (!Array.isArray(savedOrder)) return;
+
+      const pills = Array.from(dom.sortableRoutines.querySelectorAll('.routine-pill'));
+      const pillByRoutineId = new Map(pills.map((pill) => [getRoutineIdFromPill(pill), pill]));
+      const orderedPills = savedOrder
+        .map((id) => pillByRoutineId.get(id))
+        .filter(Boolean);
+      const remainingPills = pills.filter((pill) => !orderedPills.includes(pill));
+
+      [...orderedPills, ...remainingPills].forEach((pill) => {
+        dom.sortableRoutines.appendChild(pill);
+      });
+    } catch (e) {
+      console.warn('Could not load routine order', e);
+    }
+  }
+
   // ─── Exercise selection defaults ───
   const exerciseDefaults = {
     // Tennis Elbow
-    'extensor-stretch': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
-    'wrist-extension': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
-    'forearm-rotation': { selected: false, sets: 2, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
-    'grip-squeeze': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
+    'extensor-stretch': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
+    'wrist-extension': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
+    'forearm-rotation': { selected: false, sets: 2, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
+    'grip-squeeze': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
     // Cat & Cow
-    'cat-cow': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
-    'childs-pose': { selected: false, sets: 2, reps: 6, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
-    'thread-needle': { selected: false, sets: 2, reps: 5, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
-    'bird-dog': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
-    'sphinx-pose': { selected: false, sets: 2, reps: 6, progressiveSets: false, progressiveReps: false, setRest: 1.5, pace: 1.2 },
+    'cat-cow': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
+    'childs-pose': { selected: false, sets: 2, reps: 6, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
+    'thread-needle': { selected: false, sets: 2, reps: 5, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
+    'bird-dog': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
+    'sphinx-pose': { selected: false, sets: 2, reps: 6, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
     // Tai-Chi
-    'ward-off':       { selected: false, sets: 3, reps: 8,  progressiveSets: false, progressiveReps: false, setRest: 2.0, pace: 1.8 },
-    'cloud-hands':    { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 2.0, pace: 1.8 },
-    'golden-rooster': { selected: false, sets: 2, reps: 6,  progressiveSets: false, progressiveReps: false, setRest: 2.0, pace: 1.8 },
+    'ward-off':       { selected: false, sets: 3, reps: 8,  progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
+    'cloud-hands':    { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
+    'golden-rooster': { selected: false, sets: 2, reps: 6,  progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
   };
 
   let exerciseSettings = JSON.parse(JSON.stringify(exerciseDefaults));
@@ -284,11 +340,8 @@
           const savedReps = parseInt(saved[id].reps, 10);
           if (!isNaN(savedReps)) exerciseSettings[id].reps = savedReps;
 
-          const savedSetRest = parseFloat(saved[id].setRest);
-          if (!isNaN(savedSetRest)) exerciseSettings[id].setRest = savedSetRest;
-
-          const savedPace = parseFloat(saved[id].pace);
-          if (!isNaN(savedPace)) exerciseSettings[id].pace = savedPace;
+          exerciseSettings[id].setRest = 1.0;
+          exerciseSettings[id].pace = 1.0;
         }
       });
     } catch (e) {
@@ -616,7 +669,7 @@
     if (state.isRunning && !state.isFinished) {
       dom.paceValue.textContent = currentPace.toFixed(2) + 's';
     } else {
-      const config = getCurrentExerciseConfig() || { pace: 1.2 };
+      const config = getCurrentExerciseConfig() || { pace: 1.0 };
       dom.paceValue.textContent = config.pace.toFixed(2) + 's';
     }
   }
@@ -825,7 +878,7 @@
   function showCompletionOverlay() {
     const overlay = document.getElementById('completion-overlay');
     const summary = document.getElementById('done-summary');
-    const config = getCurrentExerciseConfig() || { pace: 1.2, progressiveReps: false };
+    const config = getCurrentExerciseConfig() || { pace: 1.0, progressiveReps: false };
     const startPace = config.pace;
     const endPace = config.progressiveReps && state.totalSets > 1 
       ? startPace * Math.pow(1.1, state.totalSets - 1)
@@ -1098,13 +1151,8 @@
       });
     });
     dom.btnExerciseBackPill.addEventListener('click', () => {
-      const ROUTINES = [
-        { name: 'TENNIS ELBOW', id: 'tennis-elbow' },
-        { name: 'CAT & COW',    id: 'cat-cow' },
-        { name: 'TAI-CHI',      id: 'tai-chi' },
-        { name: 'NECK RELIEF',  id: 'neck-relief' },
-        { name: 'LOWER BACK',   id: 'lower-back' }
-      ];
+      const ROUTINES = getOrderedRoutines();
+      if (ROUTINES.length === 0) return;
       const currentTitle = document.getElementById('exercise-page-title').innerText;
       let currentIndex = ROUTINES.findIndex(r => currentTitle.includes(r.name));
       if (currentIndex === -1) currentIndex = 0;
@@ -1112,13 +1160,8 @@
       openExercisePage(ROUTINES[prevIndex].name, ROUTINES[prevIndex].id);
     });
     dom.btnExerciseNextPill.addEventListener('click', () => {
-      const ROUTINES = [
-        { name: 'TENNIS ELBOW', id: 'tennis-elbow' },
-        { name: 'CAT & COW',    id: 'cat-cow' },
-        { name: 'TAI-CHI',      id: 'tai-chi' },
-        { name: 'NECK RELIEF',  id: 'neck-relief' },
-        { name: 'LOWER BACK',   id: 'lower-back' }
-      ];
+      const ROUTINES = getOrderedRoutines();
+      if (ROUTINES.length === 0) return;
       const currentTitle = document.getElementById('exercise-page-title').innerText;
       let currentIndex = ROUTINES.findIndex(r => currentTitle.includes(r.name));
       if (currentIndex === -1) currentIndex = 0;
@@ -1391,12 +1434,14 @@
     fullRender();
 
     // Initialize drag-and-drop sorting for routines
+    loadRoutineOrder();
     if (typeof Sortable !== 'undefined' && dom.sortableRoutines) {
       new Sortable(dom.sortableRoutines, {
         animation: 150,
         ghostClass: 'sortable-ghost',
         delay: 150, // Delay for mobile touch friendliness
-        delayOnTouchOnly: true
+        delayOnTouchOnly: true,
+        onEnd: saveRoutineOrder
       });
     }
   }
