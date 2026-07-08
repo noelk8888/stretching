@@ -1237,16 +1237,22 @@
     });
 
     dom.btnAppNext.addEventListener('click', () => {
-      if (state.selectedExercises.length > 0 && state.currentExerciseIndex < state.selectedExercises.length - 1) {
+      if (state.currentExerciseIndex < state.selectedExercises.length - 1) {
         state.currentExerciseIndex++;
         loadCurrentExercise();
+      } else {
+        // At LAST — go back to routine page
+        returnToMainMenu();
       }
     });
 
     dom.btnAppBack.addEventListener('click', () => {
-      if (state.selectedExercises.length > 0 && state.currentExerciseIndex > 0) {
+      if (state.currentExerciseIndex > 0) {
         state.currentExerciseIndex--;
         loadCurrentExercise();
+      } else {
+        // At FIRST — go back to routine page
+        returnToMainMenu();
       }
     });
 
