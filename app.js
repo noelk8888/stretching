@@ -86,7 +86,7 @@
       title: 'CAT & COW',
       description: 'Start on your hands and knees. Inhale and let your belly drop towards the floor, lifting your chest and tailbone towards the ceiling (Cow Pose). Exhale and arch your back towards the ceiling, tucking your chin to your chest (Cat Pose). Move slowly and breathe deeply with each movement.',
       alert: 'If you experience wrist pain, you can perform this stretch resting on your forearms instead of your hands.',
-      images: ['assets/images/cow_pose_final.png', 'assets/images/cat_cow_pose_v3.png']
+      images: ['assets/images/cat_cow_cow_pose.jpg', 'assets/images/cat_cow_cat_pose.jpg']
     },
     'childs-pose': {
       title: "CHILD'S POSE",
@@ -104,7 +104,7 @@
       title: 'BIRD-DOG',
       description: 'From all fours, slowly extend your right arm forward and your left leg backward simultaneously. Keep your back completely flat and your core engaged. Hold for a moment, return to start, and switch sides.',
       alert: 'If you feel unsteady, extend *only* your arm or *only* your leg until you build more balance.',
-      images: ['assets/images/bird_dog_1783254153480.png']
+      images: ['assets/images/bird_dog_studio.png']
     },
     'sphinx-pose': {
       title: 'SPHINX POSE',
