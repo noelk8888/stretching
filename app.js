@@ -332,8 +332,9 @@
     const config = getCurrentExerciseConfig();
     if (!config) { el.textContent = '—'; return; }
 
-    const secs = config.sets * config.reps * config.pace
+    const rawSecs = config.sets * config.reps * config.pace
                + Math.max(0, config.sets - 1) * config.setRest;
+    const secs = rawSecs * 1.2; // +20% buffer
 
     let label;
     if (secs < 60) {
@@ -384,7 +385,7 @@
     if (selectedCount === 0) {
       dom.btnStartNow.textContent = 'START';
     } else {
-      const totalSecs = calculateTotalTime();
+      const totalSecs = calculateTotalTime() * 1.2; // +20% buffer
       const totalMins = Math.max(1, Math.round(totalSecs / 60));
       dom.btnStartNow.textContent = `START — ${totalMins} min`;
     }
