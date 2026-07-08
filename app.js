@@ -422,6 +422,17 @@
     releaseWakeLock();
   }
 
+  // Goes back to the exercise card list (routine page) without going all the way to the menu
+  function returnToExercisePage() {
+    pauseTimer();
+    releaseWakeLock();
+    dom.app.setAttribute('aria-hidden', 'true');
+    dom.exercisePage.classList.add('is-active');
+    dom.exercisePage.setAttribute('aria-hidden', 'false');
+    dom.routinePage.classList.remove('is-active');
+    dom.routinePage.setAttribute('aria-hidden', 'true');
+  }
+
   function handleExerciseSelection(e) {
     const checkbox = e.target.closest('.exercise-checkbox');
     if (!checkbox) return;
@@ -1241,8 +1252,8 @@
         state.currentExerciseIndex++;
         loadCurrentExercise();
       } else {
-        // At LAST — go back to routine page
-        returnToMainMenu();
+        // At LAST — go back to exercise selection page
+        returnToExercisePage();
       }
     });
 
@@ -1251,8 +1262,8 @@
         state.currentExerciseIndex--;
         loadCurrentExercise();
       } else {
-        // At FIRST — go back to routine page
-        returnToMainMenu();
+        // At FIRST — go back to exercise selection page
+        returnToExercisePage();
       }
     });
 
