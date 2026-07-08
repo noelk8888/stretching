@@ -86,7 +86,7 @@
       title: 'CAT & COW',
       description: 'Start on your hands and knees. Inhale and let your belly drop towards the floor, lifting your chest and tailbone towards the ceiling (Cow Pose). Exhale and arch your back towards the ceiling, tucking your chin to your chest (Cat Pose). Move slowly and breathe deeply with each movement.',
       alert: 'If you experience wrist pain, you can perform this stretch resting on your forearms instead of your hands.',
-      images: ['assets/images/cat_cow_stretch_1783253633631.png', 'assets/images/cat_cow_pose_v2.png']
+      images: ['assets/images/cat_cow_stretch_1783253633631.png', 'assets/images/cat_cow_pose_v3.png']
     },
     'childs-pose': {
       title: "CHILD'S POSE",
