@@ -962,6 +962,17 @@
     // Proceed to menu page directly
     dom.btnLogin.addEventListener('click', goToRoutineMenu);
 
+    // BACK button on routine/menu page → return to landing page
+    const goToLandingPage = () => {
+      dom.routinePage.classList.remove('is-active');
+      dom.routinePage.setAttribute('aria-hidden', 'true');
+      dom.landingPage.classList.add('is-active');
+      dom.landingPage.setAttribute('aria-hidden', 'false');
+    };
+    const btnRoutineBack = document.getElementById('btn-routine-back');
+    if (btnRoutineBack) btnRoutineBack.addEventListener('click', goToLandingPage);
+
+
     // Close login modal
     document.getElementById('btn-close-modal').addEventListener('click', () => {
       document.getElementById('login-modal').setAttribute('aria-hidden', 'true');

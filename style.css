@@ -102,16 +102,39 @@ html, body {
   width: min(100%, 430px);
   z-index: 190;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: max(48px, env(safe-area-inset-top)) 28px max(48px, env(safe-area-inset-bottom));
-  background: var(--bg-primary);
+  background: var(--bg-primary) url('assets/images/menu_bg_vitruvian.png') center center / cover no-repeat;
   color: var(--text-primary);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   transform: translateX(-50%) translateY(14px);
   transition: opacity 360ms ease, visibility 360ms ease, transform 360ms ease;
+}
+
+.routine-back-btn {
+  margin-top: 32px;
+  padding: 14px 40px;
+  background: rgba(255,255,255,0.08);
+  border: 1.5px solid rgba(255,255,255,0.18);
+  border-radius: 100px;
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: background 200ms ease, border-color 200ms ease;
+  backdrop-filter: blur(8px);
+}
+
+.routine-back-btn:hover,
+.routine-back-btn:active {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.35);
 }
 
 #routine-page.is-active {
