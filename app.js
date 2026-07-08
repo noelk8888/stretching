@@ -92,7 +92,7 @@
       title: "CHILD'S POSE",
       description: 'Kneel on the floor with your toes together and your knees hip-width apart. Slowly sit back on your heels, walk your hands forward, and gently rest your forehead on the floor. Allow your spine to lengthen and your shoulders to relax.',
       alert: 'If you have knee pain, place a rolled-up towel behind your knees or skip this stretch if it causes sharp discomfort.',
-      images: ['assets/images/childs_pose_2_1783254371842.png', 'assets/images/childs_pose_1783254135860.png']
+      images: ['assets/images/childs_pose_new_1.png', 'assets/images/childs_pose_new_2.png']
     },
     'thread-needle': {
       title: 'THREAD THE NEEDLE',
