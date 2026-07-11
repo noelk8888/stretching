@@ -26,6 +26,22 @@
     imageCyclerTimerId: null,
   };
 
+  const supabaseConfig = window.EXERCISE_CLOCK_SUPABASE || {};
+  const isSupabaseConfigured = Boolean(
+    supabaseConfig.url &&
+    supabaseConfig.anonKey &&
+    window.supabase
+  );
+  const supabaseClient = isSupabaseConfigured
+    ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey)
+    : null;
+  let currentUser = null;
+  let isAdmin = false;
+  let adminRoutines = [];
+  let adminExercises = [];
+  let remoteSaveTimerId = null;
+  window.EXERCISE_CLOCK_DATA_SOURCE = 'fallback';
+
   function getCurrentExerciseConfig() {
     const exerciseId = state.selectedExercises[state.currentExerciseIndex];
     if (!exerciseId) return null;
@@ -81,7 +97,7 @@
   // ─── DOM refs ───
   const $ = (id) => document.getElementById(id);
 
-  const exerciseDetails = {
+  let exerciseDetails = {
     'cat-cow': {
       title: 'CAT & COW',
       description: 'Start on your hands and knees. Inhale and let your belly drop towards the floor, lifting your chest and tailbone towards the ceiling (Cow Pose). Exhale and arch your back towards the ceiling, tucking your chin to your chest (Cat Pose). Move slowly and breathe deeply with each movement.',
@@ -239,6 +255,7 @@
       localStorage.setItem('ec_voiceEnabled', state.voiceEnabled);
       localStorage.setItem('ec_globalDarkMode', state.globalDarkMode);
       localStorage.setItem('ec_globalSoundMode', state.globalSoundMode);
+      scheduleRemoteProfileSave();
     } catch (e) {
       /* ignore storage access errors */
     }
@@ -255,6 +272,7 @@
 
   function getRoutineIdFromPill(pill) {
     if (!pill) return '';
+    if (pill.dataset.routineId) return pill.dataset.routineId;
     if (pill.id === 'btn-tennis-elbow') return 'tennis-elbow';
     if (pill.id === 'btn-cat-cow') return 'cat-cow';
     if (pill.id === 'btn-tai-chi') return 'tai-chi';
@@ -274,6 +292,7 @@
     try {
       const order = getOrderedRoutines().map((routine) => routine.id).filter(Boolean);
       localStorage.setItem(ROUTINE_ORDER_STORAGE_KEY, JSON.stringify(order));
+      scheduleRemoteProfileSave();
     } catch (e) {
       console.warn('Could not save routine order', e);
     }
@@ -301,7 +320,7 @@
   }
 
   // ─── Exercise selection defaults ───
-  const exerciseDefaults = {
+  let exerciseDefaults = {
     // Tennis Elbow
     'extensor-stretch': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
     'wrist-extension': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
@@ -320,6 +339,198 @@
   };
 
   let exerciseSettings = JSON.parse(JSON.stringify(exerciseDefaults));
+
+  function getVisibleExerciseIds() {
+    return Array.from(document.querySelectorAll('.exercise-card'))
+      .filter((card) => card.style.display !== 'none')
+      .map((card) => card.dataset.exerciseId)
+      .filter(Boolean);
+  }
+
+  function sanitizeUrl(url) {
+    return typeof url === 'string' ? url.trim() : '';
+  }
+
+  function createRoutineButton(routine) {
+    const button = document.createElement('button');
+    button.className = 'routine-pill routine-pill--named';
+    button.type = 'button';
+    button.dataset.routineId = routine.id;
+    button.textContent = routine.name;
+    return button;
+  }
+
+  function createExerciseCard(routine, exercise) {
+    const card = document.createElement('article');
+    card.className = 'exercise-card';
+    card.dataset.routine = routine.id;
+    card.dataset.exerciseId = exercise.id;
+    card.style.display = 'none';
+
+    const thumbnail = sanitizeUrl(exercise.thumbnail);
+    const previewStyle = thumbnail
+      ? `background-image: url('${thumbnail}'); background-size: cover; background-position: center;`
+      : 'background: var(--bg-elevated);';
+
+    card.innerHTML = `
+      <label class="exercise-select">
+        <input class="exercise-checkbox" type="checkbox" />
+        <span class="exercise-checkmark" aria-hidden="true"></span>
+        <span class="sr-only">Select ${exercise.title}</span>
+      </label>
+      <div class="exercise-animation-placeholder" aria-hidden="true" style="${previewStyle}"></div>
+      <div class="exercise-copy">
+        <h2></h2>
+        <p></p>
+        <div class="exercise-dosage">
+          <div class="exercise-dose" data-type="sets">
+            <button class="progressive-toggle-btn" type="button" data-type="sets">SETS</button>
+            <button class="exercise-step-btn" type="button" data-field="sets" data-dir="-1">−</button>
+            <strong data-value="sets"></strong>
+            <button class="exercise-step-btn" type="button" data-field="sets" data-dir="1">+</button>
+          </div>
+          <div class="exercise-dose" data-type="reps">
+            <button class="progressive-toggle-btn" type="button" data-type="reps">REPS</button>
+            <button class="exercise-step-btn" type="button" data-field="reps" data-dir="-1">−</button>
+            <strong data-value="reps"></strong>
+            <button class="exercise-step-btn" type="button" data-field="reps" data-dir="1">+</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    card.querySelector('h2').textContent = exercise.title;
+    card.querySelector('p').textContent = exercise.shortDescription || '';
+    card.querySelector('[data-value="sets"]').textContent = exercise.sets;
+    card.querySelector('[data-value="reps"]').textContent = exercise.reps;
+    return card;
+  }
+
+  function applyRemoteContent(routines) {
+    if (!Array.isArray(routines) || routines.length === 0) return false;
+
+    const nextDefaults = {};
+    const nextDetails = {};
+    const exerciseOptions = document.querySelector('.exercise-options');
+
+    dom.sortableRoutines.innerHTML = '';
+    if (exerciseOptions) exerciseOptions.innerHTML = '';
+
+    routines.forEach((routine) => {
+      dom.sortableRoutines.appendChild(createRoutineButton(routine));
+      routine.exercises.forEach((exercise) => {
+        nextDefaults[exercise.id] = {
+          selected: false,
+          sets: exercise.sets,
+          reps: exercise.reps,
+          progressiveSets: Boolean(exercise.progressiveSets),
+          progressiveReps: Boolean(exercise.progressiveReps),
+          setRest: exercise.setRest,
+          pace: exercise.pace
+        };
+        nextDetails[exercise.id] = {
+          title: exercise.title,
+          description: exercise.description,
+          alert: exercise.alert,
+          images: exercise.images,
+          lottieUrl: exercise.lottieUrl
+        };
+        if (exerciseOptions) {
+          exerciseOptions.appendChild(createExerciseCard(routine, exercise));
+        }
+      });
+    });
+
+    exerciseDefaults = nextDefaults;
+    exerciseDetails = nextDetails;
+    exerciseSettings = JSON.parse(JSON.stringify(exerciseDefaults));
+    return true;
+  }
+
+  async function fetchRemoteContent() {
+    if (!supabaseClient) return false;
+
+    const { data: routines, error: routineError } = await supabaseClient
+      .from('routines')
+      .select('id, slug, title, sort_order')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+    if (routineError) {
+      console.warn('Could not load routines from Supabase', routineError);
+      return false;
+    }
+    if (!routines || routines.length === 0) return false;
+
+    const routineIds = routines.map((routine) => routine.id);
+    const { data: exercises, error: exerciseError } = await supabaseClient
+      .from('exercises')
+      .select('id, routine_id, slug, title, short_description, long_description, safety_alert, thumbnail_url, default_sets, default_reps, progressive_sets, progressive_reps, set_rest_seconds, pace_seconds, lottie_url, sort_order')
+      .in('routine_id', routineIds)
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+    if (exerciseError) {
+      console.warn('Could not load exercises from Supabase', exerciseError);
+      return false;
+    }
+
+    const exerciseIds = (exercises || []).map((exercise) => exercise.id);
+    let images = [];
+    if (exerciseIds.length > 0) {
+      const { data, error } = await supabaseClient
+        .from('exercise_images')
+        .select('exercise_id, image_url, sort_order')
+        .in('exercise_id', exerciseIds)
+        .order('sort_order', { ascending: true });
+      if (error) {
+        console.warn('Could not load exercise images from Supabase', error);
+      } else {
+        images = data || [];
+      }
+    }
+
+    const routineSlugById = new Map(routines.map((routine) => [routine.id, routine.slug]));
+    const imagesByExerciseId = new Map();
+    images.forEach((image) => {
+      const list = imagesByExerciseId.get(image.exercise_id) || [];
+      list.push(image.image_url);
+      imagesByExerciseId.set(image.exercise_id, list);
+    });
+
+    const remoteRoutines = routines.map((routine) => ({
+      id: routine.slug,
+      name: routine.title,
+      exercises: []
+    }));
+    const remoteRoutineBySlug = new Map(remoteRoutines.map((routine) => [routine.id, routine]));
+
+    (exercises || []).forEach((exercise) => {
+      const routineSlug = routineSlugById.get(exercise.routine_id);
+      const routine = remoteRoutineBySlug.get(routineSlug);
+      if (!routine) return;
+
+      const imageList = imagesByExerciseId.get(exercise.id) || [];
+      routine.exercises.push({
+        id: exercise.slug,
+        title: exercise.title,
+        shortDescription: exercise.short_description,
+        description: exercise.long_description || exercise.short_description || '',
+        alert: exercise.safety_alert || '',
+        thumbnail: exercise.thumbnail_url || imageList[0] || '',
+        images: imageList,
+        lottieUrl: exercise.lottie_url || '',
+        sets: Number(exercise.default_sets) || 1,
+        reps: Number(exercise.default_reps) || 1,
+        progressiveSets: Boolean(exercise.progressive_sets),
+        progressiveReps: Boolean(exercise.progressive_reps),
+        setRest: Number(exercise.set_rest_seconds) || 1,
+        pace: Number(exercise.pace_seconds) || 1
+      });
+    });
+
+    const applied = applyRemoteContent(remoteRoutines);
+    if (applied) window.EXERCISE_CLOCK_DATA_SOURCE = 'supabase';
+    return applied;
+  }
 
   function loadExerciseSettings() {
     try {
@@ -352,14 +563,506 @@
   function saveExerciseSettings() {
     try {
       localStorage.setItem('ec_tennisElbowExercises', JSON.stringify(exerciseSettings));
+      scheduleRemoteProfileSave();
     } catch (e) {
       console.warn('Could not save exercise settings', e);
     }
   }
 
+  function getProfilePayload() {
+    return {
+      app_state: {
+        totalSets: state.totalSets,
+        totalReps: state.totalReps,
+        beepEnabled: state.beepEnabled,
+        voiceEnabled: state.voiceEnabled,
+        globalDarkMode: state.globalDarkMode,
+        globalSoundMode: state.globalSoundMode
+      },
+      exercise_settings: exerciseSettings,
+      routine_order: getOrderedRoutines().map((routine) => routine.id).filter(Boolean)
+    };
+  }
+
+  function applyProfilePayload(profile) {
+    if (!profile) return;
+
+    const appState = profile.app_state || {};
+    if (appState.totalSets !== undefined) state.totalSets = Number(appState.totalSets) || state.totalSets;
+    if (appState.totalReps !== undefined) state.totalReps = Number(appState.totalReps) || state.totalReps;
+    if (appState.beepEnabled !== undefined) state.beepEnabled = Boolean(appState.beepEnabled);
+    if (appState.voiceEnabled !== undefined) state.voiceEnabled = Boolean(appState.voiceEnabled);
+    if (appState.globalDarkMode !== undefined) state.globalDarkMode = Boolean(appState.globalDarkMode);
+    if (appState.globalSoundMode !== undefined) state.globalSoundMode = Boolean(appState.globalSoundMode);
+
+    if (profile.exercise_settings && typeof profile.exercise_settings === 'object') {
+      Object.keys(exerciseSettings).forEach((id) => {
+        if (profile.exercise_settings[id]) {
+          exerciseSettings[id] = {
+            ...exerciseSettings[id],
+            ...profile.exercise_settings[id],
+            selected: Boolean(profile.exercise_settings[id].selected)
+          };
+        }
+      });
+    }
+
+    if (Array.isArray(profile.routine_order)) {
+      localStorage.setItem(ROUTINE_ORDER_STORAGE_KEY, JSON.stringify(profile.routine_order));
+      loadRoutineOrder();
+    }
+  }
+
+  async function saveRemoteProfile() {
+    if (!supabaseClient || !currentUser) return;
+
+    const payload = getProfilePayload();
+    const { error } = await supabaseClient
+      .from('user_settings')
+      .upsert({
+        user_id: currentUser.id,
+        app_state: payload.app_state,
+        exercise_settings: payload.exercise_settings,
+        routine_order: payload.routine_order,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+
+    if (error) console.warn('Could not save user settings to Supabase', error);
+  }
+
+  function scheduleRemoteProfileSave() {
+    if (!supabaseClient || !currentUser) return;
+    clearTimeout(remoteSaveTimerId);
+    remoteSaveTimerId = setTimeout(saveRemoteProfile, 500);
+  }
+
+  async function loadRemoteProfile() {
+    if (!supabaseClient || !currentUser) return;
+
+    const { data, error } = await supabaseClient
+      .from('user_settings')
+      .select('app_state, exercise_settings, routine_order')
+      .eq('user_id', currentUser.id)
+      .maybeSingle();
+
+    if (error) {
+      console.warn('Could not load user settings from Supabase', error);
+      return;
+    }
+
+    if (data) {
+      applyProfilePayload(data);
+    } else {
+      await saveRemoteProfile();
+    }
+  }
+
+  async function ensureUserProfile() {
+    if (!supabaseClient || !currentUser) return;
+
+    const metadata = currentUser.user_metadata || {};
+    await supabaseClient
+      .from('profiles')
+      .upsert({
+        user_id: currentUser.id,
+        display_name: metadata.full_name || metadata.name || '',
+        avatar_url: metadata.avatar_url || '',
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+  }
+
+  function setAdminStatus(message) {
+    const el = document.getElementById('admin-status');
+    if (el) el.textContent = message || '';
+  }
+
+  function updateAdminButton() {
+    const button = document.getElementById('btn-admin-mode');
+    if (!button) return;
+    button.hidden = !isAdmin;
+  }
+
+  async function checkAdminStatus() {
+    isAdmin = false;
+    if (!supabaseClient || !currentUser) {
+      updateAdminButton();
+      return false;
+    }
+
+    const { data, error } = await supabaseClient
+      .from('admin_users')
+      .select('user_id')
+      .eq('user_id', currentUser.id)
+      .maybeSingle();
+
+    if (error) {
+      console.warn('Could not check admin status', error);
+      updateAdminButton();
+      return false;
+    }
+
+    isAdmin = Boolean(data);
+    updateAdminButton();
+    return isAdmin;
+  }
+
+  function createAdminShell() {
+    if (document.getElementById('admin-modal')) return;
+
+    const adminButton = document.createElement('button');
+    adminButton.id = 'btn-admin-mode';
+    adminButton.className = 'admin-open-btn';
+    adminButton.type = 'button';
+    adminButton.hidden = true;
+    adminButton.textContent = 'ADMIN';
+    dom.routinePage.appendChild(adminButton);
+
+    const modal = document.createElement('div');
+    modal.id = 'admin-modal';
+    modal.className = 'modal-overlay admin-modal';
+    modal.setAttribute('aria-hidden', 'true');
+    modal.innerHTML = `
+      <div class="modal-content admin-modal-content">
+        <div class="admin-header">
+          <div>
+            <p class="admin-kicker">ADMIN</p>
+            <h2>Content Editor</h2>
+          </div>
+          <button id="btn-close-admin" class="admin-icon-btn" type="button" aria-label="Close admin editor">×</button>
+        </div>
+        <p id="admin-status" class="admin-status"></p>
+        <div class="admin-actions-row">
+          <button id="btn-admin-refresh" class="admin-secondary-btn" type="button">Refresh</button>
+        </div>
+        <section class="admin-section">
+          <h3>Menu Routines</h3>
+          <div id="admin-routines-list" class="admin-list"></div>
+        </section>
+        <section class="admin-section">
+          <h3>Routine Exercises</h3>
+          <label class="admin-field">
+            <span>Show routine</span>
+            <select id="admin-routine-filter"></select>
+          </label>
+          <div id="admin-exercises-list" class="admin-list"></div>
+        </section>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    adminButton.addEventListener('click', openAdminEditor);
+    document.getElementById('btn-close-admin').addEventListener('click', closeAdminEditor);
+    document.getElementById('btn-admin-refresh').addEventListener('click', openAdminEditor);
+    document.getElementById('admin-routine-filter').addEventListener('change', renderAdminExercises);
+    document.getElementById('admin-modal').addEventListener('submit', handleAdminSubmit);
+    document.getElementById('admin-modal').addEventListener('click', handleAdminClick);
+  }
+
+  function closeAdminEditor() {
+    document.getElementById('admin-modal')?.setAttribute('aria-hidden', 'true');
+  }
+
+  async function openAdminEditor() {
+    if (!isAdmin) return;
+    document.getElementById('admin-modal')?.setAttribute('aria-hidden', 'false');
+    try {
+      setAdminStatus('Loading editor...');
+      await loadAdminData();
+      renderAdminEditor();
+      setAdminStatus('Ready.');
+    } catch (error) {
+      console.error(error);
+      setAdminStatus(error.message || 'Could not load admin editor.');
+    }
+  }
+
+  async function loadAdminData() {
+    if (!supabaseClient || !isAdmin) return;
+
+    const [routinesResult, exercisesResult] = await Promise.all([
+      supabaseClient
+        .from('routines')
+        .select('id, slug, title, sort_order, is_active')
+        .order('sort_order', { ascending: true }),
+      supabaseClient
+        .from('exercises')
+        .select('id, routine_id, slug, title, short_description, long_description, safety_alert, thumbnail_url, default_sets, default_reps, sort_order, is_active')
+        .order('sort_order', { ascending: true })
+    ]);
+
+    if (routinesResult.error) throw routinesResult.error;
+    if (exercisesResult.error) throw exercisesResult.error;
+
+    adminRoutines = routinesResult.data || [];
+    adminExercises = exercisesResult.data || [];
+  }
+
+  function renderAdminEditor() {
+    renderAdminRoutines();
+    renderAdminRoutineFilter();
+    renderAdminExercises();
+  }
+
+  function renderAdminRoutines() {
+    const list = document.getElementById('admin-routines-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    adminRoutines.forEach((routine) => {
+      const card = document.createElement('form');
+      card.className = `admin-edit-card${routine.is_active ? '' : ' is-inactive'}`;
+      card.dataset.kind = 'routine';
+      card.dataset.id = routine.id;
+      card.innerHTML = `
+        <div class="admin-card-title">
+          <strong></strong>
+          <span></span>
+        </div>
+        <label class="admin-field">
+          <span>Menu title</span>
+          <input name="title" type="text" required />
+        </label>
+        <div class="admin-grid">
+          <label class="admin-field">
+            <span>Slug</span>
+            <input name="slug" type="text" readonly />
+          </label>
+          <label class="admin-field">
+            <span>Order</span>
+            <input name="sort_order" type="number" step="1" />
+          </label>
+        </div>
+        <label class="admin-check-row">
+          <input name="is_active" type="checkbox" />
+          <span>Visible in menu</span>
+        </label>
+        <div class="admin-card-actions">
+          <button class="admin-secondary-btn" type="button" data-action="toggle-routine"></button>
+          <button class="admin-save-btn" type="submit">Save Routine</button>
+        </div>
+      `;
+      card.querySelector('strong').textContent = routine.title;
+      card.querySelector('.admin-card-title span').textContent = routine.is_active ? 'Visible' : 'Hidden';
+      card.querySelector('[name="title"]').value = routine.title;
+      card.querySelector('[name="slug"]').value = routine.slug;
+      card.querySelector('[name="sort_order"]').value = routine.sort_order;
+      card.querySelector('[name="is_active"]').checked = routine.is_active;
+      card.querySelector('[data-action="toggle-routine"]').textContent = routine.is_active ? 'Hide' : 'Show';
+      list.appendChild(card);
+    });
+  }
+
+  function renderAdminRoutineFilter() {
+    const select = document.getElementById('admin-routine-filter');
+    if (!select) return;
+    const previous = select.value || 'all';
+    select.innerHTML = '<option value="all">All routines</option>';
+    adminRoutines.forEach((routine) => {
+      const option = document.createElement('option');
+      option.value = routine.id;
+      option.textContent = routine.title;
+      select.appendChild(option);
+    });
+    select.value = adminRoutines.some((routine) => routine.id === previous) ? previous : 'all';
+  }
+
+  function renderAdminExercises() {
+    const list = document.getElementById('admin-exercises-list');
+    const filter = document.getElementById('admin-routine-filter')?.value || 'all';
+    if (!list) return;
+    list.innerHTML = '';
+
+    const routineById = new Map(adminRoutines.map((routine) => [routine.id, routine]));
+    const filteredExercises = adminExercises.filter((exercise) => {
+      return filter === 'all' || exercise.routine_id === filter;
+    });
+
+    filteredExercises.forEach((exercise) => {
+      const routine = routineById.get(exercise.routine_id);
+      const card = document.createElement('form');
+      card.className = `admin-edit-card${exercise.is_active ? '' : ' is-inactive'}`;
+      card.dataset.kind = 'exercise';
+      card.dataset.id = exercise.id;
+      card.innerHTML = `
+        <div class="admin-card-title">
+          <strong></strong>
+          <span></span>
+        </div>
+        <label class="admin-field">
+          <span>Exercise title</span>
+          <input name="title" type="text" required />
+        </label>
+        <div class="admin-grid">
+          <label class="admin-field">
+            <span>Routine</span>
+            <select name="routine_id"></select>
+          </label>
+          <label class="admin-field">
+            <span>Order</span>
+            <input name="sort_order" type="number" step="1" />
+          </label>
+        </div>
+        <label class="admin-field">
+          <span>Short card description</span>
+          <textarea name="short_description" rows="2"></textarea>
+        </label>
+        <label class="admin-field">
+          <span>Full detail description</span>
+          <textarea name="long_description" rows="4"></textarea>
+        </label>
+        <label class="admin-field">
+          <span>Safety alert</span>
+          <textarea name="safety_alert" rows="2"></textarea>
+        </label>
+        <label class="admin-field">
+          <span>Thumbnail URL</span>
+          <input name="thumbnail_url" type="text" />
+        </label>
+        <div class="admin-grid">
+          <label class="admin-field">
+            <span>Default sets</span>
+            <input name="default_sets" type="number" min="1" step="1" />
+          </label>
+          <label class="admin-field">
+            <span>Default reps</span>
+            <input name="default_reps" type="number" min="1" step="1" />
+          </label>
+        </div>
+        <label class="admin-check-row">
+          <input name="is_active" type="checkbox" />
+          <span>Visible in routine</span>
+        </label>
+        <div class="admin-card-actions">
+          <button class="admin-secondary-btn" type="button" data-action="toggle-exercise"></button>
+          <button class="admin-save-btn" type="submit">Save Exercise</button>
+        </div>
+      `;
+
+      const routineSelect = card.querySelector('[name="routine_id"]');
+      adminRoutines.forEach((item) => {
+        const option = document.createElement('option');
+        option.value = item.id;
+        option.textContent = item.title;
+        routineSelect.appendChild(option);
+      });
+
+      card.querySelector('strong').textContent = exercise.title;
+      card.querySelector('.admin-card-title span').textContent = `${routine?.title || 'No routine'} · ${exercise.is_active ? 'Visible' : 'Hidden'}`;
+      card.querySelector('[name="title"]').value = exercise.title;
+      routineSelect.value = exercise.routine_id;
+      card.querySelector('[name="sort_order"]').value = exercise.sort_order;
+      card.querySelector('[name="short_description"]').value = exercise.short_description || '';
+      card.querySelector('[name="long_description"]').value = exercise.long_description || '';
+      card.querySelector('[name="safety_alert"]').value = exercise.safety_alert || '';
+      card.querySelector('[name="thumbnail_url"]').value = exercise.thumbnail_url || '';
+      card.querySelector('[name="default_sets"]').value = exercise.default_sets;
+      card.querySelector('[name="default_reps"]').value = exercise.default_reps;
+      card.querySelector('[name="is_active"]').checked = exercise.is_active;
+      card.querySelector('[data-action="toggle-exercise"]').textContent = exercise.is_active ? 'Hide' : 'Show';
+      list.appendChild(card);
+    });
+  }
+
+  async function handleAdminSubmit(e) {
+    const form = e.target.closest('.admin-edit-card');
+    if (!form) return;
+    e.preventDefault();
+
+    try {
+      setAdminStatus('Saving...');
+      if (form.dataset.kind === 'routine') {
+        await saveAdminRoutine(form);
+      } else if (form.dataset.kind === 'exercise') {
+        await saveAdminExercise(form);
+      }
+      await refreshContentAfterAdminSave();
+      setAdminStatus('Saved.');
+    } catch (error) {
+      console.error(error);
+      setAdminStatus(error.message || 'Could not save changes.');
+    }
+  }
+
+  async function handleAdminClick(e) {
+    const button = e.target.closest('[data-action]');
+    if (!button) return;
+    const form = button.closest('.admin-edit-card');
+    if (!form) return;
+
+    try {
+      setAdminStatus('Updating visibility...');
+      if (button.dataset.action === 'toggle-routine') {
+        const routine = adminRoutines.find((item) => item.id === form.dataset.id);
+        const { error } = await supabaseClient.from('routines').update({
+          is_active: !routine.is_active,
+          updated_at: new Date().toISOString()
+        }).eq('id', form.dataset.id);
+        if (error) throw error;
+      } else if (button.dataset.action === 'toggle-exercise') {
+        const exercise = adminExercises.find((item) => item.id === form.dataset.id);
+        const { error } = await supabaseClient.from('exercises').update({
+          is_active: !exercise.is_active,
+          updated_at: new Date().toISOString()
+        }).eq('id', form.dataset.id);
+        if (error) throw error;
+      }
+      await refreshContentAfterAdminSave();
+      setAdminStatus('Visibility updated.');
+    } catch (error) {
+      console.error(error);
+      setAdminStatus(error.message || 'Could not update visibility.');
+    }
+  }
+
+  async function saveAdminRoutine(form) {
+    const payload = {
+      title: form.elements.title.value.trim(),
+      sort_order: parseInt(form.elements.sort_order.value, 10) || 0,
+      is_active: form.elements.is_active.checked,
+      updated_at: new Date().toISOString()
+    };
+
+    const { error } = await supabaseClient
+      .from('routines')
+      .update(payload)
+      .eq('id', form.dataset.id);
+    if (error) throw error;
+  }
+
+  async function saveAdminExercise(form) {
+    const payload = {
+      routine_id: form.elements.routine_id.value,
+      title: form.elements.title.value.trim(),
+      short_description: form.elements.short_description.value.trim(),
+      long_description: form.elements.long_description.value.trim(),
+      safety_alert: form.elements.safety_alert.value.trim(),
+      thumbnail_url: form.elements.thumbnail_url.value.trim(),
+      default_sets: Math.max(1, parseInt(form.elements.default_sets.value, 10) || 1),
+      default_reps: Math.max(1, parseInt(form.elements.default_reps.value, 10) || 1),
+      sort_order: parseInt(form.elements.sort_order.value, 10) || 0,
+      is_active: form.elements.is_active.checked,
+      updated_at: new Date().toISOString()
+    };
+
+    const { error } = await supabaseClient
+      .from('exercises')
+      .update(payload)
+      .eq('id', form.dataset.id);
+    if (error) throw error;
+  }
+
+  async function refreshContentAfterAdminSave() {
+    await loadAdminData();
+    renderAdminEditor();
+    await fetchRemoteContent();
+    loadExerciseSettings();
+    renderExerciseSettings();
+  }
+
   // ─── Estimate total workout time ───
   function calculateTotalTime() {
-    const selectedIds = Object.keys(exerciseSettings).filter(id => exerciseSettings[id].selected);
+    const visibleIds = getVisibleExerciseIds();
+    const selectedIds = visibleIds.filter(id => exerciseSettings[id]?.selected);
     if (selectedIds.length === 0) return 0;
 
     let totalSeconds = 0;
@@ -995,9 +1698,82 @@
   });
   // Steppers removed
 
+  function setLoginStatus(message) {
+    const el = document.getElementById('login-status');
+    if (el) el.textContent = message || '';
+  }
+
+  async function initializeSupabaseSession() {
+    if (!supabaseClient) return;
+
+    const { data } = await supabaseClient.auth.getSession();
+    currentUser = data.session?.user || null;
+    if (currentUser) {
+      await ensureUserProfile();
+      await loadRemoteProfile();
+      await checkAdminStatus();
+    } else {
+      isAdmin = false;
+      updateAdminButton();
+    }
+
+    supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+      currentUser = session?.user || null;
+      if (currentUser) {
+        await ensureUserProfile();
+        await loadRemoteProfile();
+        await checkAdminStatus();
+        renderExerciseSettings();
+        setLoginStatus('Signed in. Your settings will sync on this device.');
+      } else {
+        isAdmin = false;
+        updateAdminButton();
+      }
+    });
+  }
+
+  async function signInWithEmail() {
+    if (!supabaseClient) {
+      setLoginStatus('Add Supabase credentials first.');
+      return;
+    }
+
+    const email = document.getElementById('login-email')?.value?.trim();
+    if (!email) {
+      setLoginStatus('Enter your email address first.');
+      return;
+    }
+
+    const { error } = await supabaseClient.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: window.location.href
+      }
+    });
+
+    setLoginStatus(error ? error.message : 'Check your email for the sign-in link.');
+  }
+
+  async function signInWithProvider(provider) {
+    if (!supabaseClient) {
+      setLoginStatus('Add Supabase credentials first.');
+      return;
+    }
+
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: window.location.href
+      }
+    });
+    if (error) setLoginStatus(error.message);
+  }
+
   // ─── Init ───
-  function init() {
+  async function init() {
     createCompletionOverlay();
+    await fetchRemoteContent();
+    createAdminShell();
 
     // Landing page
     const goToRoutineMenu = () => {
@@ -1012,9 +1788,18 @@
     };
 
     dom.btnGuestMode.addEventListener('click', goToRoutineMenu);
-    
-    // Proceed to menu page directly
-    dom.btnLogin.addEventListener('click', goToRoutineMenu);
+
+    if (isSupabaseConfigured) {
+      dom.btnGuestMode.style.display = '';
+    }
+
+    dom.btnLogin.addEventListener('click', () => {
+      if (isSupabaseConfigured) {
+        document.getElementById('login-modal').setAttribute('aria-hidden', 'false');
+      } else {
+        goToRoutineMenu();
+      }
+    });
 
     // BACK button on routine/menu page → return to landing page
     const goToLandingPage = () => {
@@ -1070,85 +1855,79 @@
       }
     });
 
-    document.querySelectorAll('.exercise-animation-placeholder').forEach(el => {
-      el.addEventListener('click', (e) => {
-        // Prevent click if clicking the checkbox wrapper, but here it's on the placeholder specifically
-        const card = e.target.closest('.exercise-card');
-        const id = card.dataset.exerciseId;
-        const details = exerciseDetails[id];
-        
-        if (details) {
-          document.getElementById('exercise-details-title').innerText = details.title;
-          document.getElementById('exercise-details-desc').innerText = details.description;
-          
-          if (details.alert) {
-            document.getElementById('exercise-details-alert').style.display = 'block';
-            document.getElementById('exercise-details-alert-text').innerText = details.alert;
-          } else {
-            document.getElementById('exercise-details-alert').style.display = 'none';
-          }
+    dom.exercisePage.addEventListener('click', (e) => {
+      const placeholder = e.target.closest('.exercise-animation-placeholder');
+      if (!placeholder) return;
 
-          currentCarouselImages = details.images || [];
-          currentCarouselIndex = 0;
-          track.innerHTML = '';
-          dotsContainer.innerHTML = '';
+      const card = placeholder.closest('.exercise-card');
+      const id = card.dataset.exerciseId;
+      const details = exerciseDetails[id];
+      if (!details) return;
 
-          if (currentCarouselImages.length > 0) {
-            currentCarouselImages.forEach((src, i) => {
-              const slide = document.createElement('div');
-              slide.style.minWidth = '100%';
-              slide.style.height = '100%';
-              slide.style.backgroundImage = `url('${src}')`;
-              slide.style.backgroundSize = 'contain';
-              slide.style.backgroundRepeat = 'no-repeat';
-              slide.style.backgroundPosition = 'center';
-              track.appendChild(slide);
+      document.getElementById('exercise-details-title').innerText = details.title;
+      document.getElementById('exercise-details-desc').innerText = details.description;
+      
+      if (details.alert) {
+        document.getElementById('exercise-details-alert').style.display = 'block';
+        document.getElementById('exercise-details-alert-text').innerText = details.alert;
+      } else {
+        document.getElementById('exercise-details-alert').style.display = 'none';
+      }
 
-              const dot = document.createElement('div');
-              dot.style.width = '8px';
-              dot.style.height = '8px';
-              dot.style.borderRadius = '50%';
-              dot.style.background = 'rgba(255,255,255,0.3)';
-              dot.style.cursor = 'pointer';
-              dot.addEventListener('click', () => {
-                currentCarouselIndex = i;
-                updateCarousel();
-              });
-              dotsContainer.appendChild(dot);
-            });
+      currentCarouselImages = details.images || [];
+      currentCarouselIndex = 0;
+      track.innerHTML = '';
+      dotsContainer.innerHTML = '';
+
+      if (currentCarouselImages.length > 0) {
+        currentCarouselImages.forEach((src, i) => {
+          const slide = document.createElement('div');
+          slide.style.minWidth = '100%';
+          slide.style.height = '100%';
+          slide.style.backgroundImage = `url('${src}')`;
+          slide.style.backgroundSize = 'contain';
+          slide.style.backgroundRepeat = 'no-repeat';
+          slide.style.backgroundPosition = 'center';
+          track.appendChild(slide);
+
+          const dot = document.createElement('div');
+          dot.style.width = '8px';
+          dot.style.height = '8px';
+          dot.style.borderRadius = '50%';
+          dot.style.background = 'rgba(255,255,255,0.3)';
+          dot.style.cursor = 'pointer';
+          dot.addEventListener('click', () => {
+            currentCarouselIndex = i;
             updateCarousel();
-            document.getElementById('exercise-carousel-container').style.display = 'block';
-          } else {
-            document.getElementById('exercise-carousel-container').style.display = 'none';
-          }
-          
-          detailsModal.setAttribute('aria-hidden', 'false');
-        }
-      });
+          });
+          dotsContainer.appendChild(dot);
+        });
+        updateCarousel();
+        document.getElementById('exercise-carousel-container').style.display = 'block';
+      } else {
+        document.getElementById('exercise-carousel-container').style.display = 'none';
+      }
+      
+      detailsModal.setAttribute('aria-hidden', 'false');
     });
 
     detailsClose.addEventListener('click', () => {
       detailsModal.setAttribute('aria-hidden', 'true');
     });
 
-    // Handle dummy auth options (proceeds to routine menu for now)
-    document.getElementById('btn-login-email').addEventListener('click', goToRoutineMenu);
-    document.getElementById('btn-login-google').addEventListener('click', goToRoutineMenu);
-    document.getElementById('btn-login-apple').addEventListener('click', goToRoutineMenu);
+    document.getElementById('btn-login-email').addEventListener('click', signInWithEmail);
+    document.getElementById('btn-login-google').addEventListener('click', () => signInWithProvider('google'));
+    document.getElementById('btn-login-apple').addEventListener('click', () => signInWithProvider('apple'));
 
     // btnRoutineBack logic removed
 
-    // Routine menu: clicking any routine pill (except back) goes to exercise page
-    const routinePills = dom.sortableRoutines.querySelectorAll('.routine-pill');
-    routinePills.forEach(pill => {
-      pill.addEventListener('click', (e) => {
-        let routineName = e.target.innerText;
-        let routineId = '';
-        if (routineName.includes('TENNIS ELBOW')) routineId = 'tennis-elbow';
-        else if (routineName.includes('CAT & COW') || routineName.includes('CAT & COW')) routineId = 'cat-cow';
-        else if (routineName.includes('TAI-CHI')) routineId = 'tai-chi';
-        openExercisePage(routineName, routineId);
-      });
+    // Routine menu: clicking any routine pill opens that routine.
+    dom.sortableRoutines.addEventListener('click', (e) => {
+      const pill = e.target.closest('.routine-pill');
+      if (!pill) return;
+      const routineName = pill.innerText;
+      const routineId = getRoutineIdFromPill(pill);
+      openExercisePage(routineName, routineId);
     });
     dom.btnExerciseBackPill.addEventListener('click', () => {
       const ROUTINES = getOrderedRoutines();
@@ -1207,7 +1986,8 @@
         'grip-squeeze': 'assets/lottie/grip-squeeze.json?v=2',
       };
 
-      const lottieAnim = animationByExercise[exerciseId];
+      const details = exerciseDetails[exerciseId];
+      const lottieAnim = details?.lottieUrl || animationByExercise[exerciseId];
       
       if (lottieAnim) {
         // The player component does not reliably reload when only its src changes.
@@ -1234,7 +2014,6 @@
         // Hide Lottie and show Image
         dom.mediaLottie.classList.add('hidden');
 
-        const details = exerciseDetails[exerciseId];
         if (details && details.images && details.images.length > 0) {
           state.currentImageIndex = 0;
           dom.mediaImg.style.opacity = '1';
@@ -1289,7 +2068,7 @@
     }
 
     dom.btnStartNow.addEventListener('click', () => {
-      state.selectedExercises = Object.keys(exerciseSettings).filter((id) => exerciseSettings[id].selected);
+      state.selectedExercises = getVisibleExerciseIds().filter((id) => exerciseSettings[id]?.selected);
       if (state.selectedExercises.length === 0) return;
       
       state.currentExerciseIndex = 0;
@@ -1322,10 +2101,11 @@
       }
     });
 
-    loadExerciseSettings();
-    renderExerciseSettings();
-    // Load saved settings
     loadState();
+    loadExerciseSettings();
+    await initializeSupabaseSession();
+    renderExerciseSettings();
+    if (currentUser) goToRoutineMenu();
 
     function applyGlobalDarkMode() {
       if (state.globalDarkMode) {

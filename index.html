@@ -13,7 +13,7 @@
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icon.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon.png" />
-  <link rel="stylesheet" href="style.css?v=20260705-2" />
+  <link rel="stylesheet" href="style.css?v=20260711-brand-5" />
 </head>
 <body>
   <main id="landing-page" aria-labelledby="landing-title">
@@ -23,7 +23,8 @@
         src="assets/stretching.png"
         alt="Vitruvian figure with arms and legs extended"
       />
-      <h1 id="landing-title">STRETCHING</h1>
+      <h1 id="landing-title">Bend and Mend</h1>
+      <p class="landing-subtitle">An Exercise App</p>
     </div>
     <div class="landing-controls-grid">
       <div class="landing-login-group">
@@ -504,19 +505,17 @@
     </section>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-  <script type="module" src="assets/lottie/dotlottie-player.mjs"></script>
-  <script src="app.js?v=20260705-12"></script>
-
   <!-- Login Modal (Hidden by default) -->
   <div id="login-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-content">
       <h2>Sign In</h2>
       <p style="margin-bottom: 24px; color: var(--text-muted);">Save your personalized stretch pacing and access it anywhere.</p>
       <div class="modal-actions">
-        <button id="btn-login-email" class="landing-btn-pill">Email / Password</button>
+        <input id="login-email" type="email" placeholder="you@example.com" autocomplete="email" style="width: 100%; height: 48px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-elevated); color: var(--text-primary); padding: 0 14px; font: inherit;" />
+        <button id="btn-login-email" class="landing-btn-pill">Email Magic Link</button>
         <button id="btn-login-google" class="landing-btn-pill">Sign in with Google</button>
         <button id="btn-login-apple" class="landing-btn-pill">Sign in with Apple</button>
+        <p id="login-status" style="min-height: 22px; color: var(--text-muted); margin: 0;"></p>
       </div>
       <button id="btn-close-modal" class="app-back-btn" style="width: 100%; height: 48px; margin-top: 16px;">CLOSE</button>
     </div>
@@ -543,5 +542,10 @@
       <button id="btn-close-details" class="app-back-btn" style="width: 100%; height: 48px; margin-top: 16px;">CLOSE</button>
     </div>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js?v=20260711-1"></script>
+  <script type="module" src="assets/lottie/dotlottie-player.mjs"></script>
+  <script src="app.js?v=20260711-admin-1"></script>
 </body>
 </html>

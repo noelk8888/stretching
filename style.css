@@ -639,13 +639,13 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(20px, 4vh, 34px);
-  padding: max(28px, env(safe-area-inset-top)) 24px 24px;
+  gap: clamp(12px, 2.4vh, 20px);
+  padding: max(30px, env(safe-area-inset-top)) 20px 20px;
 }
 
 .landing-artwork {
   display: block;
-  width: min(82vw, 350px);
+  width: min(92vw, 390px);
   height: auto;
   filter: invert(1);
   mix-blend-mode: screen;
@@ -657,13 +657,25 @@ body.light-mode .landing-artwork {
 }
 
 #landing-title {
-  font-size: clamp(22px, 5.8vw, 28px);
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: 0.48em;
-  text-indent: 0.48em;
-  transform: scaleY(1.28);
-  transform-origin: center;
+  margin: clamp(8px, 1.6vh, 14px) 0 0;
+  width: min(92vw, 760px);
+  font-size: clamp(36px, 8.3vw, 46px);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.landing-subtitle {
+  margin: clamp(2px, 0.45vh, 5px) 0 0;
+  color: var(--text-secondary);
+  font-size: clamp(17px, 4.1vw, 20px);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-align: center;
 }
 
 .landing-controls-grid {
@@ -1642,4 +1654,208 @@ input:checked + .slider-switch::before {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.admin-open-btn {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 50;
+  min-width: 96px;
+  height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: var(--accent);
+  color: #0f1117;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+.admin-open-btn[hidden] {
+  display: none;
+}
+
+.admin-modal-content {
+  width: min(920px, calc(100vw - 24px));
+  max-height: 88vh;
+  overflow: auto;
+  text-align: left;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.admin-kicker {
+  margin: 0 0 4px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+
+.admin-icon-btn {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.admin-status {
+  min-height: 22px;
+  margin: 0 0 12px;
+  color: var(--text-muted);
+}
+
+.admin-actions-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 18px;
+}
+
+.admin-section {
+  margin-top: 22px;
+}
+
+.admin-section h3 {
+  margin: 0 0 12px;
+  color: var(--text-primary);
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-list {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-edit-card {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-card);
+  padding: 14px;
+}
+
+.admin-edit-card.is-inactive {
+  opacity: 0.62;
+}
+
+.admin-card-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.admin-card-title span {
+  color: var(--text-muted);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-field {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-field input,
+.admin-field select,
+.admin-field textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  padding: 10px 12px;
+  font: inherit;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.admin-field textarea {
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.admin-check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 14px;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.admin-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.admin-save-btn,
+.admin-secondary-btn {
+  min-height: 42px;
+  border-radius: 999px;
+  padding: 0 18px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.admin-save-btn {
+  border: 0;
+  background: var(--accent);
+  color: #0f1117;
+}
+
+.admin-secondary-btn {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-primary);
+}
+
+@media (max-width: 640px) {
+  .admin-modal-content {
+    width: calc(100vw - 16px);
+    max-height: 92vh;
+    padding: 18px;
+  }
+
+  .admin-grid,
+  .admin-card-title,
+  .admin-card-actions {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .admin-card-actions {
+    align-items: stretch;
+  }
+
+  .admin-open-btn {
+    right: 18px;
+    bottom: 88px;
+  }
 }
