@@ -35,6 +35,7 @@
   const supabaseClient = isSupabaseConfigured
     ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey)
     : null;
+  const PASSWORD_SETUP_KEY = 'bendandmend:password-setup-email';
   let currentUser = null;
   let isAdmin = false;
   let adminRoutines = [];
@@ -1703,6 +1704,31 @@
     if (el) el.textContent = message || '';
   }
 
+  function setPasswordSetupStatus(message) {
+    const el = document.getElementById('password-setup-status');
+    if (el) el.textContent = message || '';
+  }
+
+  function closeLoginModal() {
+    const modal = document.getElementById('login-modal');
+    if (modal) modal.setAttribute('aria-hidden', 'true');
+  }
+
+  function closePasswordSetupModal() {
+    const modal = document.getElementById('password-setup-modal');
+    if (modal) modal.setAttribute('aria-hidden', 'true');
+  }
+
+  function maybePromptPasswordSetup() {
+    if (!currentUser) return;
+    const pendingEmail = localStorage.getItem(PASSWORD_SETUP_KEY);
+    if (!pendingEmail || pendingEmail !== currentUser.email) return;
+
+    closeLoginModal();
+    setPasswordSetupStatus('');
+    document.getElementById('password-setup-modal')?.setAttribute('aria-hidden', 'false');
+  }
+
   async function initializeSupabaseSession() {
     if (!supabaseClient) return;
 
@@ -1712,6 +1738,7 @@
       await ensureUserProfile();
       await loadRemoteProfile();
       await checkAdminStatus();
+      maybePromptPasswordSetup();
     } else {
       isAdmin = false;
       updateAdminButton();
@@ -1725,6 +1752,7 @@
         await checkAdminStatus();
         renderExerciseSettings();
         setLoginStatus('Signed in. Your settings will sync on this device.');
+        maybePromptPasswordSetup();
       } else {
         isAdmin = false;
         updateAdminButton();
@@ -1751,22 +1779,76 @@
       }
     });
 
-    setLoginStatus(error ? error.message : 'Check your email for the sign-in link.');
+    if (error) {
+      setLoginStatus(error.message);
+      return;
+    }
+
+    localStorage.setItem(PASSWORD_SETUP_KEY, email);
+    setLoginStatus('Check your email for the sign-in link.');
   }
 
-  async function signInWithProvider(provider) {
+  async function signInWithPassword() {
     if (!supabaseClient) {
       setLoginStatus('Add Supabase credentials first.');
       return;
     }
 
-    const { error } = await supabaseClient.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: window.location.href
-      }
+    const email = document.getElementById('login-email')?.value?.trim();
+    const password = document.getElementById('login-password')?.value || '';
+    if (!email || !password) {
+      setLoginStatus('Enter your email and password first.');
+      return;
+    }
+
+    const { error } = await supabaseClient.auth.signInWithPassword({
+      email,
+      password
     });
-    if (error) setLoginStatus(error.message);
+
+    if (error) {
+      setLoginStatus(error.message);
+      return;
+    }
+
+    setLoginStatus('Signed in. Your settings will sync on this device.');
+  }
+
+  async function saveLoginPassword() {
+    if (!supabaseClient || !currentUser) {
+      setPasswordSetupStatus('Please sign in with the magic link first.');
+      return;
+    }
+
+    const password = document.getElementById('setup-password')?.value || '';
+    const confirm = document.getElementById('setup-password-confirm')?.value || '';
+    if (password.length < 6) {
+      setPasswordSetupStatus('Use at least 6 characters.');
+      return;
+    }
+    if (password !== confirm) {
+      setPasswordSetupStatus('Passwords do not match.');
+      return;
+    }
+
+    const { error } = await supabaseClient.auth.updateUser({ password });
+    if (error) {
+      setPasswordSetupStatus(error.message);
+      return;
+    }
+
+    localStorage.removeItem(PASSWORD_SETUP_KEY);
+    document.getElementById('setup-password').value = '';
+    document.getElementById('setup-password-confirm').value = '';
+    setPasswordSetupStatus('Password saved. Next time, use LOG IN.');
+    window.setTimeout(closePasswordSetupModal, 900);
+  }
+
+  function skipLoginPasswordSetup() {
+    localStorage.removeItem(PASSWORD_SETUP_KEY);
+    document.getElementById('setup-password').value = '';
+    document.getElementById('setup-password-confirm').value = '';
+    closePasswordSetupModal();
   }
 
   // ─── Init ───
@@ -1915,9 +1997,10 @@
       detailsModal.setAttribute('aria-hidden', 'true');
     });
 
+    document.getElementById('btn-login-password').addEventListener('click', signInWithPassword);
     document.getElementById('btn-login-email').addEventListener('click', signInWithEmail);
-    document.getElementById('btn-login-google').addEventListener('click', () => signInWithProvider('google'));
-    document.getElementById('btn-login-apple').addEventListener('click', () => signInWithProvider('apple'));
+    document.getElementById('btn-save-password').addEventListener('click', saveLoginPassword);
+    document.getElementById('btn-skip-password').addEventListener('click', skipLoginPasswordSetup);
 
     // btnRoutineBack logic removed
 

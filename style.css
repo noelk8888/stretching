@@ -79,14 +79,18 @@ html, body {
    ============================================ */
 #landing-page {
   position: fixed;
-  inset: 0 auto 0 50%;
-  width: min(100%, 430px);
+  top: 50%;
+  left: 50%;
+  width: min(100vw, 430px);
+  max-width: 430px;
+  height: min(100dvh, 932px);
+  max-height: 932px;
   z-index: 200;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) minmax(150px, 23vh);
+  grid-template-rows: minmax(0, 1fr) minmax(150px, 214px);
   background: var(--bg-primary);
   color: var(--text-primary);
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   transition: opacity 360ms ease, visibility 360ms ease;
 }
 
@@ -645,8 +649,10 @@ html, body {
 
 .landing-artwork {
   display: block;
-  width: min(92vw, 390px);
+  width: min(88%, 360px);
+  max-height: min(46dvh, 430px);
   height: auto;
+  object-fit: contain;
   filter: invert(1);
   mix-blend-mode: screen;
 }
@@ -658,8 +664,8 @@ body.light-mode .landing-artwork {
 
 #landing-title {
   margin: clamp(8px, 1.6vh, 14px) 0 0;
-  width: min(92vw, 760px);
-  font-size: clamp(36px, 8.3vw, 46px);
+  width: 100%;
+  font-size: clamp(34px, 10.5vw, 46px);
   font-weight: 900;
   line-height: 1.02;
   letter-spacing: 0;
@@ -670,7 +676,7 @@ body.light-mode .landing-artwork {
 .landing-subtitle {
   margin: clamp(2px, 0.45vh, 5px) 0 0;
   color: var(--text-secondary);
-  font-size: clamp(17px, 4.1vw, 20px);
+  font-size: clamp(16px, 4.4vw, 20px);
   font-weight: 500;
   line-height: 1.1;
   letter-spacing: 0.22em;
@@ -747,6 +753,7 @@ body.light-mode .landing-btn-pill.is-active {
 @media (max-height: 570px) {
   #landing-page {
     grid-template-rows: minmax(0, 1fr) 112px;
+    height: 100dvh;
   }
 
   .landing-hero {
@@ -1654,6 +1661,21 @@ input:checked + .slider-switch::before {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.login-input {
+  width: 100%;
+  height: 48px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  padding: 0 14px;
+  font: inherit;
+}
+
+.login-input::placeholder {
+  color: var(--text-muted);
 }
 
 .admin-open-btn {
