@@ -41,6 +41,7 @@
   let adminRoutines = [];
   let adminExercises = [];
   let remoteSaveTimerId = null;
+  let pendingAdminOpen = false;
   window.EXERCISE_CLOCK_DATA_SOURCE = 'fallback';
 
   function getCurrentExerciseConfig() {
@@ -176,7 +177,6 @@
   const dom = {
     // Landing page
     landingPage: $('landing-page'),
-    btnGuestMode: $('btn-guest-mode'),
     btnLogin: $('btn-login'),
     btnDarkMode: $('btn-dark-mode'),
     btnSoundMode: $('btn-sound-mode'),
@@ -734,6 +734,7 @@
         <p id="admin-status" class="admin-status"></p>
         <div class="admin-actions-row">
           <button id="btn-admin-refresh" class="admin-secondary-btn" type="button">Refresh</button>
+          <button id="btn-admin-logout" class="admin-secondary-btn" type="button">Log Out</button>
         </div>
         <section class="admin-section">
           <h3>Menu Routines</h3>
@@ -754,6 +755,7 @@
     adminButton.addEventListener('click', openAdminEditor);
     document.getElementById('btn-close-admin').addEventListener('click', closeAdminEditor);
     document.getElementById('btn-admin-refresh').addEventListener('click', openAdminEditor);
+    document.getElementById('btn-admin-logout').addEventListener('click', signOutAdmin);
     document.getElementById('admin-routine-filter').addEventListener('change', renderAdminExercises);
     document.getElementById('admin-modal').addEventListener('submit', handleAdminSubmit);
     document.getElementById('admin-modal').addEventListener('click', handleAdminClick);
@@ -761,6 +763,24 @@
 
   function closeAdminEditor() {
     document.getElementById('admin-modal')?.setAttribute('aria-hidden', 'true');
+  }
+
+  async function signOutAdmin() {
+    if (!supabaseClient) return;
+
+    setAdminStatus('Logging out...');
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) {
+      setAdminStatus(error.message || 'Could not log out.');
+      return;
+    }
+
+    pendingAdminOpen = false;
+    isAdmin = false;
+    currentUser = null;
+    updateAdminButton();
+    closeAdminEditor();
+    setLoginStatus('');
   }
 
   async function openAdminEditor() {
@@ -1729,6 +1749,23 @@
     document.getElementById('password-setup-modal')?.setAttribute('aria-hidden', 'false');
   }
 
+  async function maybeOpenPendingAdminEditor() {
+    if (!pendingAdminOpen || !currentUser) return false;
+    if (!isAdmin) await checkAdminStatus();
+
+    if (!isAdmin) {
+      pendingAdminOpen = false;
+      setLoginStatus('This email does not have admin access.');
+      return false;
+    }
+
+    pendingAdminOpen = false;
+    closeLoginModal();
+    closePasswordSetupModal();
+    await openAdminEditor();
+    return true;
+  }
+
   async function initializeSupabaseSession() {
     if (!supabaseClient) return;
 
@@ -1738,7 +1775,7 @@
       await ensureUserProfile();
       await loadRemoteProfile();
       await checkAdminStatus();
-      maybePromptPasswordSetup();
+      if (!await maybeOpenPendingAdminEditor()) maybePromptPasswordSetup();
     } else {
       isAdmin = false;
       updateAdminButton();
@@ -1752,7 +1789,7 @@
         await checkAdminStatus();
         renderExerciseSettings();
         setLoginStatus('Signed in. Your settings will sync on this device.');
-        maybePromptPasswordSetup();
+        if (!await maybeOpenPendingAdminEditor()) maybePromptPasswordSetup();
       } else {
         isAdmin = false;
         updateAdminButton();
@@ -1869,18 +1906,21 @@
       if (loginModal) loginModal.setAttribute('aria-hidden', 'true');
     };
 
-    dom.btnGuestMode.addEventListener('click', goToRoutineMenu);
+    dom.btnLogin.addEventListener('click', goToRoutineMenu);
 
-    if (isSupabaseConfigured) {
-      dom.btnGuestMode.style.display = '';
-    }
-
-    dom.btnLogin.addEventListener('click', () => {
-      if (isSupabaseConfigured) {
-        document.getElementById('login-modal').setAttribute('aria-hidden', 'false');
-      } else {
+    document.getElementById('btn-admin-head-login')?.addEventListener('click', async () => {
+      if (!isSupabaseConfigured) {
         goToRoutineMenu();
+        return;
       }
+
+      pendingAdminOpen = true;
+      if (currentUser) {
+        await maybeOpenPendingAdminEditor();
+        return;
+      }
+
+      document.getElementById('login-modal').setAttribute('aria-hidden', 'false');
     });
 
     // BACK button on routine/menu page → return to landing page
@@ -1896,6 +1936,7 @@
 
     // Close login modal
     document.getElementById('btn-close-modal').addEventListener('click', () => {
+      pendingAdminOpen = false;
       document.getElementById('login-modal').setAttribute('aria-hidden', 'true');
     });
 

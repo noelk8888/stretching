@@ -647,14 +647,38 @@ html, body {
   padding: max(30px, env(safe-area-inset-top)) 20px 20px;
 }
 
-.landing-artwork {
-  display: block;
+.landing-artwork-wrap {
+  position: relative;
   width: min(88%, 360px);
   max-height: min(46dvh, 430px);
+}
+
+.landing-artwork {
+  display: block;
+  width: 100%;
   height: auto;
   object-fit: contain;
   filter: invert(1);
   mix-blend-mode: screen;
+}
+
+.landing-admin-hotspot {
+  position: absolute;
+  top: 16%;
+  left: 43%;
+  width: 14%;
+  height: 12%;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.landing-admin-hotspot:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  opacity: 1;
 }
 
 body.light-mode .landing-artwork {
@@ -761,7 +785,7 @@ body.light-mode .landing-btn-pill.is-active {
     padding-block: 14px;
   }
 
-  .landing-artwork {
+  .landing-artwork-wrap {
     width: min(58vh, 270px);
   }
 }

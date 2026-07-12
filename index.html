@@ -13,22 +13,24 @@
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icon.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon.png" />
-  <link rel="stylesheet" href="style.css?v=20260711-login-1" />
+  <link rel="stylesheet" href="style.css?v=20260712-admin-logout-1" />
 </head>
 <body>
   <main id="landing-page" aria-labelledby="landing-title">
     <div class="landing-hero">
-      <img
-        class="landing-artwork"
-        src="assets/stretching.png"
-        alt="Vitruvian figure with arms and legs extended"
-      />
+      <div class="landing-artwork-wrap">
+        <img
+          class="landing-artwork"
+          src="assets/stretching.png"
+          alt="Vitruvian figure with arms and legs extended"
+        />
+        <button id="btn-admin-head-login" class="landing-admin-hotspot" type="button" aria-label="Admin login"></button>
+      </div>
       <h1 id="landing-title">Bend and Mend</h1>
       <p class="landing-subtitle">An Exercise App</p>
     </div>
     <div class="landing-controls-grid">
       <div class="landing-login-group">
-        <button id="btn-guest-mode" class="landing-text-btn" type="button" style="display: none;">Guest Mode</button>
         <button id="btn-login" class="landing-btn-pill" type="button" aria-label="Start now">
           START NOW
         </button>
@@ -559,6 +561,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js?v=20260711-1"></script>
   <script type="module" src="assets/lottie/dotlottie-player.mjs"></script>
-  <script src="app.js?v=20260711-password-setup-1"></script>
+  <script src="app.js?v=20260712-admin-logout-1"></script>
 </body>
 </html>
