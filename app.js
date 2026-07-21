@@ -36,6 +36,14 @@
     ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey)
     : null;
   const PASSWORD_SETUP_KEY = 'bendandmend:password-setup-email';
+  const REST_DEFAULT_SECONDS = 1.5;
+  const PACE_DEFAULT_SECONDS = 3.0;
+  const TIMING_DEFAULT_VERSION_KEY = 'ec_timingDefaultVersion';
+  const TIMING_DEFAULT_VERSION = 'rest-1.5-pace-3';
+  const TIMING_MIN_SECONDS = 0.25;
+  const TIMING_MAX_SECONDS = 60;
+  const TIMER_TICK_MS = 250;
+  const BEEP_LEAD_SECONDS = 0.5;
   let currentUser = null;
   let isAdmin = false;
   let adminRoutines = [];
@@ -53,7 +61,7 @@
   function getCurrentPace() {
     const config = getCurrentExerciseConfig();
     if (!config || !config.progressiveReps) {
-      return config ? config.pace : 1.0;
+      return config ? config.pace : PACE_DEFAULT_SECONDS;
     }
     // Reps are constant within a set, but increase by 10% per set.
     return config.pace * Math.pow(1.1, state.currentSet);
@@ -62,10 +70,37 @@
   function getCurrentSetRest() {
     const config = getCurrentExerciseConfig();
     if (!config || !config.progressiveSets) {
-      return config ? config.setRest : 1.0;
+      return config ? config.setRest : REST_DEFAULT_SECONDS;
     }
     // Rest increases by 10% per set.
     return config.setRest * Math.pow(1.1, state.currentSet);
+  }
+
+  function clampTimingSeconds(value) {
+    return Math.min(TIMING_MAX_SECONDS, Math.max(TIMING_MIN_SECONDS, Number(value) || TIMING_MIN_SECONDS));
+  }
+
+  function roundTimingSeconds(value) {
+    return Math.round(clampTimingSeconds(value) * 100) / 100;
+  }
+
+  function getTimingStep(value, direction) {
+    if (direction < 0) {
+      if (value <= 3) return 0.5;
+      if (value <= 6) return 1;
+      if (value <= 10) return 2;
+      return 5;
+    }
+    if (value < 3) return 0.5;
+    if (value < 6) return 1;
+    if (value < 10) return 2;
+    return 5;
+  }
+
+  function adjustTimingValue(value, direction) {
+    const current = clampTimingSeconds(value);
+    const step = getTimingStep(current, direction);
+    return roundTimingSeconds(current + direction * step);
   }
 
   // ─── Wake Lock ───
@@ -212,6 +247,12 @@
     iconPause: $('icon-pause'),
 
     // Settings
+    btnTimerSetsDec: $('btn-timer-sets-dec'),
+    btnTimerSetsInc: $('btn-timer-sets-inc'),
+    timerSetsValue: $('timer-sets-value'),
+    btnTimerRepsDec: $('btn-timer-reps-dec'),
+    btnTimerRepsInc: $('btn-timer-reps-inc'),
+    timerRepsValue: $('timer-reps-value'),
     btnSetRestDec: $('btn-set-rest-dec'),
     btnSetRestInc: $('btn-set-rest-inc'),
     setRestValue: $('set-rest-value'),
@@ -321,22 +362,32 @@
   }
 
   // ─── Exercise selection defaults ───
+  const exerciseDefault = (sets, reps) => ({
+    selected: false,
+    sets,
+    reps,
+    progressiveSets: false,
+    progressiveReps: false,
+    setRest: REST_DEFAULT_SECONDS,
+    pace: PACE_DEFAULT_SECONDS
+  });
+
   let exerciseDefaults = {
     // Tennis Elbow
-    'extensor-stretch': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
-    'wrist-extension': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
-    'forearm-rotation': { selected: false, sets: 2, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
-    'grip-squeeze': { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
+    'extensor-stretch': exerciseDefault(2, 8),
+    'wrist-extension': exerciseDefault(3, 10),
+    'forearm-rotation': exerciseDefault(2, 10),
+    'grip-squeeze': exerciseDefault(3, 10),
     // Cat & Cow
-    'cat-cow': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
-    'childs-pose': { selected: false, sets: 2, reps: 6, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
-    'thread-needle': { selected: false, sets: 2, reps: 5, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
-    'bird-dog': { selected: false, sets: 2, reps: 8, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
-    'sphinx-pose': { selected: false, sets: 2, reps: 6, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
+    'cat-cow': exerciseDefault(2, 8),
+    'childs-pose': exerciseDefault(2, 6),
+    'thread-needle': exerciseDefault(2, 5),
+    'bird-dog': exerciseDefault(2, 8),
+    'sphinx-pose': exerciseDefault(2, 6),
     // Tai-Chi
-    'ward-off':       { selected: false, sets: 3, reps: 8,  progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
-    'cloud-hands':    { selected: false, sets: 3, reps: 10, progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
-    'golden-rooster': { selected: false, sets: 2, reps: 6,  progressiveSets: false, progressiveReps: false, setRest: 1.0, pace: 1.0 },
+    'ward-off': exerciseDefault(3, 8),
+    'cloud-hands': exerciseDefault(3, 10),
+    'golden-rooster': exerciseDefault(2, 6),
   };
 
   let exerciseSettings = JSON.parse(JSON.stringify(exerciseDefaults));
@@ -523,8 +574,8 @@
         reps: Number(exercise.default_reps) || 1,
         progressiveSets: Boolean(exercise.progressive_sets),
         progressiveReps: Boolean(exercise.progressive_reps),
-        setRest: Number(exercise.set_rest_seconds) || 1,
-        pace: Number(exercise.pace_seconds) || 1
+        setRest: REST_DEFAULT_SECONDS,
+        pace: PACE_DEFAULT_SECONDS
       });
     });
 
@@ -537,6 +588,8 @@
     try {
       const saved = JSON.parse(localStorage.getItem('ec_tennisElbowExercises'));
       if (!saved || typeof saved !== 'object') return;
+      const shouldMigrateOldDefault = localStorage.getItem(TIMING_DEFAULT_VERSION_KEY) !== TIMING_DEFAULT_VERSION;
+      let didMigrateTiming = false;
       
       Object.keys(exerciseSettings).forEach((id) => {
         if (saved[id] && typeof saved[id] === 'object') {
@@ -552,10 +605,30 @@
           const savedReps = parseInt(saved[id].reps, 10);
           if (!isNaN(savedReps)) exerciseSettings[id].reps = savedReps;
 
-          exerciseSettings[id].setRest = 1.0;
-          exerciseSettings[id].pace = 1.0;
+          const savedSetRest = parseFloat(saved[id].setRest);
+          const savedPace = parseFloat(saved[id].pace);
+          if (!isNaN(savedSetRest) && savedSetRest > 0) {
+            if (shouldMigrateOldDefault && (savedSetRest === 1 || savedSetRest === 3)) {
+              exerciseSettings[id].setRest = REST_DEFAULT_SECONDS;
+              didMigrateTiming = true;
+            } else {
+              exerciseSettings[id].setRest = roundTimingSeconds(savedSetRest);
+            }
+          }
+          if (!isNaN(savedPace) && savedPace > 0) {
+            if (shouldMigrateOldDefault && savedPace === 1) {
+              exerciseSettings[id].pace = PACE_DEFAULT_SECONDS;
+              didMigrateTiming = true;
+            } else {
+              exerciseSettings[id].pace = roundTimingSeconds(savedPace);
+            }
+          }
         }
       });
+      localStorage.setItem(TIMING_DEFAULT_VERSION_KEY, TIMING_DEFAULT_VERSION);
+      if (didMigrateTiming) {
+        localStorage.setItem('ec_tennisElbowExercises', JSON.stringify(exerciseSettings));
+      }
     } catch (e) {
       console.warn('Could not load exercise settings', e);
     }
@@ -578,7 +651,8 @@
         beepEnabled: state.beepEnabled,
         voiceEnabled: state.voiceEnabled,
         globalDarkMode: state.globalDarkMode,
-        globalSoundMode: state.globalSoundMode
+        globalSoundMode: state.globalSoundMode,
+        timingDefaultVersion: TIMING_DEFAULT_VERSION
       },
       exercise_settings: exerciseSettings,
       routine_order: getOrderedRoutines().map((routine) => routine.id).filter(Boolean)
@@ -586,9 +660,11 @@
   }
 
   function applyProfilePayload(profile) {
-    if (!profile) return;
+    if (!profile) return false;
+    let didMigrateTiming = false;
 
     const appState = profile.app_state || {};
+    const shouldMigrateOldDefault = appState.timingDefaultVersion !== TIMING_DEFAULT_VERSION;
     if (appState.totalSets !== undefined) state.totalSets = Number(appState.totalSets) || state.totalSets;
     if (appState.totalReps !== undefined) state.totalReps = Number(appState.totalReps) || state.totalReps;
     if (appState.beepEnabled !== undefined) state.beepEnabled = Boolean(appState.beepEnabled);
@@ -599,10 +675,26 @@
     if (profile.exercise_settings && typeof profile.exercise_settings === 'object') {
       Object.keys(exerciseSettings).forEach((id) => {
         if (profile.exercise_settings[id]) {
+          const incoming = { ...profile.exercise_settings[id] };
+          const savedSetRest = parseFloat(incoming.setRest);
+          const savedPace = parseFloat(incoming.pace);
+          if (shouldMigrateOldDefault && (savedSetRest === 1 || savedSetRest === 3)) {
+            incoming.setRest = REST_DEFAULT_SECONDS;
+            didMigrateTiming = true;
+          } else if (!isNaN(savedSetRest) && savedSetRest > 0) {
+            incoming.setRest = roundTimingSeconds(savedSetRest);
+          }
+          if (shouldMigrateOldDefault && savedPace === 1) {
+            incoming.pace = PACE_DEFAULT_SECONDS;
+            didMigrateTiming = true;
+          } else if (!isNaN(savedPace) && savedPace > 0) {
+            incoming.pace = roundTimingSeconds(savedPace);
+          }
+
           exerciseSettings[id] = {
             ...exerciseSettings[id],
-            ...profile.exercise_settings[id],
-            selected: Boolean(profile.exercise_settings[id].selected)
+            ...incoming,
+            selected: Boolean(incoming.selected)
           };
         }
       });
@@ -612,6 +704,8 @@
       localStorage.setItem(ROUTINE_ORDER_STORAGE_KEY, JSON.stringify(profile.routine_order));
       loadRoutineOrder();
     }
+
+    return didMigrateTiming;
   }
 
   async function saveRemoteProfile() {
@@ -652,7 +746,8 @@
     }
 
     if (data) {
-      applyProfilePayload(data);
+      const didMigrateTiming = applyProfilePayload(data);
+      if (didMigrateTiming) await saveRemoteProfile();
     } else {
       await saveRemoteProfile();
     }
@@ -1393,7 +1488,7 @@
     if (state.isRunning && !state.isFinished) {
       dom.paceValue.textContent = currentPace.toFixed(2) + 's';
     } else {
-      const config = getCurrentExerciseConfig() || { pace: 1.0 };
+      const config = getCurrentExerciseConfig() || { pace: PACE_DEFAULT_SECONDS };
       dom.paceValue.textContent = config.pace.toFixed(2) + 's';
     }
   }
@@ -1405,6 +1500,10 @@
 
   function disableSettingsWhileRunning() {
     const disable = state.isRunning;
+    dom.btnTimerSetsDec.disabled = disable;
+    dom.btnTimerSetsInc.disabled = disable;
+    dom.btnTimerRepsDec.disabled = disable;
+    dom.btnTimerRepsInc.disabled = disable;
     dom.btnSetRestDec.disabled = disable;
     dom.btnSetRestInc.disabled = disable;
     dom.btnPaceDec.disabled = disable;
@@ -1420,6 +1519,45 @@
   }
 
   // ─── Timer logic ───
+  function clearTimerDelay() {
+    clearTimeout(state.timerId);
+    state.timerId = null;
+  }
+
+  function scheduleTimerDelay(seconds, callback, options = {}) {
+    clearTimerDelay();
+
+    const durationMs = Math.max(0, seconds * 1000);
+    const startedAt = performance.now();
+    const endsAt = startedAt + durationMs;
+    const beepAt = endsAt - BEEP_LEAD_SECONDS * 1000;
+    let cuePlayed = false;
+
+    function step() {
+      if (!state.isRunning) return;
+
+      const now = performance.now();
+      if (options.beepBeforeVoice && !cuePlayed && now >= beepAt) {
+        playBeep();
+        cuePlayed = true;
+      }
+
+      if (now >= endsAt) {
+        callback();
+        return;
+      }
+
+      state.timerId = setTimeout(step, Math.min(TIMER_TICK_MS, Math.max(0, endsAt - now)));
+    }
+
+    if (options.beepBeforeVoice && !cuePlayed && durationMs <= BEEP_LEAD_SECONDS * 1000) {
+      playBeep();
+      cuePlayed = true;
+    }
+
+    state.timerId = setTimeout(step, Math.min(TIMER_TICK_MS, durationMs));
+  }
+
   function tick() {
     if (!state.isRunning) return;
 
@@ -1466,22 +1604,21 @@
       updateRepDots();
 
       // Small delay before next set starts
-      state.timerId = setTimeout(() => {
+      scheduleTimerDelay(getCurrentSetRest(), () => {
         if (!state.isRunning) return;
         tick();
-      }, getCurrentSetRest() * 1000);
+      }, { beepBeforeVoice: true });
       return;
     }
 
-    playBeep();
     updateCounterDisplay();
     updateRepDots();
     speak(state.currentRep.toString());
 
-    state.timerId = setTimeout(() => {
+    scheduleTimerDelay(getCurrentPace(), () => {
       if (!state.isRunning) return;
       tick();
-    }, getCurrentPace() * 1000);
+    }, { beepBeforeVoice: true });
   }
 
   function startTimer() {
@@ -1499,10 +1636,10 @@
       speak(currentSetLetter.toString().toLowerCase());
 
       // Natural pacing delay before counting the first rep
-      state.timerId = setTimeout(() => {
+      scheduleTimerDelay(getCurrentSetRest(), () => {
         if (!state.isRunning) return;
         tick();
-      }, getCurrentSetRest() * 1000);
+      }, { beepBeforeVoice: true });
     } else {
       // Resuming mid-set: tick immediately
       tick();
@@ -1512,7 +1649,7 @@
   function pauseTimer() {
     state.isRunning = false;
     dom.mediaLottie.pause?.();
-    clearTimeout(state.timerId);
+    clearTimerDelay();
     updatePlayButton();
     disableSettingsWhileRunning();
   }
@@ -1602,7 +1739,7 @@
   function showCompletionOverlay() {
     const overlay = document.getElementById('completion-overlay');
     const summary = document.getElementById('done-summary');
-    const config = getCurrentExerciseConfig() || { pace: 1.0, progressiveReps: false };
+    const config = getCurrentExerciseConfig() || { pace: PACE_DEFAULT_SECONDS, progressiveReps: false };
     const startPace = config.pace;
     const endPace = config.progressiveReps && state.totalSets > 1 
       ? startPace * Math.pow(1.1, state.totalSets - 1)
@@ -1678,11 +1815,47 @@
     }
   }
 
+  function updateTimerDoseUI() {
+    const config = getCurrentExerciseConfig();
+    if (!config) return;
+    state.totalSets = config.sets;
+    state.totalReps = config.reps;
+    dom.timerSetsValue.textContent = config.sets;
+    dom.timerRepsValue.textContent = config.reps;
+  }
+
+  function updateTimerSettingsUI() {
+    updateTimerDoseUI();
+    updateSetRestUI();
+    updatePaceUI();
+    renderRepDots();
+    renderSetBar();
+    updateTimerDuration();
+  }
+
+  function adjustCurrentExerciseDose(field, direction) {
+    if (state.isRunning) return;
+    const config = getCurrentExerciseConfig();
+    if (!config) return;
+
+    const min = 1;
+    const max = 99;
+    config[field] = Math.min(max, Math.max(min, config[field] + direction));
+    saveExerciseSettings();
+    renderExerciseSettings();
+    updateTimerSettingsUI();
+  }
+
+  dom.btnTimerSetsDec.addEventListener('click', () => adjustCurrentExerciseDose('sets', -1));
+  dom.btnTimerSetsInc.addEventListener('click', () => adjustCurrentExerciseDose('sets', 1));
+  dom.btnTimerRepsDec.addEventListener('click', () => adjustCurrentExerciseDose('reps', -1));
+  dom.btnTimerRepsInc.addEventListener('click', () => adjustCurrentExerciseDose('reps', 1));
+
   dom.btnSetRestDec.addEventListener('click', () => {
     if (state.isRunning) return;
     const config = getCurrentExerciseConfig();
-    if (config && config.setRest > 0.5) {
-      config.setRest = Math.max(0.5, config.setRest - 0.25);
+    if (config && config.setRest > TIMING_MIN_SECONDS) {
+      config.setRest = adjustTimingValue(config.setRest, -1);
       saveExerciseSettings();
       updateSetRestUI();
     }
@@ -1691,8 +1864,8 @@
   dom.btnSetRestInc.addEventListener('click', () => {
     if (state.isRunning) return;
     const config = getCurrentExerciseConfig();
-    if (config && config.setRest < 5.0) {
-      config.setRest = Math.min(5.0, config.setRest + 0.25);
+    if (config && config.setRest < TIMING_MAX_SECONDS) {
+      config.setRest = adjustTimingValue(config.setRest, 1);
       saveExerciseSettings();
       updateSetRestUI();
     }
@@ -1701,8 +1874,8 @@
   dom.btnPaceDec.addEventListener('click', () => {
     if (state.isRunning) return;
     const config = getCurrentExerciseConfig();
-    if (config && config.pace > 0.5) {
-      config.pace = Math.max(0.5, config.pace - 0.25);
+    if (config && config.pace > TIMING_MIN_SECONDS) {
+      config.pace = adjustTimingValue(config.pace, -1);
       saveExerciseSettings();
       updatePaceUI();
     }
@@ -1711,8 +1884,8 @@
   dom.btnPaceInc.addEventListener('click', () => {
     if (state.isRunning) return;
     const config = getCurrentExerciseConfig();
-    if (config && config.pace < 5.0) {
-      config.pace = Math.min(5.0, config.pace + 0.25);
+    if (config && config.pace < TIMING_MAX_SECONDS) {
+      config.pace = adjustTimingValue(config.pace, 1);
       saveExerciseSettings();
       updatePaceUI();
     }
@@ -2096,6 +2269,7 @@
       state.totalReps = config.reps;
 
       // Sync stepper UI to current exercise settings
+      updateTimerDoseUI();
       updateSetRestUI();
       updatePaceUI();
 

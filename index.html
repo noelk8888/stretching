@@ -13,7 +13,7 @@
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icon.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon.png" />
-  <link rel="stylesheet" href="style.css?v=20260712-admin-logout-1" />
+  <link rel="stylesheet" href="style.css?v=20260721-rest-default-1" />
 </head>
 <body>
   <main id="landing-page" aria-labelledby="landing-title">
@@ -458,18 +458,34 @@
         </button>
       </div>
 
+      <!-- SETS / REPS Settings -->
+      <div id="timer-counts-panel">
+        <div class="timer-setting-row timer-setting-row--compact">
+          <span class="timer-setting-label">SETS</span>
+          <button id="btn-timer-sets-dec" class="timer-step-btn" type="button">−</button>
+          <strong id="timer-sets-value" class="timer-setting-value">2</strong>
+          <button id="btn-timer-sets-inc" class="timer-step-btn" type="button">+</button>
+        </div>
+        <div class="timer-setting-row timer-setting-row--compact">
+          <span class="timer-setting-label">REPS</span>
+          <button id="btn-timer-reps-dec" class="timer-step-btn" type="button">−</button>
+          <strong id="timer-reps-value" class="timer-setting-value">8</strong>
+          <button id="btn-timer-reps-inc" class="timer-step-btn" type="button">+</button>
+        </div>
+      </div>
+
       <!-- REST / PACE Settings -->
       <div id="settings-panel">
         <div class="timer-setting-row">
           <span class="timer-setting-label">REST</span>
           <button id="btn-set-rest-dec" class="timer-step-btn" type="button">−</button>
-          <strong id="set-rest-value" class="timer-setting-value">1.00s</strong>
+          <strong id="set-rest-value" class="timer-setting-value">1.50s</strong>
           <button id="btn-set-rest-inc" class="timer-step-btn" type="button">+</button>
         </div>
         <div class="timer-setting-row">
           <span class="timer-setting-label">PACE</span>
           <button id="btn-pace-dec" class="timer-step-btn" type="button">−</button>
-          <strong id="pace-value" class="timer-setting-value">1.00s</strong>
+          <strong id="pace-value" class="timer-setting-value">3.00s</strong>
           <button id="btn-pace-inc" class="timer-step-btn" type="button">+</button>
         </div>
       </div>
@@ -561,6 +577,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js?v=20260711-1"></script>
   <script type="module" src="assets/lottie/dotlottie-player.mjs"></script>
-  <script src="app.js?v=20260712-admin-logout-1"></script>
+  <script src="app.js?v=20260721-rest-default-1"></script>
 </body>
 </html>
