@@ -43,7 +43,7 @@
   const TIMING_MIN_SECONDS = 0.25;
   const TIMING_MAX_SECONDS = 60;
   const TIMER_TICK_MS = 250;
-  const BEEP_LEAD_SECONDS = 0.5;
+  const BEEP_LEAD_SECONDS = 0.6;
   let currentUser = null;
   let isAdmin = false;
   let adminRoutines = [];
@@ -86,14 +86,14 @@
 
   function getTimingStep(value, direction) {
     if (direction < 0) {
-      if (value <= 3) return 0.5;
-      if (value <= 6) return 1;
-      if (value <= 10) return 2;
+      if (value <= 6) return 0.5;
+      if (value <= 10) return 1;
+      if (value <= 20) return 2;
       return 5;
     }
-    if (value < 3) return 0.5;
-    if (value < 6) return 1;
-    if (value < 10) return 2;
+    if (value < 6) return 0.5;
+    if (value < 10) return 1;
+    if (value < 20) return 2;
     return 5;
   }
 
@@ -253,9 +253,11 @@
     btnTimerRepsDec: $('btn-timer-reps-dec'),
     btnTimerRepsInc: $('btn-timer-reps-inc'),
     timerRepsValue: $('timer-reps-value'),
+    btnResetRestDefault: $('btn-reset-rest-default'),
     btnSetRestDec: $('btn-set-rest-dec'),
     btnSetRestInc: $('btn-set-rest-inc'),
     setRestValue: $('set-rest-value'),
+    btnResetPaceDefault: $('btn-reset-pace-default'),
     btnPaceDec: $('btn-pace-dec'),
     btnPaceInc: $('btn-pace-inc'),
     paceValue: $('pace-value'),
@@ -860,6 +862,14 @@
     document.getElementById('admin-modal')?.setAttribute('aria-hidden', 'true');
   }
 
+  function bringMediaToFront() {
+    dom.app.classList.add('media-is-front');
+  }
+
+  function sendMediaToBack() {
+    dom.app.classList.remove('media-is-front');
+  }
+
   async function signOutAdmin() {
     if (!supabaseClient) return;
 
@@ -1289,6 +1299,7 @@
   }
 
   function returnToMainMenu() {
+    sendMediaToBack();
     resetAll();
     dom.app.setAttribute('aria-hidden', 'true');
     closeExercisePage();
@@ -1297,6 +1308,7 @@
 
   // Goes back to the exercise card list (routine page) without going all the way to the menu
   function returnToExercisePage() {
+    sendMediaToBack();
     pauseTimer();
     releaseWakeLock();
     dom.app.setAttribute('aria-hidden', 'true');
@@ -1504,8 +1516,10 @@
     dom.btnTimerSetsInc.disabled = disable;
     dom.btnTimerRepsDec.disabled = disable;
     dom.btnTimerRepsInc.disabled = disable;
+    dom.btnResetRestDefault.disabled = disable;
     dom.btnSetRestDec.disabled = disable;
     dom.btnSetRestInc.disabled = disable;
+    dom.btnResetPaceDefault.disabled = disable;
     dom.btnPaceDec.disabled = disable;
     dom.btnPaceInc.disabled = disable;
   }
@@ -1536,6 +1550,7 @@
     function step() {
       if (!state.isRunning) return;
 
+      // Cue the user just before the next spoken rep count.
       const now = performance.now();
       if (options.beepBeforeVoice && !cuePlayed && now >= beepAt) {
         playBeep();
@@ -1655,6 +1670,7 @@
   }
 
   function resetAll() {
+    sendMediaToBack();
     pauseTimer();
     state.currentSet = 0;
     state.currentRep = 0;
@@ -1850,6 +1866,26 @@
   dom.btnTimerSetsInc.addEventListener('click', () => adjustCurrentExerciseDose('sets', 1));
   dom.btnTimerRepsDec.addEventListener('click', () => adjustCurrentExerciseDose('reps', -1));
   dom.btnTimerRepsInc.addEventListener('click', () => adjustCurrentExerciseDose('reps', 1));
+
+  dom.btnResetRestDefault.addEventListener('click', () => {
+    if (state.isRunning) return;
+    const config = getCurrentExerciseConfig();
+    if (!config) return;
+    config.setRest = REST_DEFAULT_SECONDS;
+    saveExerciseSettings();
+    updateSetRestUI();
+    updateTimerDuration();
+  });
+
+  dom.btnResetPaceDefault.addEventListener('click', () => {
+    if (state.isRunning) return;
+    const config = getCurrentExerciseConfig();
+    if (!config) return;
+    config.pace = PACE_DEFAULT_SECONDS;
+    saveExerciseSettings();
+    updatePaceUI();
+    updateTimerDuration();
+  });
 
   dom.btnSetRestDec.addEventListener('click', () => {
     if (state.isRunning) return;
@@ -2454,7 +2490,15 @@
 
     // Media
     dom.mediaInput.addEventListener('change', handleMediaUpload);
+    dom.mediaDisplay.addEventListener('click', () => {
+      if (!dom.app.classList.contains('media-is-front')) bringMediaToFront();
+    });
     dom.mediaImg.addEventListener('click', () => {
+      if (!dom.app.classList.contains('media-is-front')) {
+        bringMediaToFront();
+        return;
+      }
+
       const exerciseId = state.selectedExercises[state.currentExerciseIndex];
       const details = exerciseDetails[exerciseId];
       if (details && details.images && details.images.length > 1) {
@@ -2474,6 +2518,7 @@
     dom.btnPlay.addEventListener('click', () => {
       ensureAudioCtx(); // Unlock audio on user gesture
       ensureSpeech();   // Unlock speech synthesis on user gesture
+      sendMediaToBack();
       if (state.isRunning) {
         pauseTimer();
       } else {

@@ -824,6 +824,27 @@ body.light-mode .landing-btn-pill.is-active {
   position: relative;
   overflow: hidden;
   background: var(--bg-surface);
+  transition: flex-basis 220ms ease, border-radius 220ms ease, box-shadow 220ms ease;
+}
+
+#app.media-is-front #media-section {
+  flex: 1 1 auto;
+  position: relative;
+  z-index: 1;
+  margin: 16px 16px 0;
+  border: 12px solid var(--bg-primary);
+  background: var(--bg-primary);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.48);
+}
+
+#app.media-is-front #media-display img,
+#app.media-is-front #media-display video,
+#app.media-is-front #media-lottie {
+  object-fit: contain;
+}
+
+#app.media-is-front #timer-exercise-name {
+  display: none;
 }
 
 #media-placeholder {
@@ -952,6 +973,22 @@ body.light-mode .landing-btn-pill.is-active {
   gap: 12px;
   overflow-y: auto;
   background: var(--bg-primary);
+}
+
+#app.media-is-front #counter-section {
+  flex: 0 0 clamp(132px, 20dvh, 172px);
+  min-height: clamp(132px, 20dvh, 172px);
+  justify-content: center;
+  padding: 14px 18px max(18px, env(safe-area-inset-bottom));
+  overflow: hidden;
+}
+
+#app.media-is-front #counter-section > :not(#transport-controls) {
+  display: none;
+}
+
+#app.media-is-front #transport-controls {
+  padding: 0;
 }
 
 /* ---------- Rep Dots ---------- */
@@ -1161,6 +1198,24 @@ body.light-mode .landing-btn-pill.is-active {
   font-weight: 900;
   letter-spacing: 0.08em;
   color: var(--text-secondary);
+}
+
+.timer-setting-label-btn {
+  height: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.timer-setting-label-btn:hover,
+.timer-setting-label-btn:focus-visible {
+  color: var(--text-primary);
+}
+
+.timer-setting-label-btn:disabled {
+  cursor: default;
+  opacity: 0.55;
 }
 
 .timer-setting-value {
