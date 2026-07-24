@@ -153,7 +153,7 @@
       title: 'THREAD THE NEEDLE',
       description: 'From all fours, slide your right arm under your left arm, dropping your right shoulder and the right side of your head gently to the floor. Keep your hips high and your left hand planted for support. Hold, then switch sides.',
       alert: 'Do not force the twist. Keep the weight gently on your shoulder, not your neck.',
-      images: ['assets/images/cat_cow_routine_03_thread_needle.png']
+      images: ['assets/images/cat_cow_routine_03_thread_needle_inhale_exhale.png']
     },
     'bird-dog': {
       title: 'BIRD-DOG',
@@ -2451,9 +2451,141 @@
     const btnNext = document.getElementById('btn-carousel-next');
     let currentCarouselIndex = 0;
     let currentCarouselImages = [];
+    let carouselZoom = null;
+
+    function createPinchZoomController(container) {
+      const state = {
+        scale: 1,
+        minScale: 1,
+        maxScale: 4,
+        x: 0,
+        y: 0,
+        pointers: new Map(),
+        startDistance: 0,
+        startScale: 1,
+        lastPan: null,
+        lastTap: 0
+      };
+
+      function activeImage() {
+        return container.querySelector('.exercise-carousel-slide.is-active img');
+      }
+
+      function clampPan() {
+        const img = activeImage();
+        if (!img || state.scale <= 1) {
+          state.x = 0;
+          state.y = 0;
+          return;
+        }
+        const rect = container.getBoundingClientRect();
+        const maxX = rect.width * (state.scale - 1) / 2;
+        const maxY = rect.height * (state.scale - 1) / 2;
+        state.x = Math.max(-maxX, Math.min(maxX, state.x));
+        state.y = Math.max(-maxY, Math.min(maxY, state.y));
+      }
+
+      function render() {
+        clampPan();
+        const img = activeImage();
+        if (!img) return;
+        img.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+        container.classList.toggle('is-zoomed', state.scale > 1.01);
+      }
+
+      function reset() {
+        state.scale = 1;
+        state.x = 0;
+        state.y = 0;
+        render();
+      }
+
+      function distance() {
+        const points = Array.from(state.pointers.values());
+        if (points.length < 2) return 0;
+        return Math.hypot(points[0].clientX - points[1].clientX, points[0].clientY - points[1].clientY);
+      }
+
+      function onPointerDown(event) {
+        const img = activeImage();
+        if (!img || !event.target.closest('.exercise-carousel-slide')) return;
+        state.pointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY });
+        container.setPointerCapture?.(event.pointerId);
+
+        const now = Date.now();
+        if (event.pointerType === 'touch' && now - state.lastTap < 280 && state.pointers.size === 1) {
+          state.scale = state.scale > 1 ? 1 : 2.2;
+          state.x = 0;
+          state.y = 0;
+          render();
+          event.preventDefault();
+        }
+        state.lastTap = now;
+
+        if (state.pointers.size === 2) {
+          state.startDistance = distance();
+          state.startScale = state.scale;
+          state.lastPan = null;
+        } else if (state.pointers.size === 1) {
+          state.lastPan = { clientX: event.clientX, clientY: event.clientY };
+        }
+      }
+
+      function onPointerMove(event) {
+        if (!state.pointers.has(event.pointerId)) return;
+        state.pointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY });
+
+        if (state.pointers.size >= 2) {
+          const nextDistance = distance();
+          if (state.startDistance > 0) {
+            state.scale = Math.max(state.minScale, Math.min(state.maxScale, state.startScale * (nextDistance / state.startDistance)));
+            render();
+          }
+          event.preventDefault();
+          return;
+        }
+
+        if (state.scale > 1 && state.lastPan) {
+          state.x += event.clientX - state.lastPan.clientX;
+          state.y += event.clientY - state.lastPan.clientY;
+          state.lastPan = { clientX: event.clientX, clientY: event.clientY };
+          render();
+          event.preventDefault();
+        }
+      }
+
+      function onPointerUp(event) {
+        state.pointers.delete(event.pointerId);
+        if (state.scale <= 1.01) reset();
+        const points = Array.from(state.pointers.values());
+        state.lastPan = points.length === 1 ? points[0] : null;
+        state.startDistance = 0;
+      }
+
+      function onWheel(event) {
+        if (!event.ctrlKey && !event.metaKey) return;
+        event.preventDefault();
+        const delta = event.deltaY < 0 ? 0.18 : -0.18;
+        state.scale = Math.max(state.minScale, Math.min(state.maxScale, state.scale + delta));
+        if (state.scale <= 1.01) reset();
+        else render();
+      }
+
+      container.addEventListener('pointerdown', onPointerDown);
+      container.addEventListener('pointermove', onPointerMove);
+      container.addEventListener('pointerup', onPointerUp);
+      container.addEventListener('pointercancel', onPointerUp);
+      container.addEventListener('wheel', onWheel, { passive: false });
+
+      return { reset, render };
+    }
 
     function updateCarousel() {
       track.style.transform = `translateX(-${currentCarouselIndex * 100}%)`;
+      Array.from(track.children).forEach((slide, i) => {
+        slide.classList.toggle('is-active', i === currentCarouselIndex);
+      });
+      carouselZoom?.reset();
       Array.from(dotsContainer.children).forEach((dot, i) => {
         dot.style.background = i === currentCarouselIndex ? 'var(--accent)' : 'rgba(255,255,255,0.3)';
       });
@@ -2503,16 +2635,19 @@
       currentCarouselIndex = 0;
       track.innerHTML = '';
       dotsContainer.innerHTML = '';
+      if (!carouselZoom) {
+        carouselZoom = createPinchZoomController(document.getElementById('exercise-carousel-container'));
+      }
 
       if (currentCarouselImages.length > 0) {
         currentCarouselImages.forEach((src, i) => {
           const slide = document.createElement('div');
-          slide.style.minWidth = '100%';
-          slide.style.height = '100%';
-          slide.style.backgroundImage = `url('${src}')`;
-          slide.style.backgroundSize = 'contain';
-          slide.style.backgroundRepeat = 'no-repeat';
-          slide.style.backgroundPosition = 'center';
+          slide.className = 'exercise-carousel-slide';
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = `${details.title} demonstration ${i + 1}`;
+          img.draggable = false;
+          slide.appendChild(img);
           track.appendChild(slide);
 
           const dot = document.createElement('div');

@@ -160,7 +160,7 @@ insert into public.exercises (
     'Slide one arm under your body, resting your shoulder and head on the floor.',
     'From all fours, slide your right arm under your left arm, dropping your right shoulder and the right side of your head gently to the floor. Keep your hips high and your left hand planted for support. Hold, then switch sides.',
     'Do not force the twist. Keep the weight gently on your shoulder, not your neck.',
-    'assets/images/cat_cow_routine_03_thread_needle.png',
+    'assets/images/cat_cow_routine_03_thread_needle_inhale_exhale.png',
     2,
     5,
     30,
@@ -263,6 +263,6 @@ insert into public.exercise_images (exercise_id, image_url, sort_order) values
   ((select id from public.exercises where slug = 'grip-finger-opening'), 'assets/images/tennis_elbow_08_grip_finger_opening.png', 10),
   ((select id from public.exercises where slug = 'cat-cow'), 'assets/images/cat_cow_routine_01_cat_cow.png', 10),
   ((select id from public.exercises where slug = 'childs-pose'), 'assets/images/cat_cow_routine_02_childs_pose.png', 10),
-  ((select id from public.exercises where slug = 'thread-needle'), 'assets/images/cat_cow_routine_03_thread_needle.png', 10),
+  ((select id from public.exercises where slug = 'thread-needle'), 'assets/images/cat_cow_routine_03_thread_needle_inhale_exhale.png', 10),
   ((select id from public.exercises where slug = 'bird-dog'), 'assets/images/cat_cow_routine_04_bird_dog.png', 10),
   ((select id from public.exercises where slug = 'sphinx-pose'), 'assets/images/cat_cow_routine_05_sphinx_pose.png', 10);

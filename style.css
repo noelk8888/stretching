@@ -1761,6 +1761,45 @@ input:checked + .slider-switch::before {
   gap: 12px;
 }
 
+#exercise-carousel-container {
+  touch-action: none;
+  user-select: none;
+}
+
+#exercise-carousel-track {
+  will-change: transform;
+}
+
+.exercise-carousel-slide {
+  min-width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.exercise-carousel-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform-origin: center center;
+  transition: transform 120ms ease;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+#exercise-carousel-container.is-zoomed #exercise-carousel-track {
+  transition: none !important;
+}
+
+#exercise-carousel-container.is-zoomed #btn-carousel-prev,
+#exercise-carousel-container.is-zoomed #btn-carousel-next,
+#exercise-carousel-container.is-zoomed #exercise-carousel-dots {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .login-input {
   width: 100%;
   height: 48px;
