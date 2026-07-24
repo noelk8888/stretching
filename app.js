@@ -44,10 +44,12 @@
   const TIMING_MAX_SECONDS = 60;
   const TIMER_TICK_MS = 250;
   const BEEP_LEAD_SECONDS = 0.6;
+  const ADMIN_MEDIA_BUCKET = 'exercise-media';
   let currentUser = null;
   let isAdmin = false;
   let adminRoutines = [];
   let adminExercises = [];
+  let adminExerciseImages = [];
   let remoteSaveTimerId = null;
   let pendingAdminOpen = false;
   window.EXERCISE_CLOCK_DATA_SOURCE = 'fallback';
@@ -139,55 +141,79 @@
       title: 'CAT & COW',
       description: 'Start on your hands and knees. Inhale and let your belly drop towards the floor, lifting your chest and tailbone towards the ceiling (Cow Pose). Exhale and arch your back towards the ceiling, tucking your chin to your chest (Cat Pose). Move slowly and breathe deeply with each movement.',
       alert: 'If you experience wrist pain, you can perform this stretch resting on your forearms instead of your hands.',
-      images: ['assets/images/cat_cow_cow_pose.jpg', 'assets/images/cat_cow_cat_pose.jpg']
+      images: ['assets/images/cat_cow_routine_01_cat_cow.png']
     },
     'childs-pose': {
       title: "CHILD'S POSE",
       description: 'Kneel on the floor with your toes together and your knees hip-width apart. Slowly sit back on your heels, walk your hands forward, and gently rest your forehead on the floor. Allow your spine to lengthen and your shoulders to relax.',
       alert: 'If you have knee pain, place a rolled-up towel behind your knees or skip this stretch if it causes sharp discomfort.',
-      images: ['assets/images/childs_pose_new_1.png', 'assets/images/childs_pose_new_2.png']
+      images: ['assets/images/cat_cow_routine_02_childs_pose.png']
     },
     'thread-needle': {
       title: 'THREAD THE NEEDLE',
       description: 'From all fours, slide your right arm under your left arm, dropping your right shoulder and the right side of your head gently to the floor. Keep your hips high and your left hand planted for support. Hold, then switch sides.',
       alert: 'Do not force the twist. Keep the weight gently on your shoulder, not your neck.',
-      images: ['assets/images/thread_needle_pose.jpg']
+      images: ['assets/images/cat_cow_routine_03_thread_needle.png']
     },
     'bird-dog': {
       title: 'BIRD-DOG',
       description: 'From all fours, slowly extend your right arm forward and your left leg backward simultaneously. Keep your back completely flat and your core engaged. Hold for a moment, return to start, and switch sides.',
       alert: 'If you feel unsteady, extend *only* your arm or *only* your leg until you build more balance.',
-      images: ['assets/images/bird_dog_studio.png']
+      images: ['assets/images/cat_cow_routine_04_bird_dog.png']
     },
     'sphinx-pose': {
       title: 'SPHINX POSE',
       description: 'Lie flat on your stomach. Prop yourself up on your forearms, keeping your elbows directly under your shoulders. Press your forearms into the floor and gently lift your chest to create a mild lower back arch. Relax your shoulders away from your ears.',
       alert: 'If you feel any pinching in your lower spine, lower your chest slightly or skip the movement.',
-      images: ['assets/images/sphinx_pose_prone.jpg', 'assets/images/sphinx_pose_lift.jpg']
+      images: ['assets/images/cat_cow_routine_05_sphinx_pose.png']
     },
     'extensor-stretch': {
       title: 'WRIST EXTENSOR STRETCH',
-      description: 'Extend your arm in front of you with your palm facing down. Use your other hand to gently bend your wrist downward until you feel a stretch along the top of your forearm. Hold the stretch.',
+      description: 'Extend your arm in front of you with your palm facing down. With your other hand, gently bend your wrist and fingers downward until you feel a stretch along the top of your forearm. Hold without forcing.',
       alert: 'Keep your elbow straight but do not lock it forcefully.',
-      images: ['assets/images/extensor_stretch_1.png', 'assets/images/extensor_stretch_2.png']
+      images: ['assets/images/tennis_elbow_01_extensor_stretch.png']
+    },
+    'flexor-stretch': {
+      title: 'WRIST FLEXOR STRETCH',
+      description: 'Extend your arm in front of you with your palm facing up. Use your other hand to gently pull your fingers and wrist back until you feel a stretch along the underside of your forearm.',
+      alert: 'Keep the stretch gentle. Stop if you feel sharp pain, tingling, or numbness.',
+      images: ['assets/images/tennis_elbow_02_flexor_stretch.png']
+    },
+    'eccentric-wrist-extension': {
+      title: 'ECCENTRIC WRIST EXTENSION',
+      description: 'Support your forearm on a table with your palm facing down and a light weight in your hand. Use your other hand to help lift the wrist, then slowly lower the weight using the affected side.',
+      alert: 'Use very light resistance. The lowering phase should be slow and controlled, not painful.',
+      images: ['assets/images/tennis_elbow_03_eccentric_wrist_extension.png']
     },
     'wrist-extension': {
       title: 'WRIST EXTENSION',
       description: 'Hold a light weight (or just use the weight of your hand). Support your forearm on a table or your thigh with your hand hanging off the edge, palm facing down. Slowly lift your wrist up, then slowly lower it back down.',
       alert: 'Perform this movement slowly. If you feel sharp pain, stop immediately.',
-      images: ['assets/images/wrist_extension_1.png', 'assets/images/wrist_extension_2.png']
+      images: ['assets/images/tennis_elbow_04_wrist_extension.png']
     },
-    'forearm-rotation': {
-      title: 'FOREARM ROTATION',
-      description: 'Bend your elbow to 90 degrees, keeping it tucked close to your side. Slowly turn your palm to face up, hold for a moment, then slowly turn your palm to face down.',
-      alert: 'Keep your upper arm completely still; all the movement should come from your forearm.',
-      images: ['assets/images/forearm_rotation_1.png', 'assets/images/forearm_rotation_2.png']
+    'wrist-flexion': {
+      title: 'WRIST FLEXION',
+      description: 'Support your forearm with your palm facing up and your hand over the edge. Holding a very light weight, curl your wrist upward, pause briefly, then lower with control.',
+      alert: 'Keep your forearm supported and avoid gripping the weight too tightly.',
+      images: ['assets/images/tennis_elbow_05_wrist_flexion.png']
     },
-    'grip-squeeze': {
-      title: 'GRIP SQUEEZE',
-      description: 'Hold a soft stress ball or a rolled-up towel in your hand. Squeeze it firmly, hold for a few seconds, then release with control.',
-      alert: 'Do not squeeze so hard that it causes pain in your elbow.',
-      images: ['assets/images/grip_squeeze_1.png', 'assets/images/grip_squeeze_2.png']
+    'forearm-supination': {
+      title: 'FOREARM SUPINATION',
+      description: 'Bend your elbow to 90 degrees and keep it close to your side. Holding a light hammer or small weight, slowly rotate your forearm so your palm turns upward.',
+      alert: 'Keep your upper arm still. Use a small range if rotation feels sensitive.',
+      images: ['assets/images/tennis_elbow_06_supination.png']
+    },
+    'forearm-pronation': {
+      title: 'FOREARM PRONATION',
+      description: 'Bend your elbow to 90 degrees and keep it close to your side. Holding a light hammer or small weight, slowly rotate your forearm so your palm turns downward.',
+      alert: 'Move from the forearm, not the shoulder. Stop if symptoms increase.',
+      images: ['assets/images/tennis_elbow_07_pronation.png']
+    },
+    'grip-finger-opening': {
+      title: 'GRIP & FINGER OPENING',
+      description: 'Squeeze a soft ball or rolled towel, then open your fingers gently against an elastic band. Move slowly and keep the effort comfortable.',
+      alert: 'Do not squeeze or open against so much resistance that it causes elbow pain.',
+      images: ['assets/images/tennis_elbow_08_grip_finger_opening.png']
     },
     'ward-off': {
       title: 'WARD OFF',
@@ -377,9 +403,13 @@
   let exerciseDefaults = {
     // Tennis Elbow
     'extensor-stretch': exerciseDefault(2, 8),
+    'flexor-stretch': exerciseDefault(2, 8),
+    'eccentric-wrist-extension': exerciseDefault(3, 10),
     'wrist-extension': exerciseDefault(3, 10),
-    'forearm-rotation': exerciseDefault(2, 10),
-    'grip-squeeze': exerciseDefault(3, 10),
+    'wrist-flexion': exerciseDefault(3, 10),
+    'forearm-supination': exerciseDefault(3, 10),
+    'forearm-pronation': exerciseDefault(3, 10),
+    'grip-finger-opening': exerciseDefault(3, 10),
     // Cat & Cow
     'cat-cow': exerciseDefault(2, 8),
     'childs-pose': exerciseDefault(2, 6),
@@ -393,6 +423,43 @@
   };
 
   let exerciseSettings = JSON.parse(JSON.stringify(exerciseDefaults));
+
+  const fallbackRoutines = [
+    {
+      id: 'tennis-elbow',
+      name: 'TENNIS ELBOW',
+      exercises: [
+        { id: 'extensor-stretch', shortDescription: 'Gently lower the wrist to stretch the top of the forearm.' },
+        { id: 'flexor-stretch', shortDescription: 'Gently pull the wrist back to stretch the underside of the forearm.' },
+        { id: 'eccentric-wrist-extension', shortDescription: 'Help the wrist lift, then slowly lower a light weight.' },
+        { id: 'wrist-extension', shortDescription: 'Raise the wrist, then lower it slowly with the forearm supported.' },
+        { id: 'wrist-flexion', shortDescription: 'Curl the wrist upward with the palm facing up and forearm supported.' },
+        { id: 'forearm-supination', shortDescription: 'Rotate the palm upward while keeping the elbow bent and tucked.' },
+        { id: 'forearm-pronation', shortDescription: 'Rotate the palm downward while keeping the elbow bent and tucked.' },
+        { id: 'grip-finger-opening', shortDescription: 'Squeeze a soft ball, then open the fingers against a light band.' }
+      ]
+    },
+    {
+      id: 'cat-cow',
+      name: 'CAT & COW',
+      exercises: [
+        { id: 'cat-cow', shortDescription: 'Gently arch your back up like a cat, then let your stomach drop down like a cow.' },
+        { id: 'childs-pose', shortDescription: 'Sit back on your heels, walk your hands forward, resting your forehead on the floor.' },
+        { id: 'thread-needle', shortDescription: 'Slide one arm under your body, resting your shoulder and head on the floor.' },
+        { id: 'bird-dog', shortDescription: 'Extend one arm forward and opposite leg backward. Keep back flat.' },
+        { id: 'sphinx-pose', shortDescription: 'Lie flat, prop yourself up on forearms, lifting chest to create a mild lower back arch.' }
+      ]
+    },
+    {
+      id: 'tai-chi',
+      name: 'TAI-CHI',
+      exercises: [
+        { id: 'ward-off', shortDescription: 'Shift weight to one leg, raise arms in a rounded arc as if embracing a ball.' },
+        { id: 'cloud-hands', shortDescription: 'Shift side to side sweeping hands in slow overlapping circles at chest height.' },
+        { id: 'golden-rooster', shortDescription: 'Stand on one leg, lift the opposite knee and arm slowly to build balance.' }
+      ]
+    }
+  ];
 
   function getVisibleExerciseIds() {
     return Array.from(document.querySelectorAll('.exercise-card'))
@@ -422,8 +489,9 @@
     card.style.display = 'none';
 
     const thumbnail = sanitizeUrl(exercise.thumbnail);
+    const isTutorialCardAsset = /(?:tennis_elbow|cat_cow_routine)_/.test(thumbnail);
     const previewStyle = thumbnail
-      ? `background-image: url('${thumbnail}'); background-size: cover; background-position: center;`
+      ? `background-image: url('${thumbnail}'); background-size: ${isTutorialCardAsset ? 'contain' : 'cover'}; background-repeat: no-repeat; background-position: center;${isTutorialCardAsset ? ' background-color: #fff;' : ''}`
       : 'background: var(--bg-elevated);';
 
     card.innerHTML = `
@@ -458,6 +526,29 @@
     card.querySelector('[data-value="sets"]').textContent = exercise.sets;
     card.querySelector('[data-value="reps"]').textContent = exercise.reps;
     return card;
+  }
+
+  function renderFallbackContent() {
+    const exerciseOptions = document.querySelector('.exercise-options');
+    if (!exerciseOptions) return;
+
+    exerciseOptions.innerHTML = '';
+    fallbackRoutines.forEach((routine) => {
+      routine.exercises.forEach((item) => {
+        const details = exerciseDetails[item.id];
+        const defaults = exerciseDefaults[item.id];
+        if (!details || !defaults) return;
+
+        exerciseOptions.appendChild(createExerciseCard(routine, {
+          id: item.id,
+          title: details.title,
+          shortDescription: item.shortDescription,
+          thumbnail: details.images?.[0] || '',
+          sets: defaults.sets,
+          reps: defaults.reps
+        }));
+      });
+    });
   }
 
   function applyRemoteContent(routines) {
@@ -563,6 +654,10 @@
       if (!routine) return;
 
       const imageList = imagesByExerciseId.get(exercise.id) || [];
+      const allImages = [...new Set([
+        exercise.thumbnail_url,
+        ...imageList
+      ].filter(Boolean))];
       routine.exercises.push({
         id: exercise.slug,
         title: exercise.title,
@@ -570,14 +665,14 @@
         description: exercise.long_description || exercise.short_description || '',
         alert: exercise.safety_alert || '',
         thumbnail: exercise.thumbnail_url || imageList[0] || '',
-        images: imageList,
+        images: allImages,
         lottieUrl: exercise.lottie_url || '',
         sets: Number(exercise.default_sets) || 1,
         reps: Number(exercise.default_reps) || 1,
         progressiveSets: Boolean(exercise.progressive_sets),
         progressiveReps: Boolean(exercise.progressive_reps),
-        setRest: REST_DEFAULT_SECONDS,
-        pace: PACE_DEFAULT_SECONDS
+        setRest: roundTimingSeconds(exercise.set_rest_seconds || REST_DEFAULT_SECONDS),
+        pace: roundTimingSeconds(exercise.pace_seconds || PACE_DEFAULT_SECONDS)
       });
     });
 
@@ -839,6 +934,9 @@
         </section>
         <section class="admin-section">
           <h3>Routine Exercises</h3>
+          <div class="admin-actions-row admin-actions-row--section">
+            <button id="btn-admin-add-exercise" class="admin-save-btn" type="button">Add Exercise</button>
+          </div>
           <label class="admin-field">
             <span>Show routine</span>
             <select id="admin-routine-filter"></select>
@@ -853,9 +951,11 @@
     document.getElementById('btn-close-admin').addEventListener('click', closeAdminEditor);
     document.getElementById('btn-admin-refresh').addEventListener('click', openAdminEditor);
     document.getElementById('btn-admin-logout').addEventListener('click', signOutAdmin);
+    document.getElementById('btn-admin-add-exercise').addEventListener('click', addAdminExercise);
     document.getElementById('admin-routine-filter').addEventListener('change', renderAdminExercises);
     document.getElementById('admin-modal').addEventListener('submit', handleAdminSubmit);
     document.getElementById('admin-modal').addEventListener('click', handleAdminClick);
+    document.getElementById('admin-modal').addEventListener('change', handleAdminChange);
   }
 
   function closeAdminEditor() {
@@ -905,22 +1005,28 @@
   async function loadAdminData() {
     if (!supabaseClient || !isAdmin) return;
 
-    const [routinesResult, exercisesResult] = await Promise.all([
+    const [routinesResult, exercisesResult, imagesResult] = await Promise.all([
       supabaseClient
         .from('routines')
         .select('id, slug, title, sort_order, is_active')
         .order('sort_order', { ascending: true }),
       supabaseClient
         .from('exercises')
-        .select('id, routine_id, slug, title, short_description, long_description, safety_alert, thumbnail_url, default_sets, default_reps, sort_order, is_active')
+        .select('id, routine_id, slug, title, short_description, long_description, safety_alert, thumbnail_url, default_sets, default_reps, progressive_sets, progressive_reps, set_rest_seconds, pace_seconds, lottie_url, sort_order, is_active')
+        .order('sort_order', { ascending: true }),
+      supabaseClient
+        .from('exercise_images')
+        .select('id, exercise_id, image_url, sort_order')
         .order('sort_order', { ascending: true })
     ]);
 
     if (routinesResult.error) throw routinesResult.error;
     if (exercisesResult.error) throw exercisesResult.error;
+    if (imagesResult.error) throw imagesResult.error;
 
     adminRoutines = routinesResult.data || [];
     adminExercises = exercisesResult.data || [];
+    adminExerciseImages = imagesResult.data || [];
   }
 
   function renderAdminEditor() {
@@ -992,6 +1098,18 @@
     select.value = adminRoutines.some((routine) => routine.id === previous) ? previous : 'all';
   }
 
+  function getAdminExerciseImageUrls(exercise) {
+    const urls = adminExerciseImages
+      .filter((image) => image.exercise_id === exercise.id)
+      .sort((a, b) => Number(a.sort_order) - Number(b.sort_order))
+      .map((image) => image.image_url)
+      .filter(Boolean);
+    if (exercise.thumbnail_url && !urls.includes(exercise.thumbnail_url)) {
+      urls.unshift(exercise.thumbnail_url);
+    }
+    return urls;
+  }
+
   function renderAdminExercises() {
     const list = document.getElementById('admin-exercises-list');
     const filter = document.getElementById('admin-routine-filter')?.value || 'all';
@@ -1005,63 +1123,98 @@
 
     filteredExercises.forEach((exercise) => {
       const routine = routineById.get(exercise.routine_id);
+      const imageUrls = getAdminExerciseImageUrls(exercise);
+      const thumbnail = exercise.thumbnail_url || imageUrls[0] || '';
       const card = document.createElement('form');
-      card.className = `admin-edit-card${exercise.is_active ? '' : ' is-inactive'}`;
+      card.className = `admin-edit-card admin-exercise-form${exercise.is_active ? '' : ' is-inactive'}`;
       card.dataset.kind = 'exercise';
       card.dataset.id = exercise.id;
       card.innerHTML = `
-        <div class="admin-card-title">
-          <strong></strong>
-          <span></span>
+        <div class="admin-exercise-card">
+          <button class="admin-image-upload" type="button" data-action="upload-image" aria-label="Upload exercise image"></button>
+          <input class="admin-image-input" name="image_file" type="file" accept="image/*" />
+          <div class="admin-exercise-copy">
+            <input class="admin-card-title-input" name="title" type="text" required aria-label="Exercise title" />
+            <textarea class="admin-card-short-input" name="short_description" rows="2" aria-label="Short card description"></textarea>
+            <div class="admin-card-meta">
+              <span></span>
+              <label class="admin-check-row admin-check-row--compact">
+                <input name="is_active" type="checkbox" />
+                <span>Visible</span>
+              </label>
+            </div>
+            <div class="exercise-dosage admin-dosage">
+              <div class="exercise-dose admin-dose">
+                <span>SETS</span>
+                <input name="default_sets" type="number" min="1" step="1" />
+              </div>
+              <div class="exercise-dose admin-dose">
+                <span>REPS</span>
+                <input name="default_reps" type="number" min="1" step="1" />
+              </div>
+            </div>
+          </div>
         </div>
-        <label class="admin-field">
-          <span>Exercise title</span>
-          <input name="title" type="text" required />
-        </label>
-        <div class="admin-grid">
+        <details class="admin-detail-drawer">
+          <summary>More settings</summary>
+          <div class="admin-grid">
+            <label class="admin-field">
+              <span>Routine</span>
+              <select name="routine_id"></select>
+            </label>
+            <label class="admin-field">
+              <span>Display order</span>
+              <input name="sort_order" type="number" step="1" />
+              <small>Lower numbers appear first.</small>
+            </label>
+          </div>
           <label class="admin-field">
-            <span>Routine</span>
-            <select name="routine_id"></select>
+            <span>Full detail description</span>
+            <textarea name="long_description" rows="4"></textarea>
           </label>
           <label class="admin-field">
-            <span>Order</span>
-            <input name="sort_order" type="number" step="1" />
-          </label>
-        </div>
-        <label class="admin-field">
-          <span>Short card description</span>
-          <textarea name="short_description" rows="2"></textarea>
-        </label>
-        <label class="admin-field">
-          <span>Full detail description</span>
-          <textarea name="long_description" rows="4"></textarea>
-        </label>
-        <label class="admin-field">
-          <span>Safety alert</span>
-          <textarea name="safety_alert" rows="2"></textarea>
-        </label>
-        <label class="admin-field">
-          <span>Thumbnail URL</span>
-          <input name="thumbnail_url" type="text" />
-        </label>
-        <div class="admin-grid">
-          <label class="admin-field">
-            <span>Default sets</span>
-            <input name="default_sets" type="number" min="1" step="1" />
+            <span>Safety alert</span>
+            <textarea name="safety_alert" rows="2"></textarea>
           </label>
           <label class="admin-field">
-            <span>Default reps</span>
-            <input name="default_reps" type="number" min="1" step="1" />
+            <span>Thumbnail URL</span>
+            <input name="thumbnail_url" type="text" />
           </label>
-        </div>
-        <label class="admin-check-row">
-          <input name="is_active" type="checkbox" />
-          <span>Visible in routine</span>
-        </label>
-        <div class="admin-card-actions">
-          <button class="admin-secondary-btn" type="button" data-action="toggle-exercise"></button>
-          <button class="admin-save-btn" type="submit">Save Exercise</button>
-        </div>
+          <label class="admin-field">
+            <span>Image gallery URLs</span>
+            <textarea name="image_urls" rows="3"></textarea>
+            <small>One image URL per line. The first image is used first in the detail carousel.</small>
+          </label>
+          <label class="admin-field">
+            <span>Lottie / animation URL</span>
+            <input name="lottie_url" type="text" />
+          </label>
+          <div class="admin-grid">
+            <label class="admin-field">
+              <span>Rest seconds</span>
+              <input name="set_rest_seconds" type="number" min="0.25" max="60" step="0.25" />
+            </label>
+            <label class="admin-field">
+              <span>Pace seconds</span>
+              <input name="pace_seconds" type="number" min="0.25" max="60" step="0.25" />
+            </label>
+          </div>
+          <div class="admin-grid">
+            <label class="admin-check-row">
+              <input name="progressive_sets" type="checkbox" />
+              <span>Progressive sets</span>
+            </label>
+            <label class="admin-check-row">
+              <input name="progressive_reps" type="checkbox" />
+              <span>Progressive reps</span>
+            </label>
+          </div>
+          <div class="admin-card-actions">
+            <button class="admin-secondary-btn" type="button" data-action="toggle-exercise"></button>
+            <button class="admin-danger-btn" type="button" data-action="delete-exercise">Delete</button>
+            <button class="admin-save-btn" type="submit">Save Exercise</button>
+          </div>
+        </details>
       `;
 
       const routineSelect = card.querySelector('[name="routine_id"]');
@@ -1072,8 +1225,10 @@
         routineSelect.appendChild(option);
       });
 
-      card.querySelector('strong').textContent = exercise.title;
-      card.querySelector('.admin-card-title span').textContent = `${routine?.title || 'No routine'} · ${exercise.is_active ? 'Visible' : 'Hidden'}`;
+      const imageButton = card.querySelector('.admin-image-upload');
+      imageButton.style.backgroundImage = thumbnail ? `url('${thumbnail}')` : '';
+      imageButton.classList.toggle('has-image', Boolean(thumbnail));
+      card.querySelector('.admin-card-meta span').textContent = `${routine?.title || 'No routine'} · #${exercise.sort_order}`;
       card.querySelector('[name="title"]').value = exercise.title;
       routineSelect.value = exercise.routine_id;
       card.querySelector('[name="sort_order"]').value = exercise.sort_order;
@@ -1081,8 +1236,14 @@
       card.querySelector('[name="long_description"]').value = exercise.long_description || '';
       card.querySelector('[name="safety_alert"]').value = exercise.safety_alert || '';
       card.querySelector('[name="thumbnail_url"]').value = exercise.thumbnail_url || '';
+      card.querySelector('[name="image_urls"]').value = imageUrls.join('\n');
+      card.querySelector('[name="lottie_url"]').value = exercise.lottie_url || '';
       card.querySelector('[name="default_sets"]').value = exercise.default_sets;
       card.querySelector('[name="default_reps"]').value = exercise.default_reps;
+      card.querySelector('[name="set_rest_seconds"]').value = exercise.set_rest_seconds || REST_DEFAULT_SECONDS;
+      card.querySelector('[name="pace_seconds"]').value = exercise.pace_seconds || PACE_DEFAULT_SECONDS;
+      card.querySelector('[name="progressive_sets"]').checked = Boolean(exercise.progressive_sets);
+      card.querySelector('[name="progressive_reps"]').checked = Boolean(exercise.progressive_reps);
       card.querySelector('[name="is_active"]').checked = exercise.is_active;
       card.querySelector('[data-action="toggle-exercise"]').textContent = exercise.is_active ? 'Hide' : 'Show';
       list.appendChild(card);
@@ -1113,11 +1274,15 @@
     const button = e.target.closest('[data-action]');
     if (!button) return;
     const form = button.closest('.admin-edit-card');
+    if (button.dataset.action === 'upload-image') {
+      form?.querySelector('.admin-image-input')?.click();
+      return;
+    }
     if (!form) return;
 
     try {
-      setAdminStatus('Updating visibility...');
       if (button.dataset.action === 'toggle-routine') {
+        setAdminStatus('Updating visibility...');
         const routine = adminRoutines.find((item) => item.id === form.dataset.id);
         const { error } = await supabaseClient.from('routines').update({
           is_active: !routine.is_active,
@@ -1125,18 +1290,75 @@
         }).eq('id', form.dataset.id);
         if (error) throw error;
       } else if (button.dataset.action === 'toggle-exercise') {
+        setAdminStatus('Updating visibility...');
         const exercise = adminExercises.find((item) => item.id === form.dataset.id);
         const { error } = await supabaseClient.from('exercises').update({
           is_active: !exercise.is_active,
           updated_at: new Date().toISOString()
         }).eq('id', form.dataset.id);
         if (error) throw error;
+      } else if (button.dataset.action === 'delete-exercise') {
+        const exercise = adminExercises.find((item) => item.id === form.dataset.id);
+        const ok = window.confirm(`Delete "${exercise?.title || 'this exercise'}"? This cannot be undone.`);
+        if (!ok) return;
+        setAdminStatus('Deleting exercise...');
+        const { error } = await supabaseClient
+          .from('exercises')
+          .delete()
+          .eq('id', form.dataset.id);
+        if (error) throw error;
       }
       await refreshContentAfterAdminSave();
-      setAdminStatus('Visibility updated.');
+      setAdminStatus('Updated.');
     } catch (error) {
       console.error(error);
-      setAdminStatus(error.message || 'Could not update visibility.');
+      setAdminStatus(error.message || 'Could not update.');
+    }
+  }
+
+  async function handleAdminChange(e) {
+    const input = e.target.closest('.admin-image-input');
+    if (!input) return;
+
+    const form = input.closest('.admin-edit-card');
+    const file = input.files?.[0];
+    if (!form || !file) return;
+
+    try {
+      setAdminStatus('Uploading image...');
+      const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, '-').replace(/^-+|-+$/g, '') || 'exercise-image.png';
+      const filePath = `exercises/${form.dataset.id}/${Date.now()}-${safeName}`;
+      const { error: uploadError } = await supabaseClient.storage
+        .from(ADMIN_MEDIA_BUCKET)
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+      if (uploadError) throw uploadError;
+
+      const { data } = supabaseClient.storage
+        .from(ADMIN_MEDIA_BUCKET)
+        .getPublicUrl(filePath);
+      const publicUrl = data?.publicUrl;
+      if (!publicUrl) throw new Error('Upload succeeded but no public URL was returned.');
+
+      form.elements.thumbnail_url.value = publicUrl;
+      const existingUrls = form.elements.image_urls.value
+        .split(/\n+/)
+        .map((url) => url.trim())
+        .filter(Boolean);
+      form.elements.image_urls.value = [publicUrl, ...existingUrls.filter((url) => url !== publicUrl)].join('\n');
+      form.querySelector('.admin-image-upload').style.backgroundImage = `url('${publicUrl}')`;
+      form.querySelector('.admin-image-upload').classList.add('has-image');
+
+      await saveAdminExercise(form);
+      await refreshContentAfterAdminSave();
+      setAdminStatus('Image uploaded and saved.');
+    } catch (error) {
+      console.error(error);
+      setAdminStatus(error.message || 'Could not upload image.');
+    } finally {
+      input.value = '';
     }
   }
 
@@ -1156,6 +1378,10 @@
   }
 
   async function saveAdminExercise(form) {
+    const imageUrls = form.elements.image_urls.value
+      .split(/\n+/)
+      .map((url) => url.trim())
+      .filter(Boolean);
     const payload = {
       routine_id: form.elements.routine_id.value,
       title: form.elements.title.value.trim(),
@@ -1163,8 +1389,13 @@
       long_description: form.elements.long_description.value.trim(),
       safety_alert: form.elements.safety_alert.value.trim(),
       thumbnail_url: form.elements.thumbnail_url.value.trim(),
+      lottie_url: form.elements.lottie_url.value.trim(),
       default_sets: Math.max(1, parseInt(form.elements.default_sets.value, 10) || 1),
       default_reps: Math.max(1, parseInt(form.elements.default_reps.value, 10) || 1),
+      progressive_sets: form.elements.progressive_sets.checked,
+      progressive_reps: form.elements.progressive_reps.checked,
+      set_rest_seconds: roundTimingSeconds(form.elements.set_rest_seconds.value || REST_DEFAULT_SECONDS),
+      pace_seconds: roundTimingSeconds(form.elements.pace_seconds.value || PACE_DEFAULT_SECONDS),
       sort_order: parseInt(form.elements.sort_order.value, 10) || 0,
       is_active: form.elements.is_active.checked,
       updated_at: new Date().toISOString()
@@ -1175,6 +1406,67 @@
       .update(payload)
       .eq('id', form.dataset.id);
     if (error) throw error;
+
+    await saveAdminExerciseImages(form.dataset.id, imageUrls);
+  }
+
+  async function saveAdminExerciseImages(exerciseId, urls) {
+    const uniqueUrls = [...new Set(urls.map((url) => url.trim()).filter(Boolean))];
+    const { error: deleteError } = await supabaseClient
+      .from('exercise_images')
+      .delete()
+      .eq('exercise_id', exerciseId);
+    if (deleteError) throw deleteError;
+
+    if (uniqueUrls.length === 0) return;
+
+    const rows = uniqueUrls.map((url, index) => ({
+      exercise_id: exerciseId,
+      image_url: url,
+      sort_order: (index + 1) * 10
+    }));
+    const { error: insertError } = await supabaseClient
+      .from('exercise_images')
+      .insert(rows);
+    if (insertError) throw insertError;
+  }
+
+  async function addAdminExercise() {
+    if (!supabaseClient || adminRoutines.length === 0) return;
+
+    const filter = document.getElementById('admin-routine-filter')?.value || 'all';
+    const routineId = filter !== 'all' ? filter : adminRoutines[0].id;
+    const routineExercises = adminExercises.filter((exercise) => exercise.routine_id === routineId);
+    const nextOrder = routineExercises.length > 0
+      ? Math.max(...routineExercises.map((exercise) => Number(exercise.sort_order) || 0)) + 10
+      : 10;
+    const stamp = Date.now().toString(36);
+
+    try {
+      setAdminStatus('Adding exercise...');
+      const { error } = await supabaseClient
+        .from('exercises')
+        .insert({
+          routine_id: routineId,
+          slug: `new-exercise-${stamp}`,
+          title: 'NEW EXERCISE',
+          short_description: 'Add the short card description.',
+          long_description: 'Add the full exercise instructions.',
+          safety_alert: '',
+          thumbnail_url: '',
+          default_sets: 2,
+          default_reps: 8,
+          sort_order: nextOrder,
+          is_active: false
+        });
+      if (error) throw error;
+
+      await refreshContentAfterAdminSave();
+      setAdminStatus('Exercise added. Edit the card, then save when ready.');
+    } catch (error) {
+      console.error(error);
+      setAdminStatus(error.message || 'Could not add exercise.');
+    }
   }
 
   async function refreshContentAfterAdminSave() {
@@ -2100,7 +2392,8 @@
   // ─── Init ───
   async function init() {
     createCompletionOverlay();
-    await fetchRemoteContent();
+    const loadedRemoteContent = await fetchRemoteContent();
+    if (!loadedRemoteContent) renderFallbackContent();
     createAdminShell();
 
     // Landing page
@@ -2321,7 +2614,8 @@
       };
 
       const details = exerciseDetails[exerciseId];
-      const lottieAnim = details?.lottieUrl || animationByExercise[exerciseId];
+      const hasExerciseImages = Boolean(details?.images?.length);
+      const lottieAnim = details?.lottieUrl || (hasExerciseImages ? '' : animationByExercise[exerciseId]);
       
       if (lottieAnim) {
         // The player component does not reliably reload when only its src changes.

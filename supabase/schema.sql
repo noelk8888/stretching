@@ -101,6 +101,16 @@ on public.exercises for update
 using (exists (select 1 from public.admin_users where user_id = auth.uid()))
 with check (exists (select 1 from public.admin_users where user_id = auth.uid()));
 
+drop policy if exists "Admins can insert exercises" on public.exercises;
+create policy "Admins can insert exercises"
+on public.exercises for insert
+with check (exists (select 1 from public.admin_users where user_id = auth.uid()));
+
+drop policy if exists "Admins can delete exercises" on public.exercises;
+create policy "Admins can delete exercises"
+on public.exercises for delete
+using (exists (select 1 from public.admin_users where user_id = auth.uid()));
+
 drop policy if exists "Anyone can read exercise images" on public.exercise_images;
 create policy "Anyone can read exercise images"
 on public.exercise_images for select
@@ -111,6 +121,49 @@ create policy "Admins can update exercise images"
 on public.exercise_images for update
 using (exists (select 1 from public.admin_users where user_id = auth.uid()))
 with check (exists (select 1 from public.admin_users where user_id = auth.uid()));
+
+drop policy if exists "Admins can insert exercise images" on public.exercise_images;
+create policy "Admins can insert exercise images"
+on public.exercise_images for insert
+with check (exists (select 1 from public.admin_users where user_id = auth.uid()));
+
+drop policy if exists "Admins can delete exercise images" on public.exercise_images;
+create policy "Admins can delete exercise images"
+on public.exercise_images for delete
+using (exists (select 1 from public.admin_users where user_id = auth.uid()));
+
+insert into storage.buckets (id, name, public)
+values ('exercise-media', 'exercise-media', true)
+on conflict (id) do update set public = excluded.public;
+
+drop policy if exists "Anyone can view exercise media" on storage.objects;
+create policy "Anyone can view exercise media" on storage.objects for select
+using (bucket_id = 'exercise-media');
+
+drop policy if exists "Admins can upload exercise media" on storage.objects;
+create policy "Admins can upload exercise media" on storage.objects for insert
+with check (
+  bucket_id = 'exercise-media'
+  and exists (select 1 from public.admin_users where user_id = auth.uid())
+);
+
+drop policy if exists "Admins can update exercise media" on storage.objects;
+create policy "Admins can update exercise media" on storage.objects for update
+using (
+  bucket_id = 'exercise-media'
+  and exists (select 1 from public.admin_users where user_id = auth.uid())
+)
+with check (
+  bucket_id = 'exercise-media'
+  and exists (select 1 from public.admin_users where user_id = auth.uid())
+);
+
+drop policy if exists "Admins can delete exercise media" on storage.objects;
+create policy "Admins can delete exercise media" on storage.objects for delete
+using (
+  bucket_id = 'exercise-media'
+  and exists (select 1 from public.admin_users where user_id = auth.uid())
+);
 
 drop policy if exists "Users can read their own profile" on public.profiles;
 create policy "Users can read their own profile"

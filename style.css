@@ -907,7 +907,8 @@ body.light-mode .landing-btn-pill.is-active {
 #media-lottie {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  background: #fff;
 }
 
 #media-display img {
@@ -1841,6 +1842,11 @@ input:checked + .slider-switch::before {
   margin-bottom: 18px;
 }
 
+.admin-actions-row--section {
+  justify-content: flex-start;
+  margin: -2px 0 12px;
+}
+
 .admin-section {
   margin-top: 22px;
 }
@@ -1867,6 +1873,164 @@ input:checked + .slider-switch::before {
 
 .admin-edit-card.is-inactive {
   opacity: 0.62;
+}
+
+.admin-exercise-form {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.admin-exercise-card {
+  position: relative;
+  min-height: 154px;
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 14px;
+  padding: 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 24px;
+  background: var(--bg-card);
+}
+
+.admin-image-upload {
+  min-height: 122px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--bg-elevated);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+
+.admin-image-upload::after {
+  content: 'UPLOAD';
+  position: absolute;
+  inset: auto 8px 8px;
+  display: grid;
+  min-height: 26px;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(15, 17, 23, 0.76);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.admin-image-upload:not(.has-image)::before {
+  content: '+';
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: var(--text-muted);
+  font-size: 34px;
+  font-weight: 700;
+}
+
+.admin-image-input {
+  display: none;
+}
+
+.admin-exercise-copy {
+  min-width: 0;
+  padding-top: 3px;
+}
+
+.admin-card-title-input,
+.admin-card-short-input {
+  width: calc(100% - 34px);
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  padding: 0;
+  font: inherit;
+}
+
+.admin-card-title-input {
+  margin-bottom: 7px;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.18;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-card-short-input {
+  min-height: 34px;
+  resize: vertical;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.admin-card-title-input:focus,
+.admin-card-short-input:focus {
+  outline: 1px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.admin-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.admin-dosage {
+  margin-top: 8px;
+}
+
+.admin-dose {
+  grid-template-columns: 1fr 46px;
+  padding-left: 7px;
+}
+
+.admin-dose span {
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.admin-dose input {
+  width: 100%;
+  height: 30px;
+  border: 0;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font: 700 12px/30px var(--font-mono);
+  text-align: center;
+}
+
+.admin-detail-drawer {
+  margin-top: 8px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--bg-card);
+  padding: 0 14px;
+}
+
+.admin-detail-drawer summary {
+  cursor: pointer;
+  padding: 14px 0;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.admin-detail-drawer[open] {
+  padding-bottom: 14px;
 }
 
 .admin-card-title {
@@ -1914,6 +2078,15 @@ input:checked + .slider-switch::before {
   text-transform: none;
 }
 
+.admin-field small {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.35;
+  text-transform: none;
+}
+
 .admin-field textarea {
   resize: vertical;
   line-height: 1.4;
@@ -1928,6 +2101,11 @@ input:checked + .slider-switch::before {
   font-weight: 700;
 }
 
+.admin-check-row--compact {
+  margin: 0;
+  font-size: 11px;
+}
+
 .admin-card-actions {
   display: flex;
   justify-content: flex-end;
@@ -1935,7 +2113,8 @@ input:checked + .slider-switch::before {
 }
 
 .admin-save-btn,
-.admin-secondary-btn {
+.admin-secondary-btn,
+.admin-danger-btn {
   min-height: 42px;
   border-radius: 999px;
   padding: 0 18px;
@@ -1955,6 +2134,12 @@ input:checked + .slider-switch::before {
   color: var(--text-primary);
 }
 
+.admin-danger-btn {
+  border: 1px solid rgba(255, 92, 92, 0.45);
+  background: rgba(255, 92, 92, 0.12);
+  color: #ffb4b4;
+}
+
 @media (max-width: 640px) {
   .admin-modal-content {
     width: calc(100vw - 16px);
@@ -1967,6 +2152,14 @@ input:checked + .slider-switch::before {
   .admin-card-actions {
     grid-template-columns: 1fr;
     flex-direction: column;
+  }
+
+  .admin-exercise-card {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-image-upload {
+    min-height: 180px;
   }
 
   .admin-card-actions {
