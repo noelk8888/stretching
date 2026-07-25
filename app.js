@@ -1067,10 +1067,11 @@
   }
 
   function sendMediaToBack() {
+    mediaZoom?.reset();
     dom.app.classList.remove('media-is-front');
   }
 
-  function createImageZoomController(container, getImage) {
+  function createImageZoomController(container, getImage, isEnabled = () => true) {
     const state = {
       scale: 1,
       minScale: 1,
@@ -1087,6 +1088,7 @@
     };
 
     function activeImage() {
+      if (!isEnabled()) return null;
       const img = getImage();
       return img && !img.classList.contains('hidden') ? img : null;
     }
@@ -1125,11 +1127,11 @@
     }
 
     function isZoomed() {
-      return state.scale > 1.01;
+      return isEnabled() && state.scale > 1.01;
     }
 
     function shouldSuppressClick() {
-      return Date.now() < state.suppressClickUntil;
+      return isEnabled() && Date.now() < state.suppressClickUntil;
     }
 
     function distance() {
@@ -3016,7 +3018,11 @@
     let currentCarouselIndex = 0;
     let currentCarouselImages = [];
     let carouselZoom = null;
-    mediaZoom = createImageZoomController(dom.mediaDisplay, () => dom.mediaImg);
+    mediaZoom = createImageZoomController(
+      dom.mediaDisplay,
+      () => dom.mediaImg,
+      () => dom.app.classList.contains('media-is-front')
+    );
 
     function createPinchZoomController(container) {
       const state = {

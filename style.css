@@ -900,9 +900,12 @@ body.light-mode .landing-btn-pill.is-active {
 #media-display {
   position: absolute;
   inset: 0;
-  touch-action: none;
   user-select: none;
   overflow: hidden;
+}
+
+#app.media-is-front #media-display {
+  touch-action: none;
 }
 
 #media-display img,
