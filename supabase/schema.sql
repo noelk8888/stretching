@@ -54,6 +54,18 @@ create table if not exists public.admin_users (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.app_users (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid unique references auth.users(id) on delete set null,
+  email text not null unique,
+  display_name text not null default '',
+  login_count integer not null default 0 check (login_count >= 0),
+  last_login timestamptz,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create table if not exists public.user_settings (
   user_id uuid primary key references auth.users(id) on delete cascade,
   app_state jsonb not null default '{}'::jsonb,
@@ -67,6 +79,7 @@ alter table public.exercises enable row level security;
 alter table public.exercise_images enable row level security;
 alter table public.profiles enable row level security;
 alter table public.admin_users enable row level security;
+alter table public.app_users enable row level security;
 alter table public.user_settings enable row level security;
 
 drop policy if exists "Anyone can read active routines" on public.routines;
@@ -186,6 +199,58 @@ create policy "Users can read their own admin row"
 on public.admin_users for select
 using (auth.uid() = user_id);
 
+drop policy if exists "Admins can read app users" on public.app_users;
+create policy "Admins can read app users"
+on public.app_users for select
+using (exists (select 1 from public.admin_users where user_id = auth.uid()));
+
+drop policy if exists "Users can read their own app user row" on public.app_users;
+create policy "Users can read their own app user row"
+on public.app_users for select
+using (
+  user_id = auth.uid()
+  or lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+);
+
+drop policy if exists "Admins can insert app users" on public.app_users;
+create policy "Admins can insert app users"
+on public.app_users for insert
+with check (exists (select 1 from public.admin_users where user_id = auth.uid()));
+
+drop policy if exists "Users can insert their own app user row" on public.app_users;
+create policy "Users can insert their own app user row"
+on public.app_users for insert
+with check (
+  user_id = auth.uid()
+  and lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+);
+
+drop policy if exists "Admins can update app users" on public.app_users;
+create policy "Admins can update app users"
+on public.app_users for update
+using (exists (select 1 from public.admin_users where user_id = auth.uid()))
+with check (exists (select 1 from public.admin_users where user_id = auth.uid()));
+
+drop policy if exists "Users can update their own app user row" on public.app_users;
+create policy "Users can update their own app user row"
+on public.app_users for update
+using (
+  user_id = auth.uid()
+  or (
+    user_id is null
+    and lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+  )
+)
+with check (
+  user_id = auth.uid()
+  and lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+);
+
+drop policy if exists "Admins can delete app users" on public.app_users;
+create policy "Admins can delete app users"
+on public.app_users for delete
+using (exists (select 1 from public.admin_users where user_id = auth.uid()));
+
 drop policy if exists "Users can read their own settings" on public.user_settings;
 create policy "Users can read their own settings"
 on public.user_settings for select
@@ -205,3 +270,5 @@ with check (auth.uid() = user_id);
 create index if not exists routines_sort_order_idx on public.routines(sort_order);
 create index if not exists exercises_routine_sort_idx on public.exercises(routine_id, sort_order);
 create index if not exists exercise_images_exercise_sort_idx on public.exercise_images(exercise_id, sort_order);
+create index if not exists app_users_email_idx on public.app_users(lower(email));
+create index if not exists app_users_last_login_idx on public.app_users(last_login desc);

@@ -50,7 +50,9 @@
   let adminRoutines = [];
   let adminExercises = [];
   let adminExerciseImages = [];
+  let adminUsers = [];
   let remoteSaveTimerId = null;
+  let loginTrackedUserId = null;
   let pendingAdminOpen = false;
   window.EXERCISE_CLOCK_DATA_SOURCE = 'fallback';
 
@@ -864,6 +866,50 @@
       }, { onConflict: 'user_id' });
   }
 
+  function getUserDisplayName(user) {
+    const metadata = user?.user_metadata || {};
+    return metadata.full_name || metadata.name || user?.email?.split('@')[0] || '';
+  }
+
+  async function trackAppUserLogin() {
+    if (!supabaseClient || !currentUser?.email) return;
+    if (loginTrackedUserId === currentUser.id) return;
+
+    const email = currentUser.email.toLowerCase();
+    const displayName = getUserDisplayName(currentUser);
+    const now = new Date().toISOString();
+
+    const { data: existing, error: readError } = await supabaseClient
+      .from('app_users')
+      .select('id, login_count, is_active')
+      .eq('email', email)
+      .maybeSingle();
+
+    if (readError) {
+      console.warn('Could not read app user row', readError);
+      return;
+    }
+
+    const payload = {
+      user_id: currentUser.id,
+      email,
+      display_name: displayName,
+      login_count: (Number(existing?.login_count) || 0) + 1,
+      last_login: now,
+      updated_at: now
+    };
+
+    const { error } = await supabaseClient
+      .from('app_users')
+      .upsert(payload, { onConflict: 'email' });
+
+    if (error) {
+      console.warn('Could not track app user login', error);
+      return;
+    }
+    loginTrackedUserId = currentUser.id;
+  }
+
   function setAdminStatus(message) {
     const el = document.getElementById('admin-status');
     if (el) el.textContent = message || '';
@@ -928,21 +974,72 @@
           <button id="btn-admin-refresh" class="admin-secondary-btn" type="button">Refresh</button>
           <button id="btn-admin-logout" class="admin-secondary-btn" type="button">Log Out</button>
         </div>
-        <section class="admin-section">
-          <h3>Menu Routines</h3>
-          <div id="admin-routines-list" class="admin-list"></div>
-        </section>
-        <section class="admin-section">
-          <h3>Routine Exercises</h3>
-          <div class="admin-actions-row admin-actions-row--section">
-            <button id="btn-admin-add-exercise" class="admin-save-btn" type="button">Add Exercise</button>
-          </div>
-          <label class="admin-field">
-            <span>Show routine</span>
-            <select id="admin-routine-filter"></select>
-          </label>
-          <div id="admin-exercises-list" class="admin-list"></div>
-        </section>
+        <div class="admin-tabs" role="tablist" aria-label="Admin sections">
+          <button class="admin-tab is-active" type="button" role="tab" aria-selected="true" data-admin-tab="content">Content</button>
+          <button class="admin-tab" type="button" role="tab" aria-selected="false" data-admin-tab="users">Users</button>
+        </div>
+        <div id="admin-content-panel" class="admin-panel is-active" role="tabpanel">
+          <section class="admin-section">
+            <h3>Menu Routines</h3>
+            <div id="admin-routines-list" class="admin-list"></div>
+          </section>
+          <section class="admin-section">
+            <h3>Routine Exercises</h3>
+            <div class="admin-actions-row admin-actions-row--section">
+              <button id="btn-admin-add-exercise" class="admin-save-btn" type="button">Add Exercise</button>
+            </div>
+            <label class="admin-field">
+              <span>Show routine</span>
+              <select id="admin-routine-filter"></select>
+            </label>
+            <div id="admin-exercises-list" class="admin-list"></div>
+          </section>
+        </div>
+        <div id="admin-users-panel" class="admin-panel" role="tabpanel" hidden>
+          <section class="admin-section admin-users-section">
+            <div class="admin-users-heading">
+              <div>
+                <h3>Users</h3>
+                <p>Add, edit, or deactivate app users.</p>
+              </div>
+              <button id="btn-admin-add-user" class="admin-save-btn" type="button">+ Add User</button>
+            </div>
+            <form id="admin-user-form" class="admin-user-form" hidden>
+              <div class="admin-grid">
+                <label class="admin-field">
+                  <span>Name</span>
+                  <input name="display_name" type="text" placeholder="Full name" />
+                </label>
+                <label class="admin-field">
+                  <span>Email</span>
+                  <input name="email" type="email" placeholder="user@example.com" required />
+                </label>
+              </div>
+              <label class="admin-check-row">
+                <input name="is_active" type="checkbox" checked />
+                <span>Active user</span>
+              </label>
+              <input name="id" type="hidden" />
+              <div class="admin-card-actions">
+                <button class="admin-secondary-btn" type="button" data-action="cancel-user-edit">Cancel</button>
+                <button class="admin-save-btn" type="submit">Save User</button>
+              </div>
+            </form>
+            <div class="admin-users-table-wrap">
+              <table class="admin-users-table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Logins</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-list"></tbody>
+              </table>
+            </div>
+            <p class="admin-users-note">Users added here can sign in normally through Bend and Mend. Supabase Auth accounts are linked automatically after first login.</p>
+          </section>
+        </div>
       </div>
     `;
     document.body.appendChild(modal);
@@ -952,6 +1049,8 @@
     document.getElementById('btn-admin-refresh').addEventListener('click', openAdminEditor);
     document.getElementById('btn-admin-logout').addEventListener('click', signOutAdmin);
     document.getElementById('btn-admin-add-exercise').addEventListener('click', addAdminExercise);
+    document.getElementById('btn-admin-add-user').addEventListener('click', openAddAdminUser);
+    document.getElementById('admin-user-form').addEventListener('submit', saveAdminUser);
     document.getElementById('admin-routine-filter').addEventListener('change', renderAdminExercises);
     document.getElementById('admin-modal').addEventListener('submit', handleAdminSubmit);
     document.getElementById('admin-modal').addEventListener('click', handleAdminClick);
@@ -983,6 +1082,7 @@
     pendingAdminOpen = false;
     isAdmin = false;
     currentUser = null;
+    loginTrackedUserId = null;
     updateAdminButton();
     closeAdminEditor();
     setLoginStatus('');
@@ -1005,7 +1105,7 @@
   async function loadAdminData() {
     if (!supabaseClient || !isAdmin) return;
 
-    const [routinesResult, exercisesResult, imagesResult] = await Promise.all([
+    const [routinesResult, exercisesResult, imagesResult, usersResult] = await Promise.all([
       supabaseClient
         .from('routines')
         .select('id, slug, title, sort_order, is_active')
@@ -1017,22 +1117,233 @@
       supabaseClient
         .from('exercise_images')
         .select('id, exercise_id, image_url, sort_order')
-        .order('sort_order', { ascending: true })
+        .order('sort_order', { ascending: true }),
+      supabaseClient
+        .from('app_users')
+        .select('id, user_id, email, display_name, login_count, last_login, is_active, created_at, updated_at')
+        .order('last_login', { ascending: false, nullsFirst: false })
     ]);
 
     if (routinesResult.error) throw routinesResult.error;
     if (exercisesResult.error) throw exercisesResult.error;
     if (imagesResult.error) throw imagesResult.error;
+    if (usersResult.error) {
+      console.warn('Could not load app users', usersResult.error);
+    }
 
     adminRoutines = routinesResult.data || [];
     adminExercises = exercisesResult.data || [];
     adminExerciseImages = imagesResult.data || [];
+    adminUsers = usersResult.error ? [] : (usersResult.data || []);
   }
 
   function renderAdminEditor() {
     renderAdminRoutines();
     renderAdminRoutineFilter();
     renderAdminExercises();
+    renderAdminUsers();
+  }
+
+  function switchAdminTab(tabName) {
+    document.querySelectorAll('.admin-tab').forEach((tab) => {
+      const isActive = tab.dataset.adminTab === tabName;
+      tab.classList.toggle('is-active', isActive);
+      tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    document.querySelectorAll('.admin-panel').forEach((panel) => {
+      const isActive = panel.id === `admin-${tabName}-panel`;
+      panel.classList.toggle('is-active', isActive);
+      panel.hidden = !isActive;
+    });
+  }
+
+  function formatAdminLoginDate(value) {
+    if (!value) return '—';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '—';
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    });
+  }
+
+  function resetAdminUserForm() {
+    const form = document.getElementById('admin-user-form');
+    if (!form) return;
+    form.reset();
+    form.elements.namedItem('id').value = '';
+    form.elements.namedItem('email').disabled = false;
+    form.elements.namedItem('is_active').checked = true;
+    form.hidden = true;
+  }
+
+  function openAddAdminUser() {
+    const form = document.getElementById('admin-user-form');
+    if (!form) return;
+    form.reset();
+    form.elements.namedItem('id').value = '';
+    form.elements.namedItem('email').disabled = false;
+    form.elements.namedItem('is_active').checked = true;
+    form.hidden = false;
+    form.elements.namedItem('display_name').focus();
+  }
+
+  function openEditAdminUser(userId) {
+    const user = adminUsers.find((item) => item.id === userId);
+    const form = document.getElementById('admin-user-form');
+    if (!user || !form) return;
+    form.elements.namedItem('id').value = user.id;
+    form.elements.namedItem('display_name').value = user.display_name || '';
+    form.elements.namedItem('email').value = user.email || '';
+    form.elements.namedItem('email').disabled = false;
+    form.elements.namedItem('is_active').checked = user.is_active !== false;
+    form.hidden = false;
+    form.elements.namedItem('display_name').focus();
+  }
+
+  function renderAdminUsers() {
+    const list = document.getElementById('admin-users-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    if (adminUsers.length === 0) {
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.colSpan = 3;
+      cell.className = 'admin-users-empty';
+      cell.textContent = 'No users yet. Add one above.';
+      row.appendChild(cell);
+      list.appendChild(row);
+      return;
+    }
+
+    adminUsers.forEach((user) => {
+      const row = document.createElement('tr');
+      row.className = user.is_active === false ? 'is-inactive' : '';
+
+      const userCell = document.createElement('td');
+      const name = document.createElement('strong');
+      name.textContent = user.display_name || user.email || 'Unnamed user';
+      const email = document.createElement('span');
+      email.textContent = user.email || '';
+      userCell.append(name, email);
+      if (user.is_active === false) {
+        const badge = document.createElement('em');
+        badge.textContent = 'Inactive';
+        userCell.appendChild(badge);
+      }
+
+      const loginCell = document.createElement('td');
+      loginCell.className = 'admin-users-logins';
+      const count = document.createElement('strong');
+      count.textContent = Number(user.login_count) || 0;
+      const lastLogin = document.createElement('span');
+      lastLogin.textContent = formatAdminLoginDate(user.last_login);
+      loginCell.append(count, lastLogin);
+
+      const actionsCell = document.createElement('td');
+      const actions = document.createElement('div');
+      actions.className = 'admin-users-actions';
+
+      const editButton = document.createElement('button');
+      editButton.type = 'button';
+      editButton.className = 'admin-icon-action';
+      editButton.dataset.action = 'edit-user';
+      editButton.dataset.userId = user.id;
+      editButton.setAttribute('aria-label', `Edit ${user.email}`);
+      editButton.textContent = '✎';
+
+      const toggleButton = document.createElement('button');
+      toggleButton.type = 'button';
+      toggleButton.className = user.is_active === false ? 'admin-icon-action' : 'admin-icon-action admin-icon-action--danger';
+      toggleButton.dataset.action = user.is_active === false ? 'activate-user' : 'deactivate-user';
+      toggleButton.dataset.userId = user.id;
+      toggleButton.setAttribute('aria-label', `${user.is_active === false ? 'Activate' : 'Deactivate'} ${user.email}`);
+      toggleButton.textContent = user.is_active === false ? '↻' : '⌫';
+
+      actions.append(editButton, toggleButton);
+      actionsCell.appendChild(actions);
+      row.append(userCell, loginCell, actionsCell);
+      list.appendChild(row);
+    });
+  }
+
+  async function saveAdminUser(e) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const email = form.elements.namedItem('email').value.trim().toLowerCase();
+    const displayName = form.elements.namedItem('display_name').value.trim();
+    const isActive = form.elements.namedItem('is_active').checked;
+    const id = form.elements.namedItem('id').value;
+
+    if (!email) {
+      setAdminStatus('Email is required.');
+      return;
+    }
+
+    try {
+      setAdminStatus('Saving user...');
+      const payload = {
+        email,
+        display_name: displayName,
+        is_active: isActive,
+        updated_at: new Date().toISOString()
+      };
+
+      const query = id
+        ? supabaseClient.from('app_users').update(payload).eq('id', id)
+        : supabaseClient.from('app_users').insert(payload);
+      const { error } = await query;
+      if (error) throw error;
+
+      await refreshAdminUsers();
+      resetAdminUserForm();
+      setAdminStatus('User saved.');
+    } catch (error) {
+      console.error(error);
+      setAdminStatus(error.message || 'Could not save user.');
+    }
+  }
+
+  async function setAdminUserActive(userId, isActive) {
+    const user = adminUsers.find((item) => item.id === userId);
+    if (!user) return;
+    if (!isActive && currentUser?.email && user.email?.toLowerCase() === currentUser.email.toLowerCase()) {
+      setAdminStatus('You cannot deactivate your own account.');
+      return;
+    }
+    if (!isActive) {
+      const ok = window.confirm(`Deactivate ${user.email}?`);
+      if (!ok) return;
+    }
+
+    try {
+      setAdminStatus(isActive ? 'Activating user...' : 'Deactivating user...');
+      const { error } = await supabaseClient
+        .from('app_users')
+        .update({ is_active: isActive, updated_at: new Date().toISOString() })
+        .eq('id', userId);
+      if (error) throw error;
+      await refreshAdminUsers();
+      setAdminStatus(isActive ? 'User activated.' : 'User deactivated.');
+    } catch (error) {
+      console.error(error);
+      setAdminStatus(error.message || 'Could not update user.');
+    }
+  }
+
+  async function refreshAdminUsers() {
+    const { data, error } = await supabaseClient
+      .from('app_users')
+      .select('id, user_id, email, display_name, login_count, last_login, is_active, created_at, updated_at')
+      .order('last_login', { ascending: false, nullsFirst: false });
+    if (error) throw error;
+    adminUsers = data || [];
+    renderAdminUsers();
   }
 
   function renderAdminRoutines() {
@@ -1251,6 +1562,7 @@
   }
 
   async function handleAdminSubmit(e) {
+    if (e.target.closest('#admin-user-form')) return;
     const form = e.target.closest('.admin-edit-card');
     if (!form) return;
     e.preventDefault();
@@ -1272,7 +1584,28 @@
 
   async function handleAdminClick(e) {
     const button = e.target.closest('[data-action]');
+    const tab = e.target.closest('[data-admin-tab]');
+    if (tab) {
+      switchAdminTab(tab.dataset.adminTab);
+      return;
+    }
     if (!button) return;
+    if (button.dataset.action === 'cancel-user-edit') {
+      resetAdminUserForm();
+      return;
+    }
+    if (button.dataset.action === 'edit-user') {
+      openEditAdminUser(button.dataset.userId);
+      return;
+    }
+    if (button.dataset.action === 'deactivate-user') {
+      await setAdminUserActive(button.dataset.userId, false);
+      return;
+    }
+    if (button.dataset.action === 'activate-user') {
+      await setAdminUserActive(button.dataset.userId, true);
+      return;
+    }
     const form = button.closest('.admin-edit-card');
     if (button.dataset.action === 'upload-image') {
       form?.querySelector('.admin-image-input')?.click();
@@ -2274,11 +2607,13 @@
     currentUser = data.session?.user || null;
     if (currentUser) {
       await ensureUserProfile();
+      await trackAppUserLogin();
       await loadRemoteProfile();
       await checkAdminStatus();
       if (!await maybeOpenPendingAdminEditor()) maybePromptPasswordSetup();
     } else {
       isAdmin = false;
+      loginTrackedUserId = null;
       updateAdminButton();
     }
 
@@ -2286,6 +2621,7 @@
       currentUser = session?.user || null;
       if (currentUser) {
         await ensureUserProfile();
+        await trackAppUserLogin();
         await loadRemoteProfile();
         await checkAdminStatus();
         renderExerciseSettings();
@@ -2293,6 +2629,7 @@
         if (!await maybeOpenPendingAdminEditor()) maybePromptPasswordSetup();
       } else {
         isAdmin = false;
+        loginTrackedUserId = null;
         updateAdminButton();
       }
     });
