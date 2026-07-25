@@ -1207,7 +1207,7 @@
 
     function onPointerUp(event) {
       state.pointers.delete(event.pointerId);
-      if (state.scale <= 1.01) reset();
+      if (state.scale < 1) reset();
       const points = Array.from(state.pointers.values());
       state.lastPan = points.length === 1 ? points[0] : null;
       state.startDistance = 0;
@@ -1264,7 +1264,7 @@
     }
 
     function onTouchEnd(event) {
-      if (state.scale <= 1.01) reset();
+      if (state.scale < 1) reset();
       state.startDistance = 0;
       state.lastPan = event.touches.length === 1 ? touchPoint(event.touches[0]) : null;
       if (event.touches.length === 0) {
@@ -1279,7 +1279,7 @@
       event.preventDefault();
       const delta = event.deltaY < 0 ? 0.18 : -0.18;
       state.scale = Math.max(state.minScale, Math.min(state.maxScale, state.scale + delta));
-      if (state.scale <= 1.01) reset();
+      if (state.scale < 1) reset();
       else render();
     }
 
@@ -2168,6 +2168,14 @@
     dom.exercisePage.setAttribute('aria-hidden', 'false');
     dom.routinePage.classList.remove('is-active');
     dom.routinePage.setAttribute('aria-hidden', 'true');
+  }
+
+  function closeTimerOrMediaView() {
+    if (dom.app.classList.contains('media-is-front')) {
+      sendMediaToBack();
+      return;
+    }
+    returnToExercisePage();
   }
 
   function handleExerciseSelection(e) {
@@ -3638,7 +3646,7 @@
     }
     const btnAppCloseGlobal = $('btn-app-close-global');
     if (btnAppCloseGlobal) {
-      btnAppCloseGlobal.addEventListener('click', returnToMainMenu);
+      btnAppCloseGlobal.addEventListener('click', closeTimerOrMediaView);
     }
 
     // Prevent number inputs from scrolling the page

@@ -925,7 +925,7 @@ body.light-mode .landing-btn-pill.is-active {
 }
 
 #media-display.is-zoomed img {
-  transition: transform 80ms ease;
+  transition: opacity 0.3s ease;
 }
 
 #media-lottie {
