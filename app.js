@@ -2798,6 +2798,7 @@
         x: 0,
         y: 0,
         pointers: new Map(),
+        touching: false,
         startDistance: 0,
         startScale: 1,
         lastPan: null,
@@ -2843,9 +2844,19 @@
         return Math.hypot(points[0].clientX - points[1].clientX, points[0].clientY - points[1].clientY);
       }
 
+      function touchDistance(touches) {
+        if (touches.length < 2) return 0;
+        return Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
+      }
+
+      function touchPoint(touch) {
+        return { clientX: touch.clientX, clientY: touch.clientY };
+      }
+
       function onPointerDown(event) {
         const img = activeImage();
         if (!img || !event.target.closest('.exercise-carousel-slide')) return;
+        if (event.pointerType === 'touch' && state.touching) return;
         state.pointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY });
         container.setPointerCapture?.(event.pointerId);
 
@@ -2869,6 +2880,7 @@
       }
 
       function onPointerMove(event) {
+        if (event.pointerType === 'touch' && state.touching) return;
         if (!state.pointers.has(event.pointerId)) return;
         state.pointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY });
 
@@ -2899,6 +2911,68 @@
         state.startDistance = 0;
       }
 
+      function onTouchStart(event) {
+        const img = activeImage();
+        if (!img || !event.target.closest('.exercise-carousel-slide')) return;
+        state.touching = true;
+        state.pointers.clear();
+
+        const now = Date.now();
+        if (event.touches.length === 1) {
+          if (now - state.lastTap < 280) {
+            state.scale = state.scale > 1 ? 1 : 2.2;
+            state.x = 0;
+            state.y = 0;
+            render();
+            event.preventDefault();
+          }
+          state.lastTap = now;
+          state.lastPan = touchPoint(event.touches[0]);
+          return;
+        }
+
+        if (event.touches.length >= 2) {
+          state.startDistance = touchDistance(event.touches);
+          state.startScale = state.scale;
+          state.lastPan = null;
+          event.preventDefault();
+        }
+      }
+
+      function onTouchMove(event) {
+        if (!event.target.closest('.exercise-carousel-slide')) return;
+
+        if (event.touches.length >= 2) {
+          const nextDistance = touchDistance(event.touches);
+          if (state.startDistance > 0) {
+            state.scale = Math.max(state.minScale, Math.min(state.maxScale, state.startScale * (nextDistance / state.startDistance)));
+            render();
+          }
+          event.preventDefault();
+          return;
+        }
+
+        if (event.touches.length === 1 && state.scale > 1 && state.lastPan) {
+          const point = touchPoint(event.touches[0]);
+          state.x += point.clientX - state.lastPan.clientX;
+          state.y += point.clientY - state.lastPan.clientY;
+          state.lastPan = point;
+          render();
+          event.preventDefault();
+        }
+      }
+
+      function onTouchEnd(event) {
+        if (state.scale <= 1.01) reset();
+        state.startDistance = 0;
+        state.lastPan = event.touches.length === 1 ? touchPoint(event.touches[0]) : null;
+        if (event.touches.length === 0) {
+          window.setTimeout(() => {
+            state.touching = false;
+          }, 350);
+        }
+      }
+
       function onWheel(event) {
         if (!event.ctrlKey && !event.metaKey) return;
         event.preventDefault();
@@ -2912,6 +2986,10 @@
       container.addEventListener('pointermove', onPointerMove);
       container.addEventListener('pointerup', onPointerUp);
       container.addEventListener('pointercancel', onPointerUp);
+      container.addEventListener('touchstart', onTouchStart, { passive: false });
+      container.addEventListener('touchmove', onTouchMove, { passive: false });
+      container.addEventListener('touchend', onTouchEnd, { passive: false });
+      container.addEventListener('touchcancel', onTouchEnd, { passive: false });
       container.addEventListener('wheel', onWheel, { passive: false });
 
       return { reset, render };
