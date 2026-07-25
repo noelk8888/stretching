@@ -900,6 +900,9 @@ body.light-mode .landing-btn-pill.is-active {
 #media-display {
   position: absolute;
   inset: 0;
+  touch-action: none;
+  user-select: none;
+  overflow: hidden;
 }
 
 #media-display img,
@@ -912,7 +915,14 @@ body.light-mode .landing-btn-pill.is-active {
 }
 
 #media-display img {
-  transition: opacity 0.3s ease;
+  transform-origin: center center;
+  transition: opacity 0.3s ease, transform 120ms ease;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+#media-display.is-zoomed img {
+  transition: transform 80ms ease;
 }
 
 #media-lottie {

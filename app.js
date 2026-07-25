@@ -54,6 +54,7 @@
   let remoteSaveTimerId = null;
   let loginTrackedUserId = null;
   let pendingAdminOpen = false;
+  let mediaZoom = null;
   window.EXERCISE_CLOCK_DATA_SOURCE = 'fallback';
 
   function getCurrentExerciseConfig() {
@@ -1067,6 +1068,230 @@
 
   function sendMediaToBack() {
     dom.app.classList.remove('media-is-front');
+  }
+
+  function createImageZoomController(container, getImage) {
+    const state = {
+      scale: 1,
+      minScale: 1,
+      maxScale: 4,
+      x: 0,
+      y: 0,
+      pointers: new Map(),
+      touching: false,
+      startDistance: 0,
+      startScale: 1,
+      lastPan: null,
+      lastTap: 0,
+      suppressClickUntil: 0
+    };
+
+    function activeImage() {
+      const img = getImage();
+      return img && !img.classList.contains('hidden') ? img : null;
+    }
+
+    function clampPan() {
+      if (!activeImage() || state.scale <= 1) {
+        state.x = 0;
+        state.y = 0;
+        return;
+      }
+      const rect = container.getBoundingClientRect();
+      const maxX = rect.width * (state.scale - 1) / 2;
+      const maxY = rect.height * (state.scale - 1) / 2;
+      state.x = Math.max(-maxX, Math.min(maxX, state.x));
+      state.y = Math.max(-maxY, Math.min(maxY, state.y));
+    }
+
+    function render() {
+      clampPan();
+      const img = activeImage();
+      if (!img) return;
+      img.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+      container.classList.toggle('is-zoomed', state.scale > 1.01);
+    }
+
+    function reset() {
+      state.scale = 1;
+      state.x = 0;
+      state.y = 0;
+      state.startDistance = 0;
+      state.lastPan = null;
+      state.pointers.clear();
+      const img = activeImage();
+      if (img) img.style.transform = '';
+      container.classList.remove('is-zoomed');
+    }
+
+    function isZoomed() {
+      return state.scale > 1.01;
+    }
+
+    function shouldSuppressClick() {
+      return Date.now() < state.suppressClickUntil;
+    }
+
+    function distance() {
+      const points = Array.from(state.pointers.values());
+      if (points.length < 2) return 0;
+      return Math.hypot(points[0].clientX - points[1].clientX, points[0].clientY - points[1].clientY);
+    }
+
+    function touchDistance(touches) {
+      if (touches.length < 2) return 0;
+      return Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY);
+    }
+
+    function touchPoint(touch) {
+      return { clientX: touch.clientX, clientY: touch.clientY };
+    }
+
+    function toggleDoubleTapZoom() {
+      state.scale = isZoomed() ? 1 : 2.2;
+      state.x = 0;
+      state.y = 0;
+      state.suppressClickUntil = Date.now() + 450;
+      render();
+    }
+
+    function onPointerDown(event) {
+      if (!activeImage()) return;
+      if (event.pointerType === 'touch' && state.touching) return;
+      state.pointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY });
+      container.setPointerCapture?.(event.pointerId);
+
+      const now = Date.now();
+      if (event.pointerType === 'touch' && now - state.lastTap < 280 && state.pointers.size === 1) {
+        toggleDoubleTapZoom();
+        event.preventDefault();
+      }
+      state.lastTap = now;
+
+      if (state.pointers.size === 2) {
+        state.startDistance = distance();
+        state.startScale = state.scale;
+        state.lastPan = null;
+      } else if (state.pointers.size === 1) {
+        state.lastPan = { clientX: event.clientX, clientY: event.clientY };
+      }
+    }
+
+    function onPointerMove(event) {
+      if (event.pointerType === 'touch' && state.touching) return;
+      if (!state.pointers.has(event.pointerId)) return;
+      state.pointers.set(event.pointerId, { clientX: event.clientX, clientY: event.clientY });
+
+      if (state.pointers.size >= 2) {
+        const nextDistance = distance();
+        if (state.startDistance > 0) {
+          state.scale = Math.max(state.minScale, Math.min(state.maxScale, state.startScale * (nextDistance / state.startDistance)));
+          state.suppressClickUntil = Date.now() + 450;
+          render();
+        }
+        event.preventDefault();
+        return;
+      }
+
+      if (isZoomed() && state.lastPan) {
+        state.x += event.clientX - state.lastPan.clientX;
+        state.y += event.clientY - state.lastPan.clientY;
+        state.lastPan = { clientX: event.clientX, clientY: event.clientY };
+        state.suppressClickUntil = Date.now() + 250;
+        render();
+        event.preventDefault();
+      }
+    }
+
+    function onPointerUp(event) {
+      state.pointers.delete(event.pointerId);
+      if (state.scale <= 1.01) reset();
+      const points = Array.from(state.pointers.values());
+      state.lastPan = points.length === 1 ? points[0] : null;
+      state.startDistance = 0;
+    }
+
+    function onTouchStart(event) {
+      if (!activeImage()) return;
+      state.touching = true;
+      state.pointers.clear();
+
+      const now = Date.now();
+      if (event.touches.length === 1) {
+        if (now - state.lastTap < 280) {
+          toggleDoubleTapZoom();
+          event.preventDefault();
+        }
+        state.lastTap = now;
+        state.lastPan = touchPoint(event.touches[0]);
+        return;
+      }
+
+      if (event.touches.length >= 2) {
+        state.startDistance = touchDistance(event.touches);
+        state.startScale = state.scale;
+        state.lastPan = null;
+        state.suppressClickUntil = Date.now() + 450;
+        event.preventDefault();
+      }
+    }
+
+    function onTouchMove(event) {
+      if (!activeImage()) return;
+
+      if (event.touches.length >= 2) {
+        const nextDistance = touchDistance(event.touches);
+        if (state.startDistance > 0) {
+          state.scale = Math.max(state.minScale, Math.min(state.maxScale, state.startScale * (nextDistance / state.startDistance)));
+          state.suppressClickUntil = Date.now() + 450;
+          render();
+        }
+        event.preventDefault();
+        return;
+      }
+
+      if (event.touches.length === 1 && isZoomed() && state.lastPan) {
+        const point = touchPoint(event.touches[0]);
+        state.x += point.clientX - state.lastPan.clientX;
+        state.y += point.clientY - state.lastPan.clientY;
+        state.lastPan = point;
+        state.suppressClickUntil = Date.now() + 250;
+        render();
+        event.preventDefault();
+      }
+    }
+
+    function onTouchEnd(event) {
+      if (state.scale <= 1.01) reset();
+      state.startDistance = 0;
+      state.lastPan = event.touches.length === 1 ? touchPoint(event.touches[0]) : null;
+      if (event.touches.length === 0) {
+        window.setTimeout(() => {
+          state.touching = false;
+        }, 350);
+      }
+    }
+
+    function onWheel(event) {
+      if (!event.ctrlKey && !event.metaKey) return;
+      event.preventDefault();
+      const delta = event.deltaY < 0 ? 0.18 : -0.18;
+      state.scale = Math.max(state.minScale, Math.min(state.maxScale, state.scale + delta));
+      if (state.scale <= 1.01) reset();
+      else render();
+    }
+
+    container.addEventListener('pointerdown', onPointerDown);
+    container.addEventListener('pointermove', onPointerMove);
+    container.addEventListener('pointerup', onPointerUp);
+    container.addEventListener('pointercancel', onPointerUp);
+    container.addEventListener('touchstart', onTouchStart, { passive: false });
+    container.addEventListener('touchmove', onTouchMove, { passive: false });
+    container.addEventListener('touchend', onTouchEnd, { passive: false });
+    container.addEventListener('touchcancel', onTouchEnd, { passive: false });
+    container.addEventListener('wheel', onWheel, { passive: false });
+
+    return { reset, isZoomed, shouldSuppressClick };
   }
 
   async function signOutAdmin() {
@@ -2402,6 +2627,7 @@
   function handleMediaUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
+    mediaZoom?.reset();
 
     const url = URL.createObjectURL(file);
 
@@ -2425,6 +2651,7 @@
   }
 
   function removeMedia() {
+    mediaZoom?.reset();
     dom.mediaLottie.pause?.();
     dom.mediaLottie.removeAttribute('src');
     dom.mediaLottie.classList.add('hidden');
@@ -2789,6 +3016,7 @@
     let currentCarouselIndex = 0;
     let currentCarouselImages = [];
     let carouselZoom = null;
+    mediaZoom = createImageZoomController(dom.mediaDisplay, () => dom.mediaImg);
 
     function createPinchZoomController(container) {
       const state = {
@@ -3142,6 +3370,7 @@
       renderExerciseSettings();
     });
     function loadCurrentExercise() {
+      mediaZoom?.reset();
       const exerciseId = state.selectedExercises[state.currentExerciseIndex];
       const config = exerciseSettings[exerciseId];
       state.totalSets = config.sets;
@@ -3334,10 +3563,19 @@
 
     // Media
     dom.mediaInput.addEventListener('change', handleMediaUpload);
-    dom.mediaDisplay.addEventListener('click', () => {
+    dom.mediaDisplay.addEventListener('click', (event) => {
+      if (mediaZoom.shouldSuppressClick()) {
+        event.preventDefault();
+        return;
+      }
       if (!dom.app.classList.contains('media-is-front')) bringMediaToFront();
     });
-    dom.mediaImg.addEventListener('click', () => {
+    dom.mediaImg.addEventListener('click', (event) => {
+      if (mediaZoom.shouldSuppressClick() || mediaZoom.isZoomed()) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
       if (!dom.app.classList.contains('media-is-front')) {
         bringMediaToFront();
         return;
@@ -3347,6 +3585,7 @@
       const details = exerciseDetails[exerciseId];
       if (details && details.images && details.images.length > 1) {
         state.currentImageIndex = ((state.currentImageIndex || 0) + 1) % details.images.length;
+        mediaZoom.reset();
         
         // Fade out
         dom.mediaImg.style.opacity = '0';
