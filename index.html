@@ -13,7 +13,7 @@
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/icon.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="assets/icon.png" />
-  <link rel="stylesheet" href="style.css?v=20260721-media-front-play-1" />
+  <link rel="stylesheet" href="style.css?v=20260806-player-image-nav-1" />
 </head>
 <body>
   <main id="landing-page" aria-labelledby="landing-title">
@@ -47,9 +47,7 @@
       <div id="sortable-routines" class="sortable-routines-container">
         <button id="btn-tennis-elbow" class="routine-pill routine-pill--named" type="button">TENNIS ELBOW</button>
         <button id="btn-cat-cow" class="routine-pill routine-pill--named" type="button">CAT & COW</button>
-        <button id="btn-tai-chi" class="routine-pill routine-pill--named" type="button">TAI-CHI</button>
-        <button class="routine-pill routine-pill--named" type="button">NECK RELIEF</button>
-        <button class="routine-pill routine-pill--named" type="button">LOWER BACK</button>
+        <button id="btn-standing-exercises" class="routine-pill routine-pill--named" type="button">STANDING EXERCISES</button>
       </div>
     </div>
     <button id="btn-routine-back" class="routine-back-btn" type="button" aria-label="Back to landing page">← BACK</button>
@@ -419,6 +417,9 @@
         <dotlottie-player id="media-lottie" class="hidden" src="assets/lottie/forearm-stretch.lottie" autoplay loop aria-label="Exercise demonstration animation"></dotlottie-player>
         <img id="media-img" class="hidden" alt="Exercise media" />
         <video id="media-video" class="hidden" loop playsinline muted></video>
+        <button id="btn-media-prev" class="media-image-nav media-image-nav--prev hidden" type="button" aria-label="Show previous exercise image">&#10094;</button>
+        <button id="btn-media-next" class="media-image-nav media-image-nav--next hidden" type="button" aria-label="Show next exercise image">&#10095;</button>
+        <div id="media-image-dots" class="media-image-dots hidden" aria-label="Exercise image position"></div>
       </div>
     </section>
 
@@ -554,6 +555,9 @@
   <!-- Exercise Details Modal -->
   <div id="exercise-details-modal" class="modal-overlay" aria-hidden="true">
     <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+      <div class="exercise-details-top-actions">
+        <button id="btn-close-details" class="app-back-btn exercise-details-close-btn" type="button">CLOSE</button>
+      </div>
       <div id="exercise-carousel-container" style="position: relative; width: 100%; height: 250px; border-radius: 12px; margin-bottom: 16px; overflow: hidden; background: var(--bg-card);">
         <div id="exercise-carousel-track" style="display: flex; width: 100%; height: 100%; transition: transform 0.3s ease;">
           <!-- Images injected here via JS -->
@@ -570,13 +574,12 @@
         <strong style="color: #ff453a; display: block; margin-bottom: 4px;">⚠️ Safety Alert</strong>
         <span id="exercise-details-alert-text" style="color: var(--text-primary); font-size: 14px;"></span>
       </div>
-      <button id="btn-close-details" class="app-back-btn" style="width: 100%; height: 48px; margin-top: 16px;">CLOSE</button>
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js?v=20260711-1"></script>
   <script type="module" src="assets/lottie/dotlottie-player.mjs"></script>
-  <script src="app.js?v=20260721-media-front-play-1"></script>
+  <script src="app.js?v=20260806-player-image-nav-1"></script>
 </body>
 </html>

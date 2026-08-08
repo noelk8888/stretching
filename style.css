@@ -572,6 +572,10 @@ html, body {
   width: 100%;
 }
 
+.sortable-routines-container:has(.routine-pill:nth-child(6)) {
+  gap: clamp(10px, 1.8vh, 16px);
+}
+
 .sortable-ghost {
   opacity: 0.4;
   border-style: dashed;
@@ -598,6 +602,10 @@ html, body {
   transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
   -webkit-backdrop-filter: blur(22px) saturate(180%);
   backdrop-filter: blur(22px) saturate(180%);
+}
+
+.sortable-routines-container:has(.routine-pill:nth-child(6)) .routine-pill {
+  height: clamp(54px, 8vh, 74px);
 }
 
 .routine-pill::before,
@@ -922,6 +930,58 @@ body.light-mode .landing-btn-pill.is-active {
   transition: opacity 0.3s ease, transform 120ms ease;
   user-select: none;
   -webkit-user-drag: none;
+}
+
+.media-image-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 4;
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.48);
+  color: #fff;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.24);
+}
+
+.media-image-nav--prev {
+  left: 16px;
+}
+
+.media-image-nav--next {
+  right: 16px;
+}
+
+.media-image-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.media-image-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.28);
+}
+
+.media-image-dot.is-active {
+  background: var(--accent);
 }
 
 #media-display.is-zoomed img {
@@ -1777,6 +1837,20 @@ input:checked + .slider-switch::before {
 #exercise-carousel-container {
   touch-action: none;
   user-select: none;
+}
+
+.exercise-details-top-actions {
+  position: sticky;
+  top: -32px;
+  z-index: 5;
+  margin: -32px -24px 18px;
+  padding: 16px 24px 12px;
+  background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-card) 72%, rgba(35, 39, 52, 0));
+}
+
+.exercise-details-close-btn {
+  width: 100%;
+  height: 48px;
 }
 
 #exercise-carousel-track {

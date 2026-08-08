@@ -1,9 +1,10 @@
 insert into public.routines (slug, title, sort_order, is_active) values
   ('tennis-elbow', 'TENNIS ELBOW', 10, true),
   ('cat-cow', 'CAT & COW', 20, true),
-  ('tai-chi', 'TAI-CHI', 30, true),
-  ('neck-relief', 'NECK RELIEF', 40, true),
-  ('lower-back', 'LOWER BACK', 50, true)
+  ('standing-exercises', 'STANDING EXERCISES', 30, true),
+  ('tai-chi', 'TAI-CHI', 40, false),
+  ('neck-relief', 'NECK RELIEF', 50, false),
+  ('lower-back', 'LOWER BACK', 60, false)
 on conflict (slug) do update set
   title = excluded.title,
   sort_order = excluded.sort_order,
@@ -230,6 +231,58 @@ insert into public.exercises (
     6,
     30,
     true
+  ),
+  (
+    (select id from public.routines where slug = 'standing-exercises'),
+    'wall-supported-back-leg-kicks',
+    'WALL SUPPORTED BACK LEG KICKS',
+    'Hold a sturdy support and kick one leg gently back without arching your low back.',
+    'Stand facing a wall, counter, or sturdy support with both hands resting lightly on it. Keep your torso tall, brace gently, then kick one leg straight back behind you without arching your lower back. Return with control and switch sides as needed.',
+    'Keep the kick low and controlled. Stop if your lower back pinches or you feel pain traveling down your leg.',
+    'assets/images/standing_exercises_01_back_leg_kick_end.png',
+    2,
+    10,
+    10,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'standing-exercises'),
+    'standing-superman',
+    'STANDING SUPERMAN',
+    'Reach long through the arms and one back leg, then return upright with control.',
+    'Stand tall, reach both arms overhead, and extend one leg back as you lengthen through your body. Return upright with arms forward at shoulder height, then repeat slowly and alternate sides.',
+    'Use a wall or counter nearby if balance feels uncertain. Keep the movement smooth, not fast.',
+    'assets/images/standing_exercises_02_standing_superman_start.png',
+    2,
+    8,
+    20,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'standing-exercises'),
+    'stationary-lunges',
+    'STATIONARY LUNGES',
+    'Lower from a split stance into a controlled stationary lunge, then press back up.',
+    'Step into a split stance with hands on hips. Lower straight down by bending both knees, keeping your chest tall and your front knee tracking over your ankle. Press through your front foot to return to the start.',
+    'Keep the range comfortable. Use a smaller dip or hold a stable surface if your knees or balance feel sensitive.',
+    'assets/images/standing_exercises_03_stationary_lunge_end.png',
+    2,
+    8,
+    30,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'standing-exercises'),
+    'standing-knee-raises',
+    'STANDING KNEE RAISES',
+    'Stand tall and lift one knee toward hip height, alternating sides slowly.',
+    'Stand tall with your hands on your hips. Lift one knee toward hip height while keeping your torso upright, then lower the foot with control and repeat on the other side.',
+    'Do not lean backward as the knee lifts. Keep the supporting knee soft and move slowly.',
+    'assets/images/standing_exercises_04_knee_raise_end.png',
+    2,
+    10,
+    40,
+    true
   )
 on conflict (slug) do update set
   routine_id = excluded.routine_id,
@@ -247,7 +300,14 @@ on conflict (slug) do update set
 update public.exercises
 set is_active = false,
     updated_at = now()
-where slug in ('forearm-rotation', 'grip-squeeze');
+where slug in (
+  'forearm-rotation',
+  'grip-squeeze',
+  'standing-side-reach',
+  'standing-back-extension',
+  'standing-hip-hinge',
+  'standing-trunk-rotation'
+);
 
 delete from public.exercise_images
 where exercise_id in (select id from public.exercises);
@@ -265,4 +325,12 @@ insert into public.exercise_images (exercise_id, image_url, sort_order) values
   ((select id from public.exercises where slug = 'childs-pose'), 'assets/images/cat_cow_routine_02_childs_pose.png', 10),
   ((select id from public.exercises where slug = 'thread-needle'), 'assets/images/cat_cow_routine_03_thread_needle_inhale_exhale.png', 10),
   ((select id from public.exercises where slug = 'bird-dog'), 'assets/images/cat_cow_routine_04_bird_dog.png', 10),
-  ((select id from public.exercises where slug = 'sphinx-pose'), 'assets/images/cat_cow_routine_05_sphinx_pose.png', 10);
+  ((select id from public.exercises where slug = 'sphinx-pose'), 'assets/images/cat_cow_routine_05_sphinx_pose.png', 10),
+  ((select id from public.exercises where slug = 'wall-supported-back-leg-kicks'), 'assets/images/standing_exercises_01_back_leg_kick_start.png', 10),
+  ((select id from public.exercises where slug = 'wall-supported-back-leg-kicks'), 'assets/images/standing_exercises_01_back_leg_kick_end.png', 20),
+  ((select id from public.exercises where slug = 'standing-superman'), 'assets/images/standing_exercises_02_standing_superman_start.png', 10),
+  ((select id from public.exercises where slug = 'standing-superman'), 'assets/images/standing_exercises_02_standing_superman_end.png', 20),
+  ((select id from public.exercises where slug = 'stationary-lunges'), 'assets/images/standing_exercises_03_stationary_lunge_start.png', 10),
+  ((select id from public.exercises where slug = 'stationary-lunges'), 'assets/images/standing_exercises_03_stationary_lunge_end.png', 20),
+  ((select id from public.exercises where slug = 'standing-knee-raises'), 'assets/images/standing_exercises_04_knee_raise_start.png', 10),
+  ((select id from public.exercises where slug = 'standing-knee-raises'), 'assets/images/standing_exercises_04_knee_raise_end.png', 20);

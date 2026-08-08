@@ -235,6 +235,34 @@
       description: 'Stand tall, shift your weight to one leg, then slowly lift the opposite knee to hip height while raising the same-side arm upward. Hold for a breath, then lower with control and switch sides.',
       alert: 'Use a wall or chair nearby if you need extra support while building your balance.',
       images: []
+    },
+    'wall-supported-back-leg-kicks': {
+      title: 'WALL SUPPORTED BACK LEG KICKS',
+      description: 'Stand facing a wall, counter, or sturdy support with both hands resting lightly on it. Keep your torso tall, brace gently, then kick one leg straight back behind you without arching your lower back. Return with control and switch sides as needed.',
+      alert: 'Keep the kick low and controlled. Stop if your lower back pinches or you feel pain traveling down your leg.',
+      thumbnail: 'assets/images/standing_exercises_01_back_leg_kick_end.png',
+      images: ['assets/images/standing_exercises_01_back_leg_kick_start.png', 'assets/images/standing_exercises_01_back_leg_kick_end.png']
+    },
+    'standing-superman': {
+      title: 'STANDING SUPERMAN',
+      description: 'Stand tall, reach both arms overhead, and extend one leg back as you lengthen through your body. Return upright with arms forward at shoulder height, then repeat slowly and alternate sides.',
+      alert: 'Use a wall or counter nearby if balance feels uncertain. Keep the movement smooth, not fast.',
+      thumbnail: 'assets/images/standing_exercises_02_standing_superman_start.png',
+      images: ['assets/images/standing_exercises_02_standing_superman_start.png', 'assets/images/standing_exercises_02_standing_superman_end.png']
+    },
+    'stationary-lunges': {
+      title: 'STATIONARY LUNGES',
+      description: 'Step into a split stance with hands on hips. Lower straight down by bending both knees, keeping your chest tall and your front knee tracking over your ankle. Press through your front foot to return to the start.',
+      alert: 'Keep the range comfortable. Use a smaller dip or hold a stable surface if your knees or balance feel sensitive.',
+      thumbnail: 'assets/images/standing_exercises_03_stationary_lunge_end.png',
+      images: ['assets/images/standing_exercises_03_stationary_lunge_start.png', 'assets/images/standing_exercises_03_stationary_lunge_end.png']
+    },
+    'standing-knee-raises': {
+      title: 'STANDING KNEE RAISES',
+      description: 'Stand tall with your hands on your hips. Lift one knee toward hip height while keeping your torso upright, then lower the foot with control and repeat on the other side.',
+      alert: 'Do not lean backward as the knee lifts. Keep the supporting knee soft and move slowly.',
+      thumbnail: 'assets/images/standing_exercises_04_knee_raise_end.png',
+      images: ['assets/images/standing_exercises_04_knee_raise_start.png', 'assets/images/standing_exercises_04_knee_raise_end.png']
     }
   };
 
@@ -263,6 +291,9 @@
     mediaLottie: $('media-lottie'),
     mediaImg: $('media-img'),
     mediaVideo: $('media-video'),
+    btnMediaPrev: $('btn-media-prev'),
+    btnMediaNext: $('btn-media-next'),
+    mediaImageDots: $('media-image-dots'),
 
     // Visuals
     repDots: $('rep-dots-container'),
@@ -340,7 +371,8 @@
     'CAT & COW': 'cat-cow',
     'TAI-CHI': 'tai-chi',
     'NECK RELIEF': 'neck-relief',
-    'LOWER BACK': 'lower-back'
+    'LOWER BACK': 'lower-back',
+    'STANDING EXERCISES': 'standing-exercises'
   };
 
   function getRoutineIdFromPill(pill) {
@@ -349,6 +381,7 @@
     if (pill.id === 'btn-tennis-elbow') return 'tennis-elbow';
     if (pill.id === 'btn-cat-cow') return 'cat-cow';
     if (pill.id === 'btn-tai-chi') return 'tai-chi';
+    if (pill.id === 'btn-standing-exercises') return 'standing-exercises';
     return routineNameToId[pill.innerText.trim()] || '';
   }
 
@@ -423,6 +456,11 @@
     'ward-off': exerciseDefault(3, 8),
     'cloud-hands': exerciseDefault(3, 10),
     'golden-rooster': exerciseDefault(2, 6),
+    // Standing Exercises
+    'wall-supported-back-leg-kicks': exerciseDefault(2, 10),
+    'standing-superman': exerciseDefault(2, 8),
+    'stationary-lunges': exerciseDefault(2, 8),
+    'standing-knee-raises': exerciseDefault(2, 10),
   };
 
   let exerciseSettings = JSON.parse(JSON.stringify(exerciseDefaults));
@@ -454,12 +492,13 @@
       ]
     },
     {
-      id: 'tai-chi',
-      name: 'TAI-CHI',
+      id: 'standing-exercises',
+      name: 'STANDING EXERCISES',
       exercises: [
-        { id: 'ward-off', shortDescription: 'Shift weight to one leg, raise arms in a rounded arc as if embracing a ball.' },
-        { id: 'cloud-hands', shortDescription: 'Shift side to side sweeping hands in slow overlapping circles at chest height.' },
-        { id: 'golden-rooster', shortDescription: 'Stand on one leg, lift the opposite knee and arm slowly to build balance.' }
+        { id: 'wall-supported-back-leg-kicks', shortDescription: 'Hold a sturdy support and kick one leg gently back without arching your low back.' },
+        { id: 'standing-superman', shortDescription: 'Reach long through the arms and one back leg, then return upright with control.' },
+        { id: 'stationary-lunges', shortDescription: 'Lower from a split stance into a controlled stationary lunge, then press back up.' },
+        { id: 'standing-knee-raises', shortDescription: 'Stand tall and lift one knee toward hip height, alternating sides slowly.' }
       ]
     }
   ];
@@ -492,7 +531,7 @@
     card.style.display = 'none';
 
     const thumbnail = sanitizeUrl(exercise.thumbnail);
-    const isTutorialCardAsset = /(?:tennis_elbow|cat_cow_routine)_/.test(thumbnail);
+    const isTutorialCardAsset = /(?:tennis_elbow|cat_cow_routine|standing_exercises)_/.test(thumbnail);
     const previewStyle = thumbnail
       ? `background-image: url('${thumbnail}'); background-size: ${isTutorialCardAsset ? 'contain' : 'cover'}; background-repeat: no-repeat; background-position: center;${isTutorialCardAsset ? ' background-color: #fff;' : ''}`
       : 'background: var(--bg-elevated);';
@@ -546,7 +585,7 @@
           id: item.id,
           title: details.title,
           shortDescription: item.shortDescription,
-          thumbnail: details.images?.[0] || '',
+          thumbnail: details.thumbnail || details.images?.[0] || '',
           sets: defaults.sets,
           reps: defaults.reps
         }));
@@ -2634,12 +2673,16 @@
   }
 
   // ─── Media handling ───
-  function handleMediaUpload(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    mediaZoom?.reset();
+	  function handleMediaUpload(e) {
+	    const file = e.target.files[0];
+	    if (!file) return;
+	    mediaZoom?.reset();
+	    dom.btnMediaPrev.classList.add('hidden');
+	    dom.btnMediaNext.classList.add('hidden');
+	    dom.mediaImageDots.classList.add('hidden');
+	    dom.mediaImageDots.innerHTML = '';
 
-    const url = URL.createObjectURL(file);
+	    const url = URL.createObjectURL(file);
 
     if (file.type.startsWith('video/')) {
       dom.mediaLottie.classList.add('hidden');
@@ -2670,10 +2713,14 @@
     dom.mediaImg.src = '';
     dom.mediaImg.classList.add('hidden');
     dom.mediaVideo.pause();
-    dom.mediaVideo.src = '';
-    dom.mediaVideo.classList.add('hidden');
-    dom.mediaDisplay.classList.add('hidden');
-    dom.mediaPlaceholder.classList.remove('hidden');
+	    dom.mediaVideo.src = '';
+	    dom.mediaVideo.classList.add('hidden');
+	    dom.btnMediaPrev.classList.add('hidden');
+	    dom.btnMediaNext.classList.add('hidden');
+	    dom.mediaImageDots.classList.add('hidden');
+	    dom.mediaImageDots.innerHTML = '';
+	    dom.mediaDisplay.classList.add('hidden');
+	    dom.mediaPlaceholder.classList.remove('hidden');
     dom.mediaInput.value = '';
   }
 
@@ -3255,6 +3302,49 @@
       }
     }
 
+    function getCurrentExerciseImages() {
+      const exerciseId = state.selectedExercises?.[state.currentExerciseIndex];
+      const details = exerciseDetails[exerciseId];
+      return Array.isArray(details?.images) ? details.images : [];
+    }
+
+    function updateMediaImageControls() {
+      const images = getCurrentExerciseImages();
+      const canNavigate = images.length > 1 && !dom.mediaImg.classList.contains('hidden');
+      dom.btnMediaPrev.classList.toggle('hidden', !canNavigate);
+      dom.btnMediaNext.classList.toggle('hidden', !canNavigate);
+      dom.mediaImageDots.classList.toggle('hidden', !canNavigate);
+      dom.mediaImageDots.innerHTML = '';
+      if (!canNavigate) return;
+
+      images.forEach((_image, index) => {
+        const dot = document.createElement('span');
+        dot.className = `media-image-dot${index === (state.currentImageIndex || 0) ? ' is-active' : ''}`;
+        dom.mediaImageDots.appendChild(dot);
+      });
+    }
+
+    function showMediaImage(index) {
+      const images = getCurrentExerciseImages();
+      if (images.length === 0) return;
+      state.currentImageIndex = (index + images.length) % images.length;
+      mediaZoom.reset();
+      dom.mediaImg.style.opacity = '0';
+      setTimeout(() => {
+        dom.mediaImg.src = images[state.currentImageIndex];
+        dom.mediaImg.style.opacity = '1';
+        updateMediaImageControls();
+      }, 160);
+    }
+
+    function showNextMediaImage() {
+      showMediaImage((state.currentImageIndex || 0) + 1);
+    }
+
+    function showPreviousMediaImage() {
+      showMediaImage((state.currentImageIndex || 0) - 1);
+    }
+
     btnPrev.addEventListener('click', () => {
       if (currentCarouselIndex > 0) {
         currentCarouselIndex--;
@@ -3444,6 +3534,7 @@
           dom.mediaImg.classList.add('hidden');
         }
       }
+      updateMediaImageControls();
       dom.mediaVideo.classList.add('hidden');
       dom.mediaVideo.pause();
       dom.mediaPlaceholder.classList.add('hidden');
@@ -3598,17 +3689,20 @@
       const exerciseId = state.selectedExercises[state.currentExerciseIndex];
       const details = exerciseDetails[exerciseId];
       if (details && details.images && details.images.length > 1) {
-        state.currentImageIndex = ((state.currentImageIndex || 0) + 1) % details.images.length;
-        mediaZoom.reset();
-        
-        // Fade out
-        dom.mediaImg.style.opacity = '0';
-        setTimeout(() => {
-          dom.mediaImg.src = details.images[state.currentImageIndex];
-          // Fade in
-          dom.mediaImg.style.opacity = '1';
-        }, 300);
+        showNextMediaImage();
       }
+    });
+    dom.btnMediaPrev.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (!dom.app.classList.contains('media-is-front')) bringMediaToFront();
+      showPreviousMediaImage();
+    });
+    dom.btnMediaNext.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (!dom.app.classList.contains('media-is-front')) bringMediaToFront();
+      showNextMediaImage();
     });
 
     // Transport
