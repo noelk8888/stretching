@@ -52,7 +52,13 @@
     'wrist-flexion': 'assets/videos/wrist_flexion_tutorial.mp4',
     'forearm-supination': 'assets/videos/supination_pronation_tutorial.mp4',
     'finger-extension': 'assets/videos/finger_extension_tutorial.mp4',
-    'grip-finger-opening': 'assets/videos/grip_exercise_tutorial.mp4'
+    'grip-finger-opening': 'assets/videos/grip_exercise_tutorial.mp4',
+    'supine-lumbar-rotations': 'assets/videos/supine_lumbar_rotations_tutorial.mp4',
+    'supine-hip-rotations': 'assets/videos/supine_hip_rotations_tutorial.mp4',
+    'supine-figure-four': 'assets/videos/supine_figure_four_stretch_tutorial.mp4',
+    'single-knee-to-chest': 'assets/videos/single_knee_to_chest_tutorial.mp4',
+    'supine-spinal-twist': 'assets/videos/supine_spinal_twist_tutorial.mp4',
+    'side-lying-thoracic-rotation': 'assets/videos/thoracic_open_book_rotation_tutorial.mp4'
   });
   let currentUser = null;
   let isAdmin = false;
@@ -285,42 +291,48 @@
       description: 'Lie on your back with your knees bent, feet together, and arms open at shoulder height. Keeping your shoulders relaxed on the bed, slowly lower both knees to one side. Return to centre, then repeat to the other side.',
       alert: 'Use a small, comfortable range. Stop if the movement causes sharp back pain, tingling, or pain traveling into a leg.',
       thumbnail: 'assets/images/lying_in_bed_01_lumbar_rotations.jpg',
-      images: ['assets/images/lying_in_bed_01_lumbar_rotations.jpg']
+      images: ['assets/images/lying_in_bed_01_lumbar_rotations.jpg'],
+      detailVideoUrl: 'assets/videos/supine_lumbar_rotations_tutorial.mp4'
     },
     'supine-hip-rotations': {
       title: 'SUPINE HIP ROTATIONS',
       description: 'Lie on your back with your knees bent and feet wider than your hips. Gently let both knees move inward toward each other, then open them outward again while keeping your feet planted and your pelvis relaxed.',
       alert: 'Keep the motion easy and controlled. Reduce the range if you feel pinching in the hips or strain in the groin.',
       thumbnail: 'assets/images/lying_in_bed_02_hip_rotations.jpg',
-      images: ['assets/images/lying_in_bed_02_hip_rotations.jpg']
+      images: ['assets/images/lying_in_bed_02_hip_rotations.jpg'],
+      detailVideoUrl: 'assets/videos/supine_hip_rotations_tutorial.mp4'
     },
     'supine-figure-four': {
       title: 'SUPINE FIGURE-FOUR STRETCH',
       description: 'Lie on your back with both knees bent. Cross one ankle over the opposite thigh just above the knee. Thread your hands behind the supporting thigh and gently draw both legs toward your chest. Release and switch sides.',
       alert: 'Keep the crossed foot flexed and never press directly on the knee. Ease off if you feel knee pain or hip pinching.',
       thumbnail: 'assets/images/lying_in_bed_03_figure_four.jpg',
-      images: ['assets/images/lying_in_bed_03_figure_four.jpg']
+      images: ['assets/images/lying_in_bed_03_figure_four.jpg'],
+      detailVideoUrl: 'assets/videos/supine_figure_four_stretch_tutorial.mp4'
     },
     'single-knee-to-chest': {
       title: 'SINGLE KNEE TO CHEST',
       description: 'Lie on your back with one leg extended. Hold the other leg just below the knee and gently draw it toward your chest while keeping your head and shoulders relaxed. Lower with control and switch sides.',
       alert: 'Hold behind the thigh instead of over the kneecap if your knee is sensitive. Keep the extended leg relaxed.',
       thumbnail: 'assets/images/lying_in_bed_04_knee_to_chest.jpg',
-      images: ['assets/images/lying_in_bed_04_knee_to_chest.jpg']
+      images: ['assets/images/lying_in_bed_04_knee_to_chest.jpg'],
+      detailVideoUrl: 'assets/videos/single_knee_to_chest_tutorial.mp4'
     },
     'supine-spinal-twist': {
       title: 'SUPINE SPINAL TWIST',
       description: 'Lie on your back and draw one knee across your body with the opposite hand. Extend the other arm at shoulder height and turn your head gently toward that hand. Return to centre and switch sides.',
       alert: 'Keep both shoulders as relaxed as possible. Do not force the knee down or twist through pain.',
       thumbnail: 'assets/images/lying_in_bed_05_spinal_twist.jpg',
-      images: ['assets/images/lying_in_bed_05_spinal_twist.jpg']
+      images: ['assets/images/lying_in_bed_05_spinal_twist.jpg'],
+      detailVideoUrl: 'assets/videos/supine_spinal_twist_tutorial.mp4'
     },
     'side-lying-thoracic-rotation': {
       title: 'THORACIC OPEN-BOOK ROTATION',
       description: 'Lie on your side with your hips and knees bent and stacked. Reach both arms forward, then sweep the top arm open across your body as your chest rotates toward the bed behind you. Bring the arm back and repeat before switching sides.',
       alert: 'Keep your knees together so the movement comes from your upper back. Use a pillow under your head if needed.',
       thumbnail: 'assets/images/lying_in_bed_06_thoracic_rotation.jpg',
-      images: ['assets/images/lying_in_bed_06_thoracic_rotation.jpg']
+      images: ['assets/images/lying_in_bed_06_thoracic_rotation.jpg'],
+      detailVideoUrl: 'assets/videos/thoracic_open_book_rotation_tutorial.mp4'
     },
     'prone-lower-leg-swings': {
       title: 'PRONE LOWER-LEG SWINGS',

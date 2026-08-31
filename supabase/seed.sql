@@ -500,6 +500,12 @@ set lottie_url = case slug
     when 'forearm-supination' then 'assets/videos/supination_pronation_tutorial.mp4'
     when 'finger-extension' then 'assets/videos/finger_extension_tutorial.mp4'
     when 'grip-finger-opening' then 'assets/videos/grip_exercise_tutorial.mp4'
+    when 'supine-lumbar-rotations' then 'assets/videos/supine_lumbar_rotations_tutorial.mp4'
+    when 'supine-hip-rotations' then 'assets/videos/supine_hip_rotations_tutorial.mp4'
+    when 'supine-figure-four' then 'assets/videos/supine_figure_four_stretch_tutorial.mp4'
+    when 'single-knee-to-chest' then 'assets/videos/single_knee_to_chest_tutorial.mp4'
+    when 'supine-spinal-twist' then 'assets/videos/supine_spinal_twist_tutorial.mp4'
+    when 'side-lying-thoracic-rotation' then 'assets/videos/thoracic_open_book_rotation_tutorial.mp4'
   end,
   updated_at = now()
-where slug in ('flexor-stretch', 'extensor-stretch', 'eccentric-wrist-extension', 'wrist-flexion', 'forearm-supination', 'finger-extension', 'grip-finger-opening');
+where slug in ('flexor-stretch', 'extensor-stretch', 'eccentric-wrist-extension', 'wrist-flexion', 'forearm-supination', 'finger-extension', 'grip-finger-opening', 'supine-lumbar-rotations', 'supine-hip-rotations', 'supine-figure-four', 'single-knee-to-chest', 'supine-spinal-twist', 'side-lying-thoracic-rotation');
