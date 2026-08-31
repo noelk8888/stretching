@@ -45,6 +45,15 @@
   const TIMER_TICK_MS = 250;
   const BEEP_LEAD_SECONDS = 0.6;
   const ADMIN_MEDIA_BUCKET = 'exercise-media';
+  const BUNDLED_DETAIL_VIDEO_BY_EXERCISE = Object.freeze({
+    'extensor-stretch': 'assets/videos/wrist_extensor_stretch.mp4',
+    'flexor-stretch': 'assets/videos/wrist_flexor_stretch.mp4',
+    'eccentric-wrist-extension': 'assets/videos/eccentric_wrist_extension_v2.mp4',
+    'wrist-flexion': 'assets/videos/wrist_flexion_tutorial.mp4',
+    'forearm-supination': 'assets/videos/supination_pronation_tutorial.mp4',
+    'finger-extension': 'assets/videos/finger_extension_tutorial.mp4',
+    'grip-finger-opening': 'assets/videos/grip_exercise_tutorial.mp4'
+  });
   let currentUser = null;
   let isAdmin = false;
   let adminRoutines = [];
@@ -174,19 +183,22 @@
       title: 'WRIST EXTENSOR STRETCH',
       description: 'Extend your arm in front of you with your palm facing down. With your other hand, gently bend your wrist and fingers downward until you feel a stretch along the top of your forearm. Hold without forcing.',
       alert: 'Keep your elbow straight but do not lock it forcefully.',
-      images: ['assets/images/tennis_elbow_01_extensor_stretch.png']
+      images: ['assets/images/tennis_elbow_01_extensor_stretch.png'],
+      detailVideoUrl: 'assets/videos/wrist_extensor_stretch.mp4'
     },
     'flexor-stretch': {
       title: 'WRIST FLEXOR STRETCH',
       description: 'Extend your arm in front of you with your palm facing up. Use your other hand to gently pull your fingers and wrist back until you feel a stretch along the underside of your forearm.',
       alert: 'Keep the stretch gentle. Stop if you feel sharp pain, tingling, or numbness.',
-      images: ['assets/images/tennis_elbow_02_flexor_stretch.png']
+      images: ['assets/images/tennis_elbow_02_flexor_stretch.png'],
+      detailVideoUrl: 'assets/videos/wrist_flexor_stretch.mp4'
     },
     'eccentric-wrist-extension': {
       title: 'ECCENTRIC WRIST EXTENSION',
       description: 'Support your forearm on a table with your palm facing down and a light weight in your hand. Use your other hand to help lift the wrist, then slowly lower the weight using the affected side.',
       alert: 'Use very light resistance. The lowering phase should be slow and controlled, not painful.',
-      images: ['assets/images/tennis_elbow_03_eccentric_wrist_extension.png']
+      images: ['assets/images/tennis_elbow_03_eccentric_wrist_extension.png'],
+      detailVideoUrl: 'assets/videos/eccentric_wrist_extension_v2.mp4'
     },
     'wrist-extension': {
       title: 'WRIST EXTENSION',
@@ -198,25 +210,29 @@
       title: 'WRIST FLEXION',
       description: 'Support your forearm with your palm facing up and your hand over the edge. Holding a very light weight, curl your wrist upward, pause briefly, then lower with control.',
       alert: 'Keep your forearm supported and avoid gripping the weight too tightly.',
-      images: ['assets/images/tennis_elbow_05_wrist_flexion.png']
+      images: ['assets/images/tennis_elbow_05_wrist_flexion.png'],
+      detailVideoUrl: 'assets/videos/wrist_flexion_tutorial.mp4'
     },
     'forearm-supination': {
-      title: 'FOREARM SUPINATION',
-      description: 'Bend your elbow to 90 degrees and keep it close to your side. Holding a light hammer or small weight, slowly rotate your forearm so your palm turns upward.',
-      alert: 'Keep your upper arm still. Use a small range if rotation feels sensitive.',
-      images: ['assets/images/tennis_elbow_06_supination.png']
+      title: 'SUPINATION AND PRONATION',
+      description: 'Bend your elbow to 90 degrees and keep it tucked against your side. Holding a light hammer or small weight, slowly rotate your forearm until your palm faces upward, then reverse the movement until your palm faces downward.',
+      alert: 'Keep your upper arm and shoulder still. Use a small, comfortable range and stop if symptoms increase.',
+      images: ['assets/images/tennis_elbow_06_supination.png', 'assets/images/tennis_elbow_07_pronation.png'],
+      detailVideoUrl: 'assets/videos/supination_pronation_tutorial.mp4'
     },
-    'forearm-pronation': {
-      title: 'FOREARM PRONATION',
-      description: 'Bend your elbow to 90 degrees and keep it close to your side. Holding a light hammer or small weight, slowly rotate your forearm so your palm turns downward.',
-      alert: 'Move from the forearm, not the shoulder. Stop if symptoms increase.',
-      images: ['assets/images/tennis_elbow_07_pronation.png']
+    'finger-extension': {
+      title: 'FINGER EXTENSION',
+      description: 'Place a light elastic band around your fingers and thumb. Slowly spread your fingers apart against the band, pause briefly, then return with control.',
+      alert: 'Use light resistance and keep the wrist neutral. Stop if the movement increases elbow or finger pain.',
+      images: ['assets/images/tennis_elbow_08_finger_extension.png'],
+      detailVideoUrl: 'assets/videos/finger_extension_tutorial.mp4'
     },
     'grip-finger-opening': {
-      title: 'GRIP & FINGER OPENING',
-      description: 'Squeeze a soft ball or rolled towel, then open your fingers gently against an elastic band. Move slowly and keep the effort comfortable.',
-      alert: 'Do not squeeze or open against so much resistance that it causes elbow pain.',
-      images: ['assets/images/tennis_elbow_08_grip_finger_opening.png']
+      title: 'GRIP EXERCISE',
+      description: 'Hold a soft ball or rolled towel and squeeze gently. Pause briefly, then release slowly without letting the wrist bend.',
+      alert: 'Use a comfortable grip effort. Do not squeeze hard enough to increase elbow pain.',
+      images: ['assets/images/tennis_elbow_08_grip_exercise.png'],
+      detailVideoUrl: 'assets/videos/grip_exercise_tutorial.mp4'
     },
     'ward-off': {
       title: 'WARD OFF',
@@ -263,6 +279,69 @@
       alert: 'Do not lean backward as the knee lifts. Keep the supporting knee soft and move slowly.',
       thumbnail: 'assets/images/standing_exercises_04_knee_raise_end.png',
       images: ['assets/images/standing_exercises_04_knee_raise_start.png', 'assets/images/standing_exercises_04_knee_raise_end.png']
+    },
+    'supine-lumbar-rotations': {
+      title: 'SUPINE LUMBAR ROTATIONS',
+      description: 'Lie on your back with your knees bent, feet together, and arms open at shoulder height. Keeping your shoulders relaxed on the bed, slowly lower both knees to one side. Return to centre, then repeat to the other side.',
+      alert: 'Use a small, comfortable range. Stop if the movement causes sharp back pain, tingling, or pain traveling into a leg.',
+      thumbnail: 'assets/images/lying_in_bed_01_lumbar_rotations.jpg',
+      images: ['assets/images/lying_in_bed_01_lumbar_rotations.jpg']
+    },
+    'supine-hip-rotations': {
+      title: 'SUPINE HIP ROTATIONS',
+      description: 'Lie on your back with your knees bent and feet wider than your hips. Gently let both knees move inward toward each other, then open them outward again while keeping your feet planted and your pelvis relaxed.',
+      alert: 'Keep the motion easy and controlled. Reduce the range if you feel pinching in the hips or strain in the groin.',
+      thumbnail: 'assets/images/lying_in_bed_02_hip_rotations.jpg',
+      images: ['assets/images/lying_in_bed_02_hip_rotations.jpg']
+    },
+    'supine-figure-four': {
+      title: 'SUPINE FIGURE-FOUR STRETCH',
+      description: 'Lie on your back with both knees bent. Cross one ankle over the opposite thigh just above the knee. Thread your hands behind the supporting thigh and gently draw both legs toward your chest. Release and switch sides.',
+      alert: 'Keep the crossed foot flexed and never press directly on the knee. Ease off if you feel knee pain or hip pinching.',
+      thumbnail: 'assets/images/lying_in_bed_03_figure_four.jpg',
+      images: ['assets/images/lying_in_bed_03_figure_four.jpg']
+    },
+    'single-knee-to-chest': {
+      title: 'SINGLE KNEE TO CHEST',
+      description: 'Lie on your back with one leg extended. Hold the other leg just below the knee and gently draw it toward your chest while keeping your head and shoulders relaxed. Lower with control and switch sides.',
+      alert: 'Hold behind the thigh instead of over the kneecap if your knee is sensitive. Keep the extended leg relaxed.',
+      thumbnail: 'assets/images/lying_in_bed_04_knee_to_chest.jpg',
+      images: ['assets/images/lying_in_bed_04_knee_to_chest.jpg']
+    },
+    'supine-spinal-twist': {
+      title: 'SUPINE SPINAL TWIST',
+      description: 'Lie on your back and draw one knee across your body with the opposite hand. Extend the other arm at shoulder height and turn your head gently toward that hand. Return to centre and switch sides.',
+      alert: 'Keep both shoulders as relaxed as possible. Do not force the knee down or twist through pain.',
+      thumbnail: 'assets/images/lying_in_bed_05_spinal_twist.jpg',
+      images: ['assets/images/lying_in_bed_05_spinal_twist.jpg']
+    },
+    'side-lying-thoracic-rotation': {
+      title: 'THORACIC OPEN-BOOK ROTATION',
+      description: 'Lie on your side with your hips and knees bent and stacked. Reach both arms forward, then sweep the top arm open across your body as your chest rotates toward the bed behind you. Bring the arm back and repeat before switching sides.',
+      alert: 'Keep your knees together so the movement comes from your upper back. Use a pillow under your head if needed.',
+      thumbnail: 'assets/images/lying_in_bed_06_thoracic_rotation.jpg',
+      images: ['assets/images/lying_in_bed_06_thoracic_rotation.jpg']
+    },
+    'prone-lower-leg-swings': {
+      title: 'PRONE LOWER-LEG SWINGS',
+      description: 'Lie face-down with your forehead resting on folded arms. Bend both knees to about 90 degrees and keep your feet together. Slowly swing both lower legs from side to side while keeping your thighs and pelvis relaxed on the bed.',
+      alert: 'Keep the movement small and easy. Stop if it causes knee pain, sharp lower-back pain, or cramping in the hamstrings.',
+      thumbnail: 'assets/images/face_down_in_bed_01_lower_leg_swings.jpg',
+      images: ['assets/images/face_down_in_bed_01_lower_leg_swings.jpg']
+    },
+    'prone-cross-body-leg-reaches': {
+      title: 'PRONE CROSS-BODY LEG REACHES',
+      description: 'Lie face-down with both legs long. Bend one knee and gently reach that foot across behind your body toward the opposite side. Return the leg to neutral, then repeat with the other leg.',
+      alert: 'Move slowly and keep most of your pelvis supported. Use a smaller reach if you feel pinching in the hip or pressure in the lower back.',
+      thumbnail: 'assets/images/face_down_in_bed_02_cross_body_leg_reaches.jpg',
+      images: ['assets/images/face_down_in_bed_02_cross_body_leg_reaches.jpg']
+    },
+    'frog-leg-prone-back-extension': {
+      title: 'FROG-LEG PRONE BACK EXTENSION',
+      description: 'Lie face-down with one leg straight and the other knee comfortably opened out to the side. Place your forearms under your shoulders, then gently lift your chest while keeping your pelvis supported. Lower with control and switch the bent leg between sets.',
+      alert: 'Keep the extension mild and your shoulders away from your ears. Stop if you feel pinching or sharp pain in your lower back or hip.',
+      thumbnail: 'assets/images/face_down_in_bed_03_frog_leg_back_extension.jpg',
+      images: ['assets/images/face_down_in_bed_03_frog_leg_back_extension.jpg']
     }
   };
 
@@ -372,7 +451,9 @@
     'TAI-CHI': 'tai-chi',
     'NECK RELIEF': 'neck-relief',
     'LOWER BACK': 'lower-back',
-    'STANDING EXERCISES': 'standing-exercises'
+    'STANDING EXERCISES': 'standing-exercises',
+    'LYING IN BED': 'lying-in-bed',
+    'FACE DOWN IN BED': 'face-down-in-bed'
   };
 
   function getRoutineIdFromPill(pill) {
@@ -444,7 +525,7 @@
     'wrist-extension': exerciseDefault(3, 10),
     'wrist-flexion': exerciseDefault(3, 10),
     'forearm-supination': exerciseDefault(3, 10),
-    'forearm-pronation': exerciseDefault(3, 10),
+    'finger-extension': exerciseDefault(3, 10),
     'grip-finger-opening': exerciseDefault(3, 10),
     // Cat & Cow
     'cat-cow': exerciseDefault(2, 8),
@@ -461,6 +542,17 @@
     'standing-superman': exerciseDefault(2, 8),
     'stationary-lunges': exerciseDefault(2, 8),
     'standing-knee-raises': exerciseDefault(2, 10),
+    // Lying in Bed
+    'supine-lumbar-rotations': exerciseDefault(2, 10),
+    'supine-hip-rotations': exerciseDefault(2, 10),
+    'supine-figure-four': exerciseDefault(2, 12),
+    'single-knee-to-chest': exerciseDefault(2, 12),
+    'supine-spinal-twist': exerciseDefault(2, 10),
+    'side-lying-thoracic-rotation': exerciseDefault(2, 10),
+    // Face Down in Bed
+    'prone-lower-leg-swings': exerciseDefault(2, 20),
+    'prone-cross-body-leg-reaches': exerciseDefault(2, 20),
+    'frog-leg-prone-back-extension': exerciseDefault(2, 20),
   };
 
   let exerciseSettings = JSON.parse(JSON.stringify(exerciseDefaults));
@@ -475,9 +567,9 @@
         { id: 'eccentric-wrist-extension', shortDescription: 'Help the wrist lift, then slowly lower a light weight.' },
         { id: 'wrist-extension', shortDescription: 'Raise the wrist, then lower it slowly with the forearm supported.' },
         { id: 'wrist-flexion', shortDescription: 'Curl the wrist upward with the palm facing up and forearm supported.' },
-        { id: 'forearm-supination', shortDescription: 'Rotate the palm upward while keeping the elbow bent and tucked.' },
-        { id: 'forearm-pronation', shortDescription: 'Rotate the palm downward while keeping the elbow bent and tucked.' },
-        { id: 'grip-finger-opening', shortDescription: 'Squeeze a soft ball, then open the fingers against a light band.' }
+        { id: 'forearm-supination', shortDescription: 'Rotate the palm upward and downward while keeping the elbow bent and tucked.' },
+        { id: 'finger-extension', shortDescription: 'Open the fingers against a light elastic band, then return slowly.' },
+        { id: 'grip-finger-opening', shortDescription: 'Squeeze a soft ball or rolled towel, then release slowly.' }
       ]
     },
     {
@@ -499,6 +591,29 @@
         { id: 'standing-superman', shortDescription: 'Reach long through the arms and one back leg, then return upright with control.' },
         { id: 'stationary-lunges', shortDescription: 'Lower from a split stance into a controlled stationary lunge, then press back up.' },
         { id: 'standing-knee-raises', shortDescription: 'Stand tall and lift one knee toward hip height, alternating sides slowly.' }
+      ]
+    },
+    {
+      id: 'lying-in-bed',
+      name: 'LYING IN BED',
+      alwaysBundled: true,
+      exercises: [
+        { id: 'supine-lumbar-rotations', shortDescription: 'Lower both bent knees side to side while your shoulders stay relaxed on the bed.' },
+        { id: 'supine-hip-rotations', shortDescription: 'With feet wide and planted, gently move the bent knees inward and outward.' },
+        { id: 'supine-figure-four', shortDescription: 'Cross one ankle over the opposite thigh and draw the legs gently toward you.' },
+        { id: 'single-knee-to-chest', shortDescription: 'Draw one knee toward your chest while the other leg stays long and relaxed.' },
+        { id: 'supine-spinal-twist', shortDescription: 'Guide one bent knee across the body while keeping both shoulders relaxed.' },
+        { id: 'side-lying-thoracic-rotation', shortDescription: 'Keep your knees stacked and sweep the top arm open to rotate your upper back.' }
+      ]
+    },
+    {
+      id: 'face-down-in-bed',
+      name: 'FACE DOWN IN BED',
+      alwaysBundled: true,
+      exercises: [
+        { id: 'prone-lower-leg-swings', shortDescription: 'Bend both knees and swing the lower legs gently from side to side.' },
+        { id: 'prone-cross-body-leg-reaches', shortDescription: 'Reach one bent leg across behind your body, then alternate sides.' },
+        { id: 'frog-leg-prone-back-extension', shortDescription: 'Open one knee to the side and gently lift your chest from the forearms.' }
       ]
     }
   ];
@@ -531,7 +646,7 @@
     card.style.display = 'none';
 
     const thumbnail = sanitizeUrl(exercise.thumbnail);
-    const isTutorialCardAsset = /(?:tennis_elbow|cat_cow_routine|standing_exercises)_/.test(thumbnail);
+    const isTutorialCardAsset = /(?:tennis_elbow|cat_cow_routine|standing_exercises|lying_in_bed|face_down_in_bed)_/.test(thumbnail);
     const previewStyle = thumbnail
       ? `background-image: url('${thumbnail}'); background-size: ${isTutorialCardAsset ? 'contain' : 'cover'}; background-repeat: no-repeat; background-position: center;${isTutorialCardAsset ? ' background-color: #fff;' : ''}`
       : 'background: var(--bg-elevated);';
@@ -593,6 +708,41 @@
     });
   }
 
+  function appendBundledRoutines(routines) {
+    const existingIds = new Set(routines.map((routine) => routine.id));
+    fallbackRoutines
+      .filter((routine) => routine.alwaysBundled && !existingIds.has(routine.id))
+      .forEach((routine) => {
+        routines.push({
+          id: routine.id,
+          name: routine.name,
+          exercises: routine.exercises.map((item) => {
+            const details = exerciseDetails[item.id];
+            const defaults = exerciseDefaults[item.id];
+            return {
+              id: item.id,
+              title: details.title,
+              shortDescription: item.shortDescription,
+              description: details.description,
+              alert: details.alert,
+              thumbnail: details.thumbnail || details.images?.[0] || '',
+              images: details.images || [],
+              lottieUrl: details.lottieUrl || '',
+              videoUrl: details.videoUrl || '',
+              detailVideoUrl: details.detailVideoUrl || '',
+              sets: defaults.sets,
+              reps: defaults.reps,
+              progressiveSets: defaults.progressiveSets,
+              progressiveReps: defaults.progressiveReps,
+              setRest: defaults.setRest,
+              pace: defaults.pace
+            };
+          })
+        });
+      });
+    return routines;
+  }
+
   function applyRemoteContent(routines) {
     if (!Array.isArray(routines) || routines.length === 0) return false;
 
@@ -620,7 +770,9 @@
           description: exercise.description,
           alert: exercise.alert,
           images: exercise.images,
-          lottieUrl: exercise.lottieUrl
+          lottieUrl: exercise.lottieUrl,
+          videoUrl: exercise.videoUrl,
+          detailVideoUrl: exercise.detailVideoUrl || BUNDLED_DETAIL_VIDEO_BY_EXERCISE[exercise.id] || ''
         };
         if (exerciseOptions) {
           exerciseOptions.appendChild(createExerciseCard(routine, exercise));
@@ -696,6 +848,8 @@
       if (!routine) return;
 
       const imageList = imagesByExerciseId.get(exercise.id) || [];
+      const mediaUrl = exercise.lottie_url || '';
+      const isVideo = /\.(?:mp4|webm|mov)(?:[?#].*)?$/i.test(mediaUrl);
       const allImages = [...new Set([
         exercise.thumbnail_url,
         ...imageList
@@ -708,7 +862,9 @@
         alert: exercise.safety_alert || '',
         thumbnail: exercise.thumbnail_url || imageList[0] || '',
         images: allImages,
-        lottieUrl: exercise.lottie_url || '',
+        lottieUrl: isVideo ? '' : mediaUrl,
+        videoUrl: '',
+        detailVideoUrl: isVideo ? mediaUrl : '',
         sets: Number(exercise.default_sets) || 1,
         reps: Number(exercise.default_reps) || 1,
         progressiveSets: Boolean(exercise.progressive_sets),
@@ -718,6 +874,50 @@
       });
     });
 
+    const tennisElbow = remoteRoutineBySlug.get('tennis-elbow');
+    if (tennisElbow) {
+      const supination = tennisElbow.exercises.find((item) => item.id === 'forearm-supination');
+      const pronation = tennisElbow.exercises.find((item) => item.id === 'forearm-pronation');
+      if (supination) {
+        supination.title = 'SUPINATION AND PRONATION';
+        supination.shortDescription = 'Rotate the palm upward and downward while keeping the elbow bent and tucked.';
+        supination.description = 'Bend your elbow to 90 degrees and keep it tucked against your side. Holding a light hammer or small weight, slowly rotate your forearm until your palm faces upward, then reverse the movement until your palm faces downward.';
+        supination.alert = 'Keep your upper arm and shoulder still. Use a small, comfortable range and stop if symptoms increase.';
+        supination.images = [...new Set([
+          ...(supination.images || []),
+          ...(pronation?.images || []),
+          'assets/images/tennis_elbow_07_pronation.png'
+        ])];
+        tennisElbow.exercises = tennisElbow.exercises.filter((item) => item.id !== 'forearm-pronation');
+      }
+    }
+
+    if (tennisElbow) {
+      const gripExercise = tennisElbow.exercises.find((item) => item.id === 'grip-finger-opening');
+      if (gripExercise) {
+        gripExercise.title = 'GRIP EXERCISE';
+        gripExercise.shortDescription = 'Squeeze a soft ball or rolled towel, then release slowly.';
+        gripExercise.description = 'Hold a soft ball or rolled towel and squeeze gently. Pause briefly, then release slowly without letting the wrist bend.';
+        gripExercise.alert = 'Use a comfortable grip effort. Do not squeeze hard enough to increase elbow pain.';
+        gripExercise.thumbnail = 'assets/images/tennis_elbow_08_grip_exercise.png';
+        gripExercise.images = ['assets/images/tennis_elbow_08_grip_exercise.png'];
+
+        const existingFingerExtension = tennisElbow.exercises.find((item) => item.id === 'finger-extension');
+        const fingerExtension = existingFingerExtension || { ...gripExercise, id: 'finger-extension' };
+        fingerExtension.title = 'FINGER EXTENSION';
+        fingerExtension.shortDescription = 'Open the fingers against a light elastic band, then return slowly.';
+        fingerExtension.description = 'Place a light elastic band around your fingers and thumb. Slowly spread your fingers apart against the band, pause briefly, then return with control.';
+        fingerExtension.alert = 'Use light resistance and keep the wrist neutral. Stop if the movement increases elbow or finger pain.';
+        fingerExtension.thumbnail = 'assets/images/tennis_elbow_08_finger_extension.png';
+        fingerExtension.images = ['assets/images/tennis_elbow_08_finger_extension.png'];
+
+        tennisElbow.exercises = tennisElbow.exercises.filter((item) => item.id !== 'finger-extension');
+        const gripIndex = tennisElbow.exercises.findIndex((item) => item.id === 'grip-finger-opening');
+        tennisElbow.exercises.splice(Math.max(0, gripIndex), 0, fingerExtension);
+      }
+    }
+
+    appendBundledRoutines(remoteRoutines);
     const applied = applyRemoteContent(remoteRoutines);
     if (applied) window.EXERCISE_CLOCK_DATA_SOURCE = 'supabase';
     return applied;
@@ -729,18 +929,18 @@
       if (!saved || typeof saved !== 'object') return;
       const shouldMigrateOldDefault = localStorage.getItem(TIMING_DEFAULT_VERSION_KEY) !== TIMING_DEFAULT_VERSION;
       let didMigrateTiming = false;
-      
+
       Object.keys(exerciseSettings).forEach((id) => {
         if (saved[id] && typeof saved[id] === 'object') {
           // Explicitly coerce to ensure we don't accidentally load strings or NaNs
           exerciseSettings[id].selected = Boolean(saved[id].selected);
-          
+
           if (saved[id].progressiveSets !== undefined) exerciseSettings[id].progressiveSets = Boolean(saved[id].progressiveSets);
           if (saved[id].progressiveReps !== undefined) exerciseSettings[id].progressiveReps = Boolean(saved[id].progressiveReps);
-          
+
           const savedSets = parseInt(saved[id].sets, 10);
           if (!isNaN(savedSets)) exerciseSettings[id].sets = savedSets;
-          
+
           const savedReps = parseInt(saved[id].reps, 10);
           if (!isNaN(savedReps)) exerciseSettings[id].reps = savedReps;
 
@@ -2123,16 +2323,16 @@
     let selectedCount = 0;
     let visibleCardsCount = 0;
     const cards = Array.from(document.querySelectorAll('.exercise-card'));
-    
+
     cards.forEach((card) => {
       if (card.style.display === 'none') return;
       visibleCardsCount++;
       const id = card.dataset.exerciseId;
       if (!exerciseSettings[id]) return;
-      
+
       const config = exerciseSettings[id];
       const checkbox = card.querySelector('.exercise-checkbox');
-      
+
       if (checkbox) checkbox.checked = config.selected;
       if (config.selected) {
         card.classList.add('is-selected');
@@ -2175,7 +2375,7 @@
       }
     });
     renderExerciseSettings();
-    
+
     dom.routinePage.classList.remove('is-active');
     dom.routinePage.setAttribute('aria-hidden', 'true');
     dom.exercisePage.classList.add('is-active');
@@ -2244,13 +2444,13 @@
     const card = btn.closest('.exercise-card');
     const config = exerciseSettings[card.dataset.exerciseId];
     const type = btn.dataset.type;
-    
+
     if (type === 'sets') {
       config.progressiveSets = !config.progressiveSets;
     } else if (type === 'reps') {
       config.progressiveReps = !config.progressiveReps;
     }
-    
+
     saveExerciseSettings();
     renderExerciseSettings();
   }
@@ -2278,7 +2478,7 @@
         window.speechSynthesis.cancel(); // Cancel ongoing to speak immediately
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.rate = 1.0; // Normal speed for natural voices
-        
+
         // Try to pick a natural-sounding voice
         const voices = window.speechSynthesis.getVoices();
         if (voices.length > 0) {
@@ -2290,7 +2490,7 @@
             utterance.voice = bestVoice;
           }
         }
-        
+
         window.speechSynthesis.speak(utterance);
       }
     } catch (e) {
@@ -2656,10 +2856,10 @@
     const summary = document.getElementById('done-summary');
     const config = getCurrentExerciseConfig() || { pace: PACE_DEFAULT_SECONDS, progressiveReps: false };
     const startPace = config.pace;
-    const endPace = config.progressiveReps && state.totalSets > 1 
+    const endPace = config.progressiveReps && state.totalSets > 1
       ? startPace * Math.pow(1.1, state.totalSets - 1)
       : startPace;
-      
+
     const paceText = endPace > startPace
       ? `${startPace.toFixed(1)}s–${endPace.toFixed(1)}s pace`
       : `${startPace.toFixed(1)}s pace`;
@@ -3023,7 +3223,7 @@
       dom.landingPage.setAttribute('aria-hidden', 'true');
       dom.routinePage.classList.add('is-active');
       dom.routinePage.setAttribute('aria-hidden', 'false');
-      
+
       // Close modal if open
       const loginModal = document.getElementById('login-modal');
       if (loginModal) loginModal.setAttribute('aria-hidden', 'true');
@@ -3295,7 +3495,7 @@
       });
       btnPrev.style.display = currentCarouselIndex === 0 ? 'none' : 'flex';
       btnNext.style.display = currentCarouselIndex === currentCarouselImages.length - 1 ? 'none' : 'flex';
-      
+
       if (currentCarouselImages.length <= 1) {
         btnPrev.style.display = 'none';
         btnNext.style.display = 'none';
@@ -3370,7 +3570,7 @@
 
       document.getElementById('exercise-details-title').innerText = details.title;
       document.getElementById('exercise-details-desc').innerText = details.description;
-      
+
       if (details.alert) {
         document.getElementById('exercise-details-alert').style.display = 'block';
         document.getElementById('exercise-details-alert-text').innerText = details.alert;
@@ -3378,15 +3578,39 @@
         document.getElementById('exercise-details-alert').style.display = 'none';
       }
 
-      currentCarouselImages = details.images || [];
+      const detailVideoUrl = details.detailVideoUrl || '';
+      currentCarouselImages = detailVideoUrl ? [] : (details.images || []);
       currentCarouselIndex = 0;
       track.innerHTML = '';
       dotsContainer.innerHTML = '';
+      const carouselContainer = document.getElementById('exercise-carousel-container');
+      carouselContainer.classList.toggle('has-video', Boolean(detailVideoUrl));
       if (!carouselZoom) {
-        carouselZoom = createPinchZoomController(document.getElementById('exercise-carousel-container'));
+        carouselZoom = createPinchZoomController(carouselContainer);
       }
 
-      if (currentCarouselImages.length > 0) {
+      if (detailVideoUrl) {
+        const slide = document.createElement('div');
+        slide.className = 'exercise-carousel-slide is-active';
+        const video = document.createElement('video');
+        video.src = detailVideoUrl;
+        video.poster = details.thumbnail || details.images?.[0] || '';
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.controls = true;
+        video.setAttribute('aria-label', `${details.title} video demonstration`);
+        slide.appendChild(video);
+        track.appendChild(slide);
+        track.style.transform = 'translateX(0)';
+        btnPrev.style.display = 'none';
+        btnNext.style.display = 'none';
+        dotsContainer.style.display = 'none';
+        carouselContainer.style.display = 'block';
+        video.play().catch(() => {});
+      } else if (currentCarouselImages.length > 0) {
+        dotsContainer.style.display = 'flex';
         currentCarouselImages.forEach((src, i) => {
           const slide = document.createElement('div');
           slide.className = 'exercise-carousel-slide';
@@ -3410,15 +3634,17 @@
           dotsContainer.appendChild(dot);
         });
         updateCarousel();
-        document.getElementById('exercise-carousel-container').style.display = 'block';
+        carouselContainer.style.display = 'block';
       } else {
-        document.getElementById('exercise-carousel-container').style.display = 'none';
+        dotsContainer.style.display = 'flex';
+        carouselContainer.style.display = 'none';
       }
-      
+
       detailsModal.setAttribute('aria-hidden', 'false');
     });
 
     detailsClose.addEventListener('click', () => {
+      track.querySelectorAll('video').forEach((video) => video.pause());
       detailsModal.setAttribute('aria-hidden', 'true');
     });
 
@@ -3497,10 +3723,20 @@
       };
 
       const details = exerciseDetails[exerciseId];
+      const videoGuide = details?.videoUrl || '';
       const hasExerciseImages = Boolean(details?.images?.length);
       const lottieAnim = details?.lottieUrl || (hasExerciseImages ? '' : animationByExercise[exerciseId]);
-      
-      if (lottieAnim) {
+
+      if (videoGuide) {
+        dom.mediaLottie.classList.add('hidden');
+        dom.mediaImg.classList.add('hidden');
+        dom.mediaVideo.src = videoGuide;
+        dom.mediaVideo.loop = true;
+        dom.mediaVideo.muted = true;
+        dom.mediaVideo.playsInline = true;
+        dom.mediaVideo.classList.remove('hidden');
+        dom.mediaVideo.play().catch(() => {});
+      } else if (lottieAnim) {
         // The player component does not reliably reload when only its src changes.
         // Replace it so each guide screen renders the selected exercise animation.
         const nextMediaLottie = document.createElement('dotlottie-player');
@@ -3521,6 +3757,10 @@
         setTimeout(playGuideAnimation, 400);
         setTimeout(playGuideAnimation, 1000);
         dom.mediaImg.classList.add('hidden');
+        dom.mediaVideo.pause();
+        dom.mediaVideo.removeAttribute('src');
+        dom.mediaVideo.load();
+        dom.mediaVideo.classList.add('hidden');
       } else {
         // Hide Lottie and show Image
         dom.mediaLottie.classList.add('hidden');
@@ -3533,10 +3773,12 @@
         } else {
           dom.mediaImg.classList.add('hidden');
         }
+        dom.mediaVideo.pause();
+        dom.mediaVideo.removeAttribute('src');
+        dom.mediaVideo.load();
+        dom.mediaVideo.classList.add('hidden');
       }
       updateMediaImageControls();
-      dom.mediaVideo.classList.add('hidden');
-      dom.mediaVideo.pause();
       dom.mediaPlaceholder.classList.add('hidden');
       dom.mediaDisplay.classList.remove('hidden');
 
@@ -3582,14 +3824,14 @@
     dom.btnStartNow.addEventListener('click', () => {
       state.selectedExercises = getVisibleExerciseIds().filter((id) => exerciseSettings[id]?.selected);
       if (state.selectedExercises.length === 0) return;
-      
+
       state.currentExerciseIndex = 0;
       loadCurrentExercise();
 
       dom.exercisePage.classList.remove('is-active');
       dom.exercisePage.setAttribute('aria-hidden', 'true');
       dom.app.setAttribute('aria-hidden', 'false');
-      
+
       requestWakeLock();
     });
 

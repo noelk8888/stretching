@@ -2,9 +2,11 @@ insert into public.routines (slug, title, sort_order, is_active) values
   ('tennis-elbow', 'TENNIS ELBOW', 10, true),
   ('cat-cow', 'CAT & COW', 20, true),
   ('standing-exercises', 'STANDING EXERCISES', 30, true),
-  ('tai-chi', 'TAI-CHI', 40, false),
-  ('neck-relief', 'NECK RELIEF', 50, false),
-  ('lower-back', 'LOWER BACK', 60, false)
+  ('lying-in-bed', 'LYING IN BED', 40, true),
+  ('face-down-in-bed', 'FACE DOWN IN BED', 50, true),
+  ('tai-chi', 'TAI-CHI', 60, false),
+  ('neck-relief', 'NECK RELIEF', 70, false),
+  ('lower-back', 'LOWER BACK', 80, false)
 on conflict (slug) do update set
   title = excluded.title,
   sort_order = excluded.sort_order,
@@ -92,10 +94,10 @@ insert into public.exercises (
   (
     (select id from public.routines where slug = 'tennis-elbow'),
     'forearm-supination',
-    'FOREARM SUPINATION',
-    'Rotate the palm upward while keeping the elbow bent and tucked.',
-    'Bend your elbow to 90 degrees and keep it close to your side. Holding a light hammer or small weight, slowly rotate your forearm so your palm turns upward.',
-    'Keep your upper arm still. Use a small range if rotation feels sensitive.',
+    'SUPINATION AND PRONATION',
+    'Rotate the palm upward and downward while keeping the elbow bent and tucked.',
+    'Bend your elbow to 90 degrees and keep it tucked against your side. Holding a light hammer or small weight, slowly rotate your forearm until your palm faces upward, then reverse the movement until your palm faces downward.',
+    'Keep your upper arm and shoulder still. Use a small, comfortable range and stop if symptoms increase.',
     'assets/images/tennis_elbow_06_supination.png',
     3,
     10,
@@ -113,16 +115,29 @@ insert into public.exercises (
     3,
     10,
     70,
+    false
+  ),
+  (
+    (select id from public.routines where slug = 'tennis-elbow'),
+    'finger-extension',
+    'FINGER EXTENSION',
+    'Open the fingers against a light elastic band, then return slowly.',
+    'Place a light elastic band around your fingers and thumb. Slowly spread your fingers apart against the band, pause briefly, then return with control.',
+    'Use light resistance and keep the wrist neutral. Stop if the movement increases elbow or finger pain.',
+    'assets/images/tennis_elbow_08_finger_extension.png',
+    3,
+    10,
+    70,
     true
   ),
   (
     (select id from public.routines where slug = 'tennis-elbow'),
     'grip-finger-opening',
-    'GRIP & FINGER OPENING',
-    'Squeeze a soft ball, then open the fingers against a light band.',
-    'Squeeze a soft ball or rolled towel, then open your fingers gently against an elastic band. Move slowly and keep the effort comfortable.',
-    'Do not squeeze or open against so much resistance that it causes elbow pain.',
-    'assets/images/tennis_elbow_08_grip_finger_opening.png',
+    'GRIP EXERCISE',
+    'Squeeze a soft ball or rolled towel, then release slowly.',
+    'Hold a soft ball or rolled towel and squeeze gently. Pause briefly, then release slowly without letting the wrist bend.',
+    'Use a comfortable grip effort. Do not squeeze hard enough to increase elbow pain.',
+    'assets/images/tennis_elbow_08_grip_exercise.png',
     3,
     10,
     80,
@@ -283,6 +298,123 @@ insert into public.exercises (
     10,
     40,
     true
+  ),
+  (
+    (select id from public.routines where slug = 'lying-in-bed'),
+    'supine-lumbar-rotations',
+    'SUPINE LUMBAR ROTATIONS',
+    'Lower both bent knees side to side while your shoulders stay relaxed on the bed.',
+    'Lie on your back with your knees bent, feet together, and arms open at shoulder height. Keeping your shoulders relaxed on the bed, slowly lower both knees to one side. Return to centre, then repeat to the other side.',
+    'Use a small, comfortable range. Stop if the movement causes sharp back pain, tingling, or pain traveling into a leg.',
+    'assets/images/lying_in_bed_01_lumbar_rotations.jpg',
+    2,
+    10,
+    10,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'lying-in-bed'),
+    'supine-hip-rotations',
+    'SUPINE HIP ROTATIONS',
+    'With feet wide and planted, gently move the bent knees inward and outward.',
+    'Lie on your back with your knees bent and feet wider than your hips. Gently let both knees move inward toward each other, then open them outward again while keeping your feet planted and your pelvis relaxed.',
+    'Keep the motion easy and controlled. Reduce the range if you feel pinching in the hips or strain in the groin.',
+    'assets/images/lying_in_bed_02_hip_rotations.jpg',
+    2,
+    10,
+    20,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'lying-in-bed'),
+    'supine-figure-four',
+    'SUPINE FIGURE-FOUR STRETCH',
+    'Cross one ankle over the opposite thigh and draw the legs gently toward you.',
+    'Lie on your back with both knees bent. Cross one ankle over the opposite thigh just above the knee. Thread your hands behind the supporting thigh and gently draw both legs toward your chest. Release and switch sides.',
+    'Keep the crossed foot flexed and never press directly on the knee. Ease off if you feel knee pain or hip pinching.',
+    'assets/images/lying_in_bed_03_figure_four.jpg',
+    2,
+    12,
+    30,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'lying-in-bed'),
+    'single-knee-to-chest',
+    'SINGLE KNEE TO CHEST',
+    'Draw one knee toward your chest while the other leg stays long and relaxed.',
+    'Lie on your back with one leg extended. Hold the other leg just below the knee and gently draw it toward your chest while keeping your head and shoulders relaxed. Lower with control and switch sides.',
+    'Hold behind the thigh instead of over the kneecap if your knee is sensitive. Keep the extended leg relaxed.',
+    'assets/images/lying_in_bed_04_knee_to_chest.jpg',
+    2,
+    12,
+    40,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'lying-in-bed'),
+    'supine-spinal-twist',
+    'SUPINE SPINAL TWIST',
+    'Guide one bent knee across the body while keeping both shoulders relaxed.',
+    'Lie on your back and draw one knee across your body with the opposite hand. Extend the other arm at shoulder height and turn your head gently toward that hand. Return to centre and switch sides.',
+    'Keep both shoulders as relaxed as possible. Do not force the knee down or twist through pain.',
+    'assets/images/lying_in_bed_05_spinal_twist.jpg',
+    2,
+    10,
+    50,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'lying-in-bed'),
+    'side-lying-thoracic-rotation',
+    'THORACIC OPEN-BOOK ROTATION',
+    'Keep your knees stacked and sweep the top arm open to rotate your upper back.',
+    'Lie on your side with your hips and knees bent and stacked. Reach both arms forward, then sweep the top arm open across your body as your chest rotates toward the bed behind you. Bring the arm back and repeat before switching sides.',
+    'Keep your knees together so the movement comes from your upper back. Use a pillow under your head if needed.',
+    'assets/images/lying_in_bed_06_thoracic_rotation.jpg',
+    2,
+    10,
+    60,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'face-down-in-bed'),
+    'prone-lower-leg-swings',
+    'PRONE LOWER-LEG SWINGS',
+    'Bend both knees and swing the lower legs gently from side to side.',
+    'Lie face-down with your forehead resting on folded arms. Bend both knees to about 90 degrees and keep your feet together. Slowly swing both lower legs from side to side while keeping your thighs and pelvis relaxed on the bed.',
+    'Keep the movement small and easy. Stop if it causes knee pain, sharp lower-back pain, or cramping in the hamstrings.',
+    'assets/images/face_down_in_bed_01_lower_leg_swings.jpg',
+    2,
+    20,
+    10,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'face-down-in-bed'),
+    'prone-cross-body-leg-reaches',
+    'PRONE CROSS-BODY LEG REACHES',
+    'Reach one bent leg across behind your body, then alternate sides.',
+    'Lie face-down with both legs long. Bend one knee and gently reach that foot across behind your body toward the opposite side. Return the leg to neutral, then repeat with the other leg.',
+    'Move slowly and keep most of your pelvis supported. Use a smaller reach if you feel pinching in the hip or pressure in the lower back.',
+    'assets/images/face_down_in_bed_02_cross_body_leg_reaches.jpg',
+    2,
+    20,
+    20,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'face-down-in-bed'),
+    'frog-leg-prone-back-extension',
+    'FROG-LEG PRONE BACK EXTENSION',
+    'Open one knee to the side and gently lift your chest from the forearms.',
+    'Lie face-down with one leg straight and the other knee comfortably opened out to the side. Place your forearms under your shoulders, then gently lift your chest while keeping your pelvis supported. Lower with control and switch the bent leg between sets.',
+    'Keep the extension mild and your shoulders away from your ears. Stop if you feel pinching or sharp pain in your lower back or hip.',
+    'assets/images/face_down_in_bed_03_frog_leg_back_extension.jpg',
+    2,
+    20,
+    30,
+    true
   )
 on conflict (slug) do update set
   routine_id = excluded.routine_id,
@@ -319,8 +451,10 @@ insert into public.exercise_images (exercise_id, image_url, sort_order) values
   ((select id from public.exercises where slug = 'wrist-extension'), 'assets/images/tennis_elbow_04_wrist_extension.png', 10),
   ((select id from public.exercises where slug = 'wrist-flexion'), 'assets/images/tennis_elbow_05_wrist_flexion.png', 10),
   ((select id from public.exercises where slug = 'forearm-supination'), 'assets/images/tennis_elbow_06_supination.png', 10),
+  ((select id from public.exercises where slug = 'forearm-supination'), 'assets/images/tennis_elbow_07_pronation.png', 20),
   ((select id from public.exercises where slug = 'forearm-pronation'), 'assets/images/tennis_elbow_07_pronation.png', 10),
-  ((select id from public.exercises where slug = 'grip-finger-opening'), 'assets/images/tennis_elbow_08_grip_finger_opening.png', 10),
+  ((select id from public.exercises where slug = 'finger-extension'), 'assets/images/tennis_elbow_08_finger_extension.png', 10),
+  ((select id from public.exercises where slug = 'grip-finger-opening'), 'assets/images/tennis_elbow_08_grip_exercise.png', 10),
   ((select id from public.exercises where slug = 'cat-cow'), 'assets/images/cat_cow_routine_01_cat_cow.png', 10),
   ((select id from public.exercises where slug = 'childs-pose'), 'assets/images/cat_cow_routine_02_childs_pose.png', 10),
   ((select id from public.exercises where slug = 'thread-needle'), 'assets/images/cat_cow_routine_03_thread_needle_inhale_exhale.png', 10),
@@ -333,4 +467,39 @@ insert into public.exercise_images (exercise_id, image_url, sort_order) values
   ((select id from public.exercises where slug = 'stationary-lunges'), 'assets/images/standing_exercises_03_stationary_lunge_start.png', 10),
   ((select id from public.exercises where slug = 'stationary-lunges'), 'assets/images/standing_exercises_03_stationary_lunge_end.png', 20),
   ((select id from public.exercises where slug = 'standing-knee-raises'), 'assets/images/standing_exercises_04_knee_raise_start.png', 10),
-  ((select id from public.exercises where slug = 'standing-knee-raises'), 'assets/images/standing_exercises_04_knee_raise_end.png', 20);
+  ((select id from public.exercises where slug = 'standing-knee-raises'), 'assets/images/standing_exercises_04_knee_raise_end.png', 20),
+  ((select id from public.exercises where slug = 'supine-lumbar-rotations'), 'assets/images/lying_in_bed_01_lumbar_rotations.jpg', 10),
+  ((select id from public.exercises where slug = 'supine-hip-rotations'), 'assets/images/lying_in_bed_02_hip_rotations.jpg', 10),
+  ((select id from public.exercises where slug = 'supine-figure-four'), 'assets/images/lying_in_bed_03_figure_four.jpg', 10),
+  ((select id from public.exercises where slug = 'single-knee-to-chest'), 'assets/images/lying_in_bed_04_knee_to_chest.jpg', 10),
+  ((select id from public.exercises where slug = 'supine-spinal-twist'), 'assets/images/lying_in_bed_05_spinal_twist.jpg', 10),
+  ((select id from public.exercises where slug = 'side-lying-thoracic-rotation'), 'assets/images/lying_in_bed_06_thoracic_rotation.jpg', 10),
+  ((select id from public.exercises where slug = 'prone-lower-leg-swings'), 'assets/images/face_down_in_bed_01_lower_leg_swings.jpg', 10),
+  ((select id from public.exercises where slug = 'prone-cross-body-leg-reaches'), 'assets/images/face_down_in_bed_02_cross_body_leg_reaches.jpg', 10),
+  ((select id from public.exercises where slug = 'frog-leg-prone-back-extension'), 'assets/images/face_down_in_bed_03_frog_leg_back_extension.jpg', 10);
+
+update public.exercises
+set lottie_url = null,
+    updated_at = now()
+where slug in (
+  'supine-lumbar-rotations',
+  'supine-hip-rotations',
+  'supine-figure-four',
+  'single-knee-to-chest',
+  'supine-spinal-twist',
+  'side-lying-thoracic-rotation',
+  'prone-lower-leg-swings'
+);
+
+update public.exercises
+set lottie_url = case slug
+    when 'flexor-stretch' then 'assets/videos/wrist_flexor_stretch.mp4'
+    when 'extensor-stretch' then 'assets/videos/wrist_extensor_stretch.mp4'
+    when 'eccentric-wrist-extension' then 'assets/videos/eccentric_wrist_extension_v2.mp4'
+    when 'wrist-flexion' then 'assets/videos/wrist_flexion_tutorial.mp4'
+    when 'forearm-supination' then 'assets/videos/supination_pronation_tutorial.mp4'
+    when 'finger-extension' then 'assets/videos/finger_extension_tutorial.mp4'
+    when 'grip-finger-opening' then 'assets/videos/grip_exercise_tutorial.mp4'
+  end,
+  updated_at = now()
+where slug in ('flexor-stretch', 'extensor-stretch', 'eccentric-wrist-extension', 'wrist-flexion', 'forearm-supination', 'finger-extension', 'grip-finger-opening');
