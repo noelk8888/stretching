@@ -576,10 +576,10 @@
       exercises: [
         { id: 'extensor-stretch', shortDescription: 'Gently lower the wrist to stretch the top of the forearm.' },
         { id: 'flexor-stretch', shortDescription: 'Gently pull the wrist back to stretch the underside of the forearm.' },
+        { id: 'forearm-supination', shortDescription: 'Rotate the palm upward and downward while keeping the elbow bent and tucked.' },
         { id: 'eccentric-wrist-extension', shortDescription: 'Help the wrist lift, then slowly lower a light weight.' },
         { id: 'wrist-extension', shortDescription: 'Raise the wrist, then lower it slowly with the forearm supported.' },
         { id: 'wrist-flexion', shortDescription: 'Curl the wrist upward with the palm facing up and forearm supported.' },
-        { id: 'forearm-supination', shortDescription: 'Rotate the palm upward and downward while keeping the elbow bent and tucked.' },
         { id: 'finger-extension', shortDescription: 'Open the fingers against a light elastic band, then return slowly.' },
         { id: 'grip-finger-opening', shortDescription: 'Squeeze a soft ball or rolled towel, then release slowly.' }
       ]
@@ -589,20 +589,20 @@
       name: 'CAT & COW',
       exercises: [
         { id: 'cat-cow', shortDescription: 'Gently arch your back up like a cat, then let your stomach drop down like a cow.' },
-        { id: 'childs-pose', shortDescription: 'Sit back on your heels, walk your hands forward, resting your forehead on the floor.' },
         { id: 'thread-needle', shortDescription: 'Slide one arm under your body, resting your shoulder and head on the floor.' },
         { id: 'bird-dog', shortDescription: 'Extend one arm forward and opposite leg backward. Keep back flat.' },
-        { id: 'sphinx-pose', shortDescription: 'Lie flat, prop yourself up on forearms, lifting chest to create a mild lower back arch.' }
+        { id: 'sphinx-pose', shortDescription: 'Lie flat, prop yourself up on forearms, lifting chest to create a mild lower back arch.' },
+        { id: 'childs-pose', shortDescription: 'Sit back on your heels, walk your hands forward, resting your forehead on the floor.' }
       ]
     },
     {
       id: 'standing-exercises',
       name: 'STANDING EXERCISES',
       exercises: [
+        { id: 'standing-knee-raises', shortDescription: 'Stand tall and lift one knee toward hip height, alternating sides slowly.' },
         { id: 'wall-supported-back-leg-kicks', shortDescription: 'Hold a sturdy support and kick one leg gently back without arching your low back.' },
         { id: 'standing-superman', shortDescription: 'Reach long through the arms and one back leg, then return upright with control.' },
-        { id: 'stationary-lunges', shortDescription: 'Lower from a split stance into a controlled stationary lunge, then press back up.' },
-        { id: 'standing-knee-raises', shortDescription: 'Stand tall and lift one knee toward hip height, alternating sides slowly.' }
+        { id: 'stationary-lunges', shortDescription: 'Lower from a split stance into a controlled stationary lunge, then press back up.' }
       ]
     },
     {
@@ -610,10 +610,10 @@
       name: 'LYING IN BED',
       alwaysBundled: true,
       exercises: [
-        { id: 'supine-lumbar-rotations', shortDescription: 'Lower both bent knees side to side while your shoulders stay relaxed on the bed.' },
         { id: 'supine-hip-rotations', shortDescription: 'With feet wide and planted, gently move the bent knees inward and outward.' },
-        { id: 'supine-figure-four', shortDescription: 'Cross one ankle over the opposite thigh and draw the legs gently toward you.' },
+        { id: 'supine-lumbar-rotations', shortDescription: 'Lower both bent knees side to side while your shoulders stay relaxed on the bed.' },
         { id: 'single-knee-to-chest', shortDescription: 'Draw one knee toward your chest while the other leg stays long and relaxed.' },
+        { id: 'supine-figure-four', shortDescription: 'Cross one ankle over the opposite thigh and draw the legs gently toward you.' },
         { id: 'supine-spinal-twist', shortDescription: 'Guide one bent knee across the body while keeping both shoulders relaxed.' },
         { id: 'side-lying-thoracic-rotation', shortDescription: 'Keep your knees stacked and sweep the top arm open to rotate your upper back.' }
       ]
@@ -3571,12 +3571,7 @@
       }
     });
 
-    dom.exercisePage.addEventListener('click', (e) => {
-      const placeholder = e.target.closest('.exercise-animation-placeholder');
-      if (!placeholder) return;
-
-      const card = placeholder.closest('.exercise-card');
-      const id = card.dataset.exerciseId;
+    function openExerciseDetails(id) {
       const details = exerciseDetails[id];
       if (!details) return;
 
@@ -3653,6 +3648,14 @@
       }
 
       detailsModal.setAttribute('aria-hidden', 'false');
+    }
+
+    dom.exercisePage.addEventListener('click', (e) => {
+      const placeholder = e.target.closest('.exercise-animation-placeholder');
+      if (!placeholder) return;
+
+      const card = placeholder.closest('.exercise-card');
+      openExerciseDetails(card.dataset.exerciseId);
     });
 
     detailsClose.addEventListener('click', () => {
@@ -3935,13 +3938,23 @@
         event.stopPropagation();
         return;
       }
+
+      const exerciseId = state.selectedExercises[state.currentExerciseIndex];
+      const details = exerciseDetails[exerciseId];
+
+      if (!dom.app.classList.contains('media-is-front') && details?.detailVideoUrl) {
+        event.preventDefault();
+        event.stopPropagation();
+        pauseTimer();
+        openExerciseDetails(exerciseId);
+        return;
+      }
+
       if (!dom.app.classList.contains('media-is-front')) {
         bringMediaToFront();
         return;
       }
 
-      const exerciseId = state.selectedExercises[state.currentExerciseIndex];
-      const details = exerciseDetails[exerciseId];
       if (details && details.images && details.images.length > 1) {
         showNextMediaImage();
       }

@@ -62,7 +62,7 @@ insert into public.exercises (
     'assets/images/tennis_elbow_03_eccentric_wrist_extension.png',
     3,
     10,
-    30,
+    40,
     true
   ),
   (
@@ -75,7 +75,7 @@ insert into public.exercises (
     'assets/images/tennis_elbow_04_wrist_extension.png',
     3,
     10,
-    40,
+    50,
     true
   ),
   (
@@ -88,7 +88,7 @@ insert into public.exercises (
     'assets/images/tennis_elbow_05_wrist_flexion.png',
     3,
     10,
-    50,
+    60,
     true
   ),
   (
@@ -101,7 +101,7 @@ insert into public.exercises (
     'assets/images/tennis_elbow_06_supination.png',
     3,
     10,
-    60,
+    30,
     true
   ),
   (
@@ -166,7 +166,7 @@ insert into public.exercises (
     'assets/images/cat_cow_routine_02_childs_pose.png',
     2,
     6,
-    20,
+    50,
     true
   ),
   (
@@ -179,7 +179,7 @@ insert into public.exercises (
     'assets/images/cat_cow_routine_03_thread_needle_inhale_exhale.png',
     2,
     5,
-    30,
+    20,
     true
   ),
   (
@@ -192,7 +192,7 @@ insert into public.exercises (
     'assets/images/cat_cow_routine_04_bird_dog.png',
     2,
     8,
-    40,
+    30,
     true
   ),
   (
@@ -205,7 +205,7 @@ insert into public.exercises (
     'assets/images/cat_cow_routine_05_sphinx_pose.png',
     2,
     6,
-    50,
+    40,
     true
   ),
   (
@@ -257,7 +257,7 @@ insert into public.exercises (
     'assets/images/standing_exercises_01_back_leg_kick_end.png',
     2,
     10,
-    10,
+    20,
     true
   ),
   (
@@ -270,7 +270,7 @@ insert into public.exercises (
     'assets/images/standing_exercises_02_standing_superman_start.png',
     2,
     8,
-    20,
+    30,
     true
   ),
   (
@@ -283,7 +283,7 @@ insert into public.exercises (
     'assets/images/standing_exercises_03_stationary_lunge_end.png',
     2,
     8,
-    30,
+    40,
     true
   ),
   (
@@ -296,7 +296,7 @@ insert into public.exercises (
     'assets/images/standing_exercises_04_knee_raise_end.png',
     2,
     10,
-    40,
+    10,
     true
   ),
   (
@@ -309,7 +309,7 @@ insert into public.exercises (
     'assets/images/lying_in_bed_01_lumbar_rotations.jpg',
     2,
     10,
-    10,
+    20,
     true
   ),
   (
@@ -322,7 +322,7 @@ insert into public.exercises (
     'assets/images/lying_in_bed_02_hip_rotations.jpg',
     2,
     10,
-    20,
+    10,
     true
   ),
   (
@@ -335,7 +335,7 @@ insert into public.exercises (
     'assets/images/lying_in_bed_03_figure_four.jpg',
     2,
     12,
-    30,
+    40,
     true
   ),
   (
@@ -348,7 +348,7 @@ insert into public.exercises (
     'assets/images/lying_in_bed_04_knee_to_chest.jpg',
     2,
     12,
-    40,
+    30,
     true
   ),
   (
