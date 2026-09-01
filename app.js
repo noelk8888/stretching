@@ -17,6 +17,8 @@
     isRunning: false,
     isFinished: false,
     timerId: null,
+    timerGeneration: 0,
+    pendingDelay: null,
     beepEnabled: true,  // sound beep
     voiceEnabled: true, // read out loud
     selectedExercises: [],
@@ -2644,44 +2646,83 @@
   }
 
   // ─── Timer logic ───
-  function clearTimerDelay() {
+  function clearTimerDelay({ preserveRemaining = false } = {}) {
+    if (preserveRemaining && state.pendingDelay && state.pendingDelay.endsAt !== null) {
+      state.pendingDelay.remainingMs = Math.max(0, state.pendingDelay.endsAt - performance.now());
+      state.pendingDelay.endsAt = null;
+    } else if (!preserveRemaining) {
+      state.pendingDelay = null;
+    }
+
     clearTimeout(state.timerId);
     state.timerId = null;
+    state.timerGeneration++;
+  }
+
+  function runPendingTimerDelay() {
+    const pendingDelay = state.pendingDelay;
+    if (!pendingDelay) return false;
+
+    const generation = state.timerGeneration;
+    const startedAt = performance.now();
+    const endsAt = startedAt + pendingDelay.remainingMs;
+    const beepAt = endsAt - BEEP_LEAD_SECONDS * 1000;
+    pendingDelay.endsAt = endsAt;
+
+    function isCurrentDelay() {
+      return state.isRunning &&
+        state.timerGeneration === generation &&
+        state.pendingDelay === pendingDelay &&
+        state.currentExerciseIndex === pendingDelay.exerciseIndex &&
+        state.selectedExercises[state.currentExerciseIndex] === pendingDelay.exerciseId;
+    }
+
+    function step() {
+      if (!isCurrentDelay()) return;
+
+      // Cue the user just before the next spoken rep count.
+      const now = performance.now();
+      if (pendingDelay.options.beepBeforeVoice && !pendingDelay.cuePlayed && now >= beepAt) {
+        playBeep();
+        pendingDelay.cuePlayed = true;
+      }
+
+      if (now >= endsAt) {
+        state.timerId = null;
+        state.pendingDelay = null;
+        pendingDelay.callback();
+        return;
+      }
+
+      pendingDelay.remainingMs = Math.max(0, endsAt - now);
+      state.timerId = setTimeout(step, Math.min(TIMER_TICK_MS, pendingDelay.remainingMs));
+    }
+
+    if (pendingDelay.options.beepBeforeVoice &&
+        !pendingDelay.cuePlayed &&
+        pendingDelay.remainingMs <= BEEP_LEAD_SECONDS * 1000) {
+      playBeep();
+      pendingDelay.cuePlayed = true;
+    }
+
+    state.timerId = setTimeout(step, Math.min(TIMER_TICK_MS, pendingDelay.remainingMs));
+    return true;
   }
 
   function scheduleTimerDelay(seconds, callback, options = {}) {
     clearTimerDelay();
 
     const durationMs = Math.max(0, seconds * 1000);
-    const startedAt = performance.now();
-    const endsAt = startedAt + durationMs;
-    const beepAt = endsAt - BEEP_LEAD_SECONDS * 1000;
-    let cuePlayed = false;
-
-    function step() {
-      if (!state.isRunning) return;
-
-      // Cue the user just before the next spoken rep count.
-      const now = performance.now();
-      if (options.beepBeforeVoice && !cuePlayed && now >= beepAt) {
-        playBeep();
-        cuePlayed = true;
-      }
-
-      if (now >= endsAt) {
-        callback();
-        return;
-      }
-
-      state.timerId = setTimeout(step, Math.min(TIMER_TICK_MS, Math.max(0, endsAt - now)));
-    }
-
-    if (options.beepBeforeVoice && !cuePlayed && durationMs <= BEEP_LEAD_SECONDS * 1000) {
-      playBeep();
-      cuePlayed = true;
-    }
-
-    state.timerId = setTimeout(step, Math.min(TIMER_TICK_MS, durationMs));
+    state.pendingDelay = {
+      remainingMs: durationMs,
+      endsAt: null,
+      callback,
+      options,
+      cuePlayed: false,
+      exerciseIndex: state.currentExerciseIndex,
+      exerciseId: state.selectedExercises[state.currentExerciseIndex]
+    };
+    runPendingTimerDelay();
   }
 
   function tick() {
@@ -2752,10 +2793,16 @@
       resetAll();
     }
 
+    if (state.isRunning) return;
+
     state.isRunning = true;
     dom.mediaLottie.play?.();
     updatePlayButton();
     disableSettingsWhileRunning();
+
+    // Continue the exact delay that was interrupted. Advancing immediately on
+    // resume can skip a rep, set, or exercise when the last count was visible.
+    if (runPendingTimerDelay()) return;
 
     if (state.currentRep === 0) {
       const currentSetLetter = ALPHA[state.currentSet] || (state.currentSet + 1);
@@ -2767,15 +2814,19 @@
         tick();
       }, { beepBeforeVoice: true });
     } else {
-      // Resuming mid-set: tick immediately
-      tick();
+      // There should normally be a preserved delay here. If one was cleared by
+      // a lifecycle event, wait a full pace interval rather than skipping ahead.
+      scheduleTimerDelay(getCurrentPace(), () => {
+        if (!state.isRunning) return;
+        tick();
+      }, { beepBeforeVoice: true });
     }
   }
 
   function pauseTimer() {
     state.isRunning = false;
     dom.mediaLottie.pause?.();
-    clearTimerDelay();
+    clearTimerDelay({ preserveRemaining: true });
     updatePlayButton();
     disableSettingsWhileRunning();
   }
@@ -2783,6 +2834,7 @@
   function resetAll() {
     sendMediaToBack();
     pauseTimer();
+    clearTimerDelay();
     state.currentSet = 0;
     state.currentRep = 0;
     state.isFinished = false;
@@ -2795,6 +2847,7 @@
 
     const wasRunning = state.isRunning;
     if (wasRunning) pauseTimer();
+    clearTimerDelay();
 
     state.currentSet++;
     state.currentRep = 0;
