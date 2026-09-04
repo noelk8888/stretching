@@ -382,7 +382,7 @@ insert into public.exercises (
     'prone-lower-leg-swings',
     'PRONE LOWER-LEG SWINGS',
     'Bend both knees and swing the lower legs gently from side to side.',
-    'Lie face-down with your forehead resting on folded arms. Bend both knees to about 90 degrees and keep your feet together. Slowly swing both lower legs from side to side while keeping your thighs and pelvis relaxed on the bed.',
+    'Lie face-down with your arms resting comfortably. Bend both knees to about 90 degrees, keep your thighs relaxed on the bed, and slowly swing both lower legs from side to side as a gentle warm-up.',
     'Keep the movement small and easy. Stop if it causes knee pain, sharp lower-back pain, or cramping in the hamstrings.',
     'assets/images/face_down_in_bed_01_lower_leg_swings.jpg',
     2,
@@ -395,7 +395,7 @@ insert into public.exercises (
     'prone-cross-body-leg-reaches',
     'PRONE CROSS-BODY LEG REACHES',
     'Reach one bent leg across behind your body, then alternate sides.',
-    'Lie face-down with both legs long. Bend one knee and gently reach that foot across behind your body toward the opposite side. Return the leg to neutral, then repeat with the other leg.',
+    'Lie face-down with both legs long. Bend one knee, lift that leg gently, and reach the foot across behind your body toward the opposite side. Return to neutral, then alternate sides with control.',
     'Move slowly and keep most of your pelvis supported. Use a smaller reach if you feel pinching in the hip or pressure in the lower back.',
     'assets/images/face_down_in_bed_02_cross_body_leg_reaches.jpg',
     2,
@@ -408,7 +408,7 @@ insert into public.exercises (
     'frog-leg-prone-back-extension',
     'FROG-LEG PRONE BACK EXTENSION',
     'Open one knee to the side and gently lift your chest from the forearms.',
-    'Lie face-down with one leg straight and the other knee comfortably opened out to the side. Place your forearms under your shoulders, then gently lift your chest while keeping your pelvis supported. Lower with control and switch the bent leg between sets.',
+    'Lie face-down with one leg straight and the other knee comfortably opened out to the side. Place your forearms under your shoulders, gently lift and lengthen your chest, then lower with control. Switch the bent leg between sets.',
     'Keep the extension mild and your shoulders away from your ears. Stop if you feel pinching or sharp pain in your lower back or hip.',
     'assets/images/face_down_in_bed_03_frog_leg_back_extension.jpg',
     2,
@@ -506,6 +506,9 @@ set lottie_url = case slug
     when 'single-knee-to-chest' then 'assets/videos/single_knee_to_chest_tutorial.mp4'
     when 'supine-spinal-twist' then 'assets/videos/supine_spinal_twist_tutorial.mp4'
     when 'side-lying-thoracic-rotation' then 'assets/videos/thoracic_open_book_rotation_tutorial.mp4'
+    when 'prone-lower-leg-swings' then 'assets/videos/prone_lower_leg_swings_tutorial.mp4'
+    when 'prone-cross-body-leg-reaches' then 'assets/videos/prone_cross_body_leg_reaches_tutorial.mp4'
+    when 'frog-leg-prone-back-extension' then 'assets/videos/frog_leg_prone_back_extension_tutorial.mp4'
   end,
   updated_at = now()
-where slug in ('flexor-stretch', 'extensor-stretch', 'eccentric-wrist-extension', 'wrist-flexion', 'forearm-supination', 'finger-extension', 'grip-finger-opening', 'supine-lumbar-rotations', 'supine-hip-rotations', 'supine-figure-four', 'single-knee-to-chest', 'supine-spinal-twist', 'side-lying-thoracic-rotation');
+where slug in ('flexor-stretch', 'extensor-stretch', 'eccentric-wrist-extension', 'wrist-flexion', 'forearm-supination', 'finger-extension', 'grip-finger-opening', 'supine-lumbar-rotations', 'supine-hip-rotations', 'supine-figure-four', 'single-knee-to-chest', 'supine-spinal-twist', 'side-lying-thoracic-rotation', 'prone-lower-leg-swings', 'prone-cross-body-leg-reaches', 'frog-leg-prone-back-extension');

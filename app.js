@@ -60,7 +60,10 @@
     'supine-figure-four': 'assets/videos/supine_figure_four_stretch_tutorial.mp4',
     'single-knee-to-chest': 'assets/videos/single_knee_to_chest_tutorial.mp4',
     'supine-spinal-twist': 'assets/videos/supine_spinal_twist_tutorial.mp4',
-    'side-lying-thoracic-rotation': 'assets/videos/thoracic_open_book_rotation_tutorial.mp4'
+    'side-lying-thoracic-rotation': 'assets/videos/thoracic_open_book_rotation_tutorial.mp4',
+    'prone-lower-leg-swings': 'assets/videos/prone_lower_leg_swings_tutorial.mp4',
+    'prone-cross-body-leg-reaches': 'assets/videos/prone_cross_body_leg_reaches_tutorial.mp4',
+    'frog-leg-prone-back-extension': 'assets/videos/frog_leg_prone_back_extension_tutorial.mp4'
   });
   let currentUser = null;
   let isAdmin = false;
@@ -338,24 +341,27 @@
     },
     'prone-lower-leg-swings': {
       title: 'PRONE LOWER-LEG SWINGS',
-      description: 'Lie face-down with your forehead resting on folded arms. Bend both knees to about 90 degrees and keep your feet together. Slowly swing both lower legs from side to side while keeping your thighs and pelvis relaxed on the bed.',
+      description: 'Lie face-down with your arms resting comfortably. Bend both knees to about 90 degrees, keep your thighs relaxed on the bed, and slowly swing both lower legs from side to side as a gentle warm-up.',
       alert: 'Keep the movement small and easy. Stop if it causes knee pain, sharp lower-back pain, or cramping in the hamstrings.',
       thumbnail: 'assets/images/face_down_in_bed_01_lower_leg_swings.jpg',
-      images: ['assets/images/face_down_in_bed_01_lower_leg_swings.jpg']
+      images: ['assets/images/face_down_in_bed_01_lower_leg_swings.jpg'],
+      detailVideoUrl: 'assets/videos/prone_lower_leg_swings_tutorial.mp4'
     },
     'prone-cross-body-leg-reaches': {
       title: 'PRONE CROSS-BODY LEG REACHES',
-      description: 'Lie face-down with both legs long. Bend one knee and gently reach that foot across behind your body toward the opposite side. Return the leg to neutral, then repeat with the other leg.',
+      description: 'Lie face-down with both legs long. Bend one knee, lift that leg gently, and reach the foot across behind your body toward the opposite side. Return to neutral, then alternate sides with control.',
       alert: 'Move slowly and keep most of your pelvis supported. Use a smaller reach if you feel pinching in the hip or pressure in the lower back.',
       thumbnail: 'assets/images/face_down_in_bed_02_cross_body_leg_reaches.jpg',
-      images: ['assets/images/face_down_in_bed_02_cross_body_leg_reaches.jpg']
+      images: ['assets/images/face_down_in_bed_02_cross_body_leg_reaches.jpg'],
+      detailVideoUrl: 'assets/videos/prone_cross_body_leg_reaches_tutorial.mp4'
     },
     'frog-leg-prone-back-extension': {
       title: 'FROG-LEG PRONE BACK EXTENSION',
-      description: 'Lie face-down with one leg straight and the other knee comfortably opened out to the side. Place your forearms under your shoulders, then gently lift your chest while keeping your pelvis supported. Lower with control and switch the bent leg between sets.',
+      description: 'Lie face-down with one leg straight and the other knee comfortably opened out to the side. Place your forearms under your shoulders, gently lift and lengthen your chest, then lower with control. Switch the bent leg between sets.',
       alert: 'Keep the extension mild and your shoulders away from your ears. Stop if you feel pinching or sharp pain in your lower back or hip.',
       thumbnail: 'assets/images/face_down_in_bed_03_frog_leg_back_extension.jpg',
-      images: ['assets/images/face_down_in_bed_03_frog_leg_back_extension.jpg']
+      images: ['assets/images/face_down_in_bed_03_frog_leg_back_extension.jpg'],
+      detailVideoUrl: 'assets/videos/frog_leg_prone_back_extension_tutorial.mp4'
     }
   };
 
@@ -564,6 +570,7 @@
     'supine-spinal-twist': exerciseDefault(2, 10),
     'side-lying-thoracic-rotation': exerciseDefault(2, 10),
     // Face Down in Bed
+    // The source video prescribes 20 repetitions for each prone movement.
     'prone-lower-leg-swings': exerciseDefault(2, 20),
     'prone-cross-body-leg-reaches': exerciseDefault(2, 20),
     'frog-leg-prone-back-extension': exerciseDefault(2, 20),
