@@ -4,9 +4,10 @@ insert into public.routines (slug, title, sort_order, is_active) values
   ('standing-exercises', 'STANDING EXERCISES', 30, true),
   ('lying-in-bed', 'LYING IN BED', 40, true),
   ('face-down-in-bed', 'FACE DOWN IN BED', 50, true),
-  ('tai-chi', 'TAI-CHI', 60, false),
-  ('neck-relief', 'NECK RELIEF', 70, false),
-  ('lower-back', 'LOWER BACK', 80, false)
+  ('morning-warm-ups', 'MORNING WARM UPS', 60, true),
+  ('tai-chi', 'TAI-CHI', 70, false),
+  ('neck-relief', 'NECK RELIEF', 80, false),
+  ('lower-back', 'LOWER BACK', 90, false)
 on conflict (slug) do update set
   title = excluded.title,
   sort_order = excluded.sort_order,
@@ -415,6 +416,110 @@ insert into public.exercises (
     20,
     30,
     true
+  ),
+  (
+    (select id from public.routines where slug = 'morning-warm-ups'),
+    'morning-hops',
+    'HOPS',
+    'Use small, light hops to wake up the body and raise your heart rate.',
+    'Stand with your feet about hip-width apart and your knees soft. Make small, light hops in place, land quietly through the balls of your feet, and let your arms move naturally. Keep the rhythm easy and steady.',
+    'Choose a brisk march instead if impact bothers your knees, hips, ankles, pelvic floor, or balance. Stop if you feel pain, dizziness, or unusual shortness of breath.',
+    'assets/images/morning_warm_ups_01_hops.jpg',
+    1,
+    60,
+    10,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'morning-warm-ups'),
+    'morning-body-wave',
+    'BODY WAVE',
+    'Flow from a tall overhead reach into a soft whole-body wave.',
+    'Stand with your feet comfortably apart. Sweep your arms forward and overhead as you lengthen upward, then soften your knees and let your chest, ribs, and hips flow through a gentle wave as your arms circle down. Return to standing and repeat smoothly.',
+    'Keep the movement comfortable and controlled. Make the wave smaller if you feel strain in your neck, shoulders, or lower back.',
+    'assets/images/morning_warm_ups_02_body_wave.jpg',
+    1,
+    12,
+    20,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'morning-warm-ups'),
+    'morning-arm-swings',
+    'ARM SWINGS',
+    'Alternate loose, sweeping arm arcs while standing tall.',
+    'Stand tall with your knees relaxed. Swing one arm forward and overhead as the other travels down and back, then alternate sides in a loose continuous rhythm. Let the shoulders move freely without shrugging.',
+    'Use smaller circles if your shoulders feel stiff or painful. Keep your ribs down and avoid forcing the arms overhead.',
+    'assets/images/morning_warm_ups_03_arm_swings.jpg',
+    1,
+    30,
+    30,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'morning-warm-ups'),
+    'morning-dead-arms',
+    'DEAD ARMS',
+    'Keep your arms relaxed and let them swing freely with gentle torso turns.',
+    'Stand with your feet wider than your hips and keep your knees soft. Relax your shoulders and let both arms hang loosely, then turn your torso gently from side to side so the arms swing like pendulums around your body.',
+    'Keep the movement loose rather than forceful. Reduce the twist if you feel dizziness, back pain, or discomfort in your shoulders.',
+    'assets/images/morning_warm_ups_04_dead_arms.jpg',
+    1,
+    30,
+    40,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'morning-warm-ups'),
+    'morning-march-slaps',
+    'MARCH SLAPS',
+    'March in place and lightly tap each lifted thigh with the opposite hand.',
+    'March in place with a tall posture. Open your arms comfortably to the sides, then bring the opposite hand inward to lightly tap the thigh of the lifting leg. Alternate sides and keep an easy, steady rhythm.',
+    'Tap gently rather than striking the leg. Hold a stable surface or keep the knees lower if balance is uncertain.',
+    'assets/images/morning_warm_ups_05_march_slaps.jpg',
+    1,
+    20,
+    50,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'morning-warm-ups'),
+    'morning-trunk-twists',
+    'TRUNK TWISTS',
+    'Use a soft wide stance and rotate your trunk smoothly from side to side.',
+    'Take a comfortable wide stance, soften your knees, and hinge forward slightly with a long spine. Rotate your ribcage and arms smoothly from side to side while your hips and knees stay softly supported.',
+    'Twist only through a pain-free range. Stay more upright if hinging forward causes back discomfort or dizziness.',
+    'assets/images/morning_warm_ups_06_trunk_twists.jpg',
+    1,
+    20,
+    60,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'morning-warm-ups'),
+    'morning-windmill',
+    'WINDMILL',
+    'Reach toward the opposite leg while rotating through your upper body.',
+    'Stand with your feet wide and knees softly bent. Hinge from your hips and rotate your torso as one hand reaches toward the opposite shin or foot while the other arm travels back. Return through centre and alternate sides.',
+    'Reach only as low as you can while staying controlled. Keep your knees soft and skip the downward reach if it causes back pain or dizziness.',
+    'assets/images/morning_warm_ups_07_windmill.jpg',
+    1,
+    12,
+    70,
+    true
+  ),
+  (
+    (select id from public.routines where slug = 'morning-warm-ups'),
+    'morning-plie-squats',
+    'PLIÉ SQUATS',
+    'Lower into a wide plié squat, then stand and sweep your arms overhead.',
+    'Step your feet wide and turn your toes out comfortably. Bend your knees in the same direction as your toes as you lower into a plié squat and sweep your arms down, then press through your feet to stand and reach your arms overhead.',
+    'Keep your knees tracking over your toes and use a shallow squat if your hips or knees feel sensitive. Hold a stable surface if needed.',
+    'assets/images/morning_warm_ups_08_plie_squats.jpg',
+    1,
+    12,
+    80,
+    true
   )
 on conflict (slug) do update set
   routine_id = excluded.routine_id,
@@ -476,7 +581,29 @@ insert into public.exercise_images (exercise_id, image_url, sort_order) values
   ((select id from public.exercises where slug = 'side-lying-thoracic-rotation'), 'assets/images/lying_in_bed_06_thoracic_rotation.jpg', 10),
   ((select id from public.exercises where slug = 'prone-lower-leg-swings'), 'assets/images/face_down_in_bed_01_lower_leg_swings.jpg', 10),
   ((select id from public.exercises where slug = 'prone-cross-body-leg-reaches'), 'assets/images/face_down_in_bed_02_cross_body_leg_reaches.jpg', 10),
-  ((select id from public.exercises where slug = 'frog-leg-prone-back-extension'), 'assets/images/face_down_in_bed_03_frog_leg_back_extension.jpg', 10);
+  ((select id from public.exercises where slug = 'frog-leg-prone-back-extension'), 'assets/images/face_down_in_bed_03_frog_leg_back_extension.jpg', 10),
+  ((select id from public.exercises where slug = 'morning-hops'), 'assets/images/morning_warm_ups_01_hops.jpg', 10),
+  ((select id from public.exercises where slug = 'morning-body-wave'), 'assets/images/morning_warm_ups_02_body_wave.jpg', 10),
+  ((select id from public.exercises where slug = 'morning-arm-swings'), 'assets/images/morning_warm_ups_03_arm_swings.jpg', 10),
+  ((select id from public.exercises where slug = 'morning-dead-arms'), 'assets/images/morning_warm_ups_04_dead_arms.jpg', 10),
+  ((select id from public.exercises where slug = 'morning-march-slaps'), 'assets/images/morning_warm_ups_05_march_slaps.jpg', 10),
+  ((select id from public.exercises where slug = 'morning-trunk-twists'), 'assets/images/morning_warm_ups_06_trunk_twists.jpg', 10),
+  ((select id from public.exercises where slug = 'morning-windmill'), 'assets/images/morning_warm_ups_07_windmill.jpg', 10),
+  ((select id from public.exercises where slug = 'morning-plie-squats'), 'assets/images/morning_warm_ups_08_plie_squats.jpg', 10);
+
+update public.exercises
+set pace_seconds = case slug
+    when 'morning-hops' then 1
+    when 'morning-body-wave' then 5
+    when 'morning-arm-swings' then 2
+    when 'morning-dead-arms' then 2
+    when 'morning-march-slaps' then 3
+    when 'morning-trunk-twists' then 3
+    when 'morning-windmill' then 5
+    when 'morning-plie-squats' then 5
+  end,
+  updated_at = now()
+where slug in ('morning-hops', 'morning-body-wave', 'morning-arm-swings', 'morning-dead-arms', 'morning-march-slaps', 'morning-trunk-twists', 'morning-windmill', 'morning-plie-squats');
 
 update public.exercises
 set lottie_url = null,
@@ -509,6 +636,14 @@ set lottie_url = case slug
     when 'prone-lower-leg-swings' then 'assets/videos/prone_lower_leg_swings_tutorial.mp4'
     when 'prone-cross-body-leg-reaches' then 'assets/videos/prone_cross_body_leg_reaches_tutorial.mp4'
     when 'frog-leg-prone-back-extension' then 'assets/videos/frog_leg_prone_back_extension_tutorial.mp4'
+    when 'morning-hops' then 'assets/videos/morning_hops_tutorial.mp4'
+    when 'morning-body-wave' then 'assets/videos/morning_body_wave_tutorial.mp4'
+    when 'morning-arm-swings' then 'assets/videos/morning_arm_swings_tutorial.mp4'
+    when 'morning-dead-arms' then 'assets/videos/morning_dead_arms_tutorial.mp4'
+    when 'morning-march-slaps' then 'assets/videos/morning_march_slaps_tutorial.mp4'
+    when 'morning-trunk-twists' then 'assets/videos/morning_trunk_twists_tutorial.mp4'
+    when 'morning-windmill' then 'assets/videos/morning_windmill_tutorial.mp4'
+    when 'morning-plie-squats' then 'assets/videos/morning_plie_squats_tutorial.mp4'
   end,
   updated_at = now()
-where slug in ('flexor-stretch', 'extensor-stretch', 'eccentric-wrist-extension', 'wrist-flexion', 'forearm-supination', 'finger-extension', 'grip-finger-opening', 'supine-lumbar-rotations', 'supine-hip-rotations', 'supine-figure-four', 'single-knee-to-chest', 'supine-spinal-twist', 'side-lying-thoracic-rotation', 'prone-lower-leg-swings', 'prone-cross-body-leg-reaches', 'frog-leg-prone-back-extension');
+where slug in ('flexor-stretch', 'extensor-stretch', 'eccentric-wrist-extension', 'wrist-flexion', 'forearm-supination', 'finger-extension', 'grip-finger-opening', 'supine-lumbar-rotations', 'supine-hip-rotations', 'supine-figure-four', 'single-knee-to-chest', 'supine-spinal-twist', 'side-lying-thoracic-rotation', 'prone-lower-leg-swings', 'prone-cross-body-leg-reaches', 'frog-leg-prone-back-extension', 'morning-hops', 'morning-body-wave', 'morning-arm-swings', 'morning-dead-arms', 'morning-march-slaps', 'morning-trunk-twists', 'morning-windmill', 'morning-plie-squats');

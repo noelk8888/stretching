@@ -63,7 +63,15 @@
     'side-lying-thoracic-rotation': 'assets/videos/thoracic_open_book_rotation_tutorial.mp4',
     'prone-lower-leg-swings': 'assets/videos/prone_lower_leg_swings_tutorial.mp4',
     'prone-cross-body-leg-reaches': 'assets/videos/prone_cross_body_leg_reaches_tutorial.mp4',
-    'frog-leg-prone-back-extension': 'assets/videos/frog_leg_prone_back_extension_tutorial.mp4'
+    'frog-leg-prone-back-extension': 'assets/videos/frog_leg_prone_back_extension_tutorial.mp4',
+    'morning-hops': 'assets/videos/morning_hops_tutorial.mp4',
+    'morning-body-wave': 'assets/videos/morning_body_wave_tutorial.mp4',
+    'morning-arm-swings': 'assets/videos/morning_arm_swings_tutorial.mp4',
+    'morning-dead-arms': 'assets/videos/morning_dead_arms_tutorial.mp4',
+    'morning-march-slaps': 'assets/videos/morning_march_slaps_tutorial.mp4',
+    'morning-trunk-twists': 'assets/videos/morning_trunk_twists_tutorial.mp4',
+    'morning-windmill': 'assets/videos/morning_windmill_tutorial.mp4',
+    'morning-plie-squats': 'assets/videos/morning_plie_squats_tutorial.mp4'
   });
   let currentUser = null;
   let isAdmin = false;
@@ -362,6 +370,70 @@
       thumbnail: 'assets/images/face_down_in_bed_03_frog_leg_back_extension.jpg',
       images: ['assets/images/face_down_in_bed_03_frog_leg_back_extension.jpg'],
       detailVideoUrl: 'assets/videos/frog_leg_prone_back_extension_tutorial.mp4'
+    },
+    'morning-hops': {
+      title: 'HOPS',
+      description: 'Stand with your feet about hip-width apart and your knees soft. Make small, light hops in place, land quietly through the balls of your feet, and let your arms move naturally. Keep the rhythm easy and steady.',
+      alert: 'Choose a brisk march instead if impact bothers your knees, hips, ankles, pelvic floor, or balance. Stop if you feel pain, dizziness, or unusual shortness of breath.',
+      thumbnail: 'assets/images/morning_warm_ups_01_hops.jpg',
+      images: ['assets/images/morning_warm_ups_01_hops.jpg'],
+      detailVideoUrl: 'assets/videos/morning_hops_tutorial.mp4'
+    },
+    'morning-body-wave': {
+      title: 'BODY WAVE',
+      description: 'Stand with your feet comfortably apart. Sweep your arms forward and overhead as you lengthen upward, then soften your knees and let your chest, ribs, and hips flow through a gentle wave as your arms circle down. Return to standing and repeat smoothly.',
+      alert: 'Keep the movement comfortable and controlled. Make the wave smaller if you feel strain in your neck, shoulders, or lower back.',
+      thumbnail: 'assets/images/morning_warm_ups_02_body_wave.jpg',
+      images: ['assets/images/morning_warm_ups_02_body_wave.jpg'],
+      detailVideoUrl: 'assets/videos/morning_body_wave_tutorial.mp4'
+    },
+    'morning-arm-swings': {
+      title: 'ARM SWINGS',
+      description: 'Stand tall with your knees relaxed. Swing one arm forward and overhead as the other travels down and back, then alternate sides in a loose continuous rhythm. Let the shoulders move freely without shrugging.',
+      alert: 'Use smaller circles if your shoulders feel stiff or painful. Keep your ribs down and avoid forcing the arms overhead.',
+      thumbnail: 'assets/images/morning_warm_ups_03_arm_swings.jpg',
+      images: ['assets/images/morning_warm_ups_03_arm_swings.jpg'],
+      detailVideoUrl: 'assets/videos/morning_arm_swings_tutorial.mp4'
+    },
+    'morning-dead-arms': {
+      title: 'DEAD ARMS',
+      description: 'Stand with your feet wider than your hips and keep your knees soft. Relax your shoulders and let both arms hang loosely, then turn your torso gently from side to side so the arms swing like pendulums around your body.',
+      alert: 'Keep the movement loose rather than forceful. Reduce the twist if you feel dizziness, back pain, or discomfort in your shoulders.',
+      thumbnail: 'assets/images/morning_warm_ups_04_dead_arms.jpg',
+      images: ['assets/images/morning_warm_ups_04_dead_arms.jpg'],
+      detailVideoUrl: 'assets/videos/morning_dead_arms_tutorial.mp4'
+    },
+    'morning-march-slaps': {
+      title: 'MARCH SLAPS',
+      description: 'March in place with a tall posture. Open your arms comfortably to the sides, then bring the opposite hand inward to lightly tap the thigh of the lifting leg. Alternate sides and keep an easy, steady rhythm.',
+      alert: 'Tap gently rather than striking the leg. Hold a stable surface or keep the knees lower if balance is uncertain.',
+      thumbnail: 'assets/images/morning_warm_ups_05_march_slaps.jpg',
+      images: ['assets/images/morning_warm_ups_05_march_slaps.jpg'],
+      detailVideoUrl: 'assets/videos/morning_march_slaps_tutorial.mp4'
+    },
+    'morning-trunk-twists': {
+      title: 'TRUNK TWISTS',
+      description: 'Take a comfortable wide stance, soften your knees, and hinge forward slightly with a long spine. Rotate your ribcage and arms smoothly from side to side while your hips and knees stay softly supported.',
+      alert: 'Twist only through a pain-free range. Stay more upright if hinging forward causes back discomfort or dizziness.',
+      thumbnail: 'assets/images/morning_warm_ups_06_trunk_twists.jpg',
+      images: ['assets/images/morning_warm_ups_06_trunk_twists.jpg'],
+      detailVideoUrl: 'assets/videos/morning_trunk_twists_tutorial.mp4'
+    },
+    'morning-windmill': {
+      title: 'WINDMILL',
+      description: 'Stand with your feet wide and knees softly bent. Hinge from your hips and rotate your torso as one hand reaches toward the opposite shin or foot while the other arm travels back. Return through centre and alternate sides.',
+      alert: 'Reach only as low as you can while staying controlled. Keep your knees soft and skip the downward reach if it causes back pain or dizziness.',
+      thumbnail: 'assets/images/morning_warm_ups_07_windmill.jpg',
+      images: ['assets/images/morning_warm_ups_07_windmill.jpg'],
+      detailVideoUrl: 'assets/videos/morning_windmill_tutorial.mp4'
+    },
+    'morning-plie-squats': {
+      title: 'PLIÉ SQUATS',
+      description: 'Step your feet wide and turn your toes out comfortably. Bend your knees in the same direction as your toes as you lower into a plié squat and sweep your arms down, then press through your feet to stand and reach your arms overhead.',
+      alert: 'Keep your knees tracking over your toes and use a shallow squat if your hips or knees feel sensitive. Hold a stable surface if needed.',
+      thumbnail: 'assets/images/morning_warm_ups_08_plie_squats.jpg',
+      images: ['assets/images/morning_warm_ups_08_plie_squats.jpg'],
+      detailVideoUrl: 'assets/videos/morning_plie_squats_tutorial.mp4'
     }
   };
 
@@ -473,7 +545,8 @@
     'LOWER BACK': 'lower-back',
     'STANDING EXERCISES': 'standing-exercises',
     'LYING IN BED': 'lying-in-bed',
-    'FACE DOWN IN BED': 'face-down-in-bed'
+    'FACE DOWN IN BED': 'face-down-in-bed',
+    'MORNING WARM UPS': 'morning-warm-ups'
   };
 
   function getRoutineIdFromPill(pill) {
@@ -574,6 +647,16 @@
     'prone-lower-leg-swings': exerciseDefault(2, 20),
     'prone-cross-body-leg-reaches': exerciseDefault(2, 20),
     'frog-leg-prone-back-extension': exerciseDefault(2, 20),
+    // Morning Warm Ups
+    // The source prescribes one minute per movement; reps and pace multiply to 60 seconds.
+    'morning-hops': { ...exerciseDefault(1, 60), pace: 1 },
+    'morning-body-wave': { ...exerciseDefault(1, 12), pace: 5 },
+    'morning-arm-swings': { ...exerciseDefault(1, 30), pace: 2 },
+    'morning-dead-arms': { ...exerciseDefault(1, 30), pace: 2 },
+    'morning-march-slaps': exerciseDefault(1, 20),
+    'morning-trunk-twists': exerciseDefault(1, 20),
+    'morning-windmill': { ...exerciseDefault(1, 12), pace: 5 },
+    'morning-plie-squats': { ...exerciseDefault(1, 12), pace: 5 },
   };
 
   let exerciseSettings = JSON.parse(JSON.stringify(exerciseDefaults));
@@ -636,6 +719,21 @@
         { id: 'prone-cross-body-leg-reaches', shortDescription: 'Reach one bent leg across behind your body, then alternate sides.' },
         { id: 'frog-leg-prone-back-extension', shortDescription: 'Open one knee to the side and gently lift your chest from the forearms.' }
       ]
+    },
+    {
+      id: 'morning-warm-ups',
+      name: 'MORNING WARM UPS',
+      alwaysBundled: true,
+      exercises: [
+        { id: 'morning-hops', shortDescription: 'Use small, light hops to wake up the body and raise your heart rate.' },
+        { id: 'morning-body-wave', shortDescription: 'Flow from a tall overhead reach into a soft whole-body wave.' },
+        { id: 'morning-arm-swings', shortDescription: 'Alternate loose, sweeping arm arcs while standing tall.' },
+        { id: 'morning-dead-arms', shortDescription: 'Keep your arms relaxed and let them swing freely with gentle torso turns.' },
+        { id: 'morning-march-slaps', shortDescription: 'March in place and lightly tap each lifted thigh with the opposite hand.' },
+        { id: 'morning-trunk-twists', shortDescription: 'Use a soft wide stance and rotate your trunk smoothly from side to side.' },
+        { id: 'morning-windmill', shortDescription: 'Reach toward the opposite leg while rotating through your upper body.' },
+        { id: 'morning-plie-squats', shortDescription: 'Lower into a wide plié squat, then stand and sweep your arms overhead.' }
+      ]
     }
   ];
 
@@ -667,7 +765,7 @@
     card.style.display = 'none';
 
     const thumbnail = sanitizeUrl(exercise.thumbnail);
-    const isTutorialCardAsset = /(?:tennis_elbow|cat_cow_routine|standing_exercises|lying_in_bed|face_down_in_bed)_/.test(thumbnail);
+    const isTutorialCardAsset = /(?:tennis_elbow|cat_cow_routine|standing_exercises|lying_in_bed|face_down_in_bed|morning_warm_ups)_/.test(thumbnail);
     const previewStyle = thumbnail
       ? `background-image: url('${thumbnail}'); background-size: ${isTutorialCardAsset ? 'contain' : 'cover'}; background-repeat: no-repeat; background-position: center;${isTutorialCardAsset ? ' background-color: #fff;' : ''}`
       : 'background: var(--bg-elevated);';
