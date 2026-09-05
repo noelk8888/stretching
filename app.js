@@ -3351,6 +3351,16 @@
       () => dom.app.classList.contains('media-is-front')
     );
 
+    function updateExerciseCarouselMediaSize(media) {
+      const carouselContainer = document.getElementById('exercise-carousel-container');
+      const mediaWidth = media?.videoWidth || media?.naturalWidth || 0;
+      const mediaHeight = media?.videoHeight || media?.naturalHeight || 0;
+      if (!mediaWidth || !mediaHeight) return;
+
+      carouselContainer.style.setProperty('--tutorial-media-aspect', `${mediaWidth} / ${mediaHeight}`);
+      carouselContainer.classList.add('has-adaptive-media');
+    }
+
     function createPinchZoomController(container) {
       const state = {
         scale: 1,
@@ -3561,6 +3571,9 @@
       Array.from(track.children).forEach((slide, i) => {
         slide.classList.toggle('is-active', i === currentCarouselIndex);
       });
+      updateExerciseCarouselMediaSize(
+        track.children[currentCarouselIndex]?.querySelector('img, video')
+      );
       carouselZoom?.reset();
       Array.from(dotsContainer.children).forEach((dot, i) => {
         dot.style.background = i === currentCarouselIndex ? 'var(--accent)' : 'rgba(255,255,255,0.3)';
@@ -3652,6 +3665,8 @@
       dotsContainer.innerHTML = '';
       const carouselContainer = document.getElementById('exercise-carousel-container');
       carouselContainer.classList.toggle('has-video', Boolean(detailVideoUrl));
+      carouselContainer.classList.remove('has-adaptive-media');
+      carouselContainer.style.removeProperty('--tutorial-media-aspect');
       if (!carouselZoom) {
         carouselZoom = createPinchZoomController(carouselContainer);
       }
@@ -3667,6 +3682,11 @@
         video.muted = true;
         video.playsInline = true;
         video.controls = true;
+        video.style.objectFit = 'contain';
+        video.style.objectPosition = 'center';
+        video.addEventListener('loadedmetadata', () => {
+          updateExerciseCarouselMediaSize(video);
+        }, { once: true });
         video.setAttribute('aria-label', `${details.title} video demonstration`);
         slide.appendChild(video);
         track.appendChild(slide);
@@ -3685,6 +3705,9 @@
           img.src = src;
           img.alt = `${details.title} demonstration ${i + 1}`;
           img.draggable = false;
+          img.addEventListener('load', () => {
+            if (i === currentCarouselIndex) updateExerciseCarouselMediaSize(img);
+          }, { once: true });
           slide.appendChild(img);
           track.appendChild(slide);
 
@@ -3707,6 +3730,8 @@
         carouselContainer.style.display = 'none';
       }
 
+      const detailsContent = detailsModal.querySelector('.exercise-details-modal-content');
+      if (detailsContent) detailsContent.scrollTop = 0;
       detailsModal.setAttribute('aria-hidden', 'false');
     }
 

@@ -1835,12 +1835,38 @@ input:checked + .slider-switch::before {
 }
 
 #exercise-carousel-container {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--bg-card);
   touch-action: none;
   user-select: none;
 }
 
 #exercise-carousel-container.has-video {
+  background: #000;
   touch-action: manipulation;
+}
+
+.exercise-details-modal-content {
+  width: 100%;
+  max-width: 402px;
+  height: min(100dvh, 874px);
+  max-height: min(100dvh, 874px);
+  padding-top: max(32px, env(safe-area-inset-top));
+  padding-bottom: max(32px, env(safe-area-inset-bottom));
+  border-radius: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+#exercise-carousel-container.has-adaptive-media {
+  height: auto;
+  max-height: min(734px, calc(100dvh - 140px));
+  aspect-ratio: var(--tutorial-media-aspect, 16 / 9);
 }
 
 .exercise-details-top-actions {
@@ -1884,7 +1910,8 @@ input:checked + .slider-switch::before {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: contain !important;
+  object-position: center;
   background: #000;
 }
 
