@@ -730,6 +730,31 @@ body.light-mode .landing-artwork {
   gap: 12px;
 }
 
+.offline-status {
+  min-height: 18px;
+  color: var(--text-muted);
+  font: 600 11px/1.35 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.offline-status[data-state="working"] {
+  color: var(--warning);
+}
+
+.offline-status[data-state="ready"] {
+  color: var(--success);
+}
+
+.offline-status[data-state="offline"] {
+  color: var(--accent);
+}
+
+.offline-status[data-state="error"] {
+  color: var(--danger);
+}
+
 .landing-login-group {
   display: flex;
   flex-direction: column;

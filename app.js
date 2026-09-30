@@ -29,7 +29,8 @@
   };
 
   const supabaseConfig = window.EXERCISE_CLOCK_SUPABASE || {};
-  const isSupabaseConfigured = Boolean(
+  const browserReportsOnline = typeof navigator === 'undefined' || navigator.onLine !== false;
+  const isSupabaseConfigured = browserReportsOnline && Boolean(
     supabaseConfig.url &&
     supabaseConfig.anonKey &&
     window.supabase
@@ -808,8 +809,10 @@
     const exerciseOptions = document.querySelector('.exercise-options');
     if (!exerciseOptions) return;
 
+    dom.sortableRoutines.innerHTML = '';
     exerciseOptions.innerHTML = '';
     fallbackRoutines.forEach((routine) => {
+      dom.sortableRoutines.appendChild(createRoutineButton(routine));
       routine.exercises.forEach((item) => {
         const details = exerciseDetails[item.id];
         const defaults = exerciseDefaults[item.id];

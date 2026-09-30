@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="description" content="Exercise Clock - A mobile exercise timer with configurable sets, reps, and pace control." />
+  <meta name="description" content="Bend and Mend - A mobile exercise timer with guided stretching routines." />
+  <meta name="theme-color" content="#0f1117" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Exercise Clock</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <meta name="apple-mobile-web-app-title" content="Bend & Mend" />
+  <title>Bend and Mend</title>
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/icon.png" />
-  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon.png" />
-  <link rel="stylesheet" href="style.css?v=20260905-portrait-video-preview-1" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png" />
+  <link rel="stylesheet" href="style.css?v=20261001-offline-pwa-1" />
 </head>
 <body>
   <main id="landing-page" aria-labelledby="landing-title">
@@ -39,6 +39,7 @@
         <button id="btn-dark-mode" class="landing-btn-pill is-active" type="button">DARK</button>
         <button id="btn-sound-mode" class="landing-btn-pill is-active" type="button">SOUND</button>
       </div>
+      <p id="offline-status" class="offline-status" role="status" aria-live="polite">CHECKING OFFLINE ACCESS…</p>
     </div>
   </main>
 
@@ -578,10 +579,11 @@
       </div>
     </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/vendor/sortable-1.15.6.min.js"></script>
+  <script src="assets/vendor/supabase-js-2.117.2.min.js"></script>
   <script src="supabase-config.js?v=20260711-1"></script>
   <script type="module" src="assets/lottie/dotlottie-player.mjs"></script>
-  <script src="app.js?v=20260905-morning-warm-ups-1"></script>
+  <script src="app.js?v=20261001-offline-pwa-1"></script>
+  <script src="pwa.js?v=20261001-offline-pwa-1"></script>
 </body>
 </html>
