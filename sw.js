@@ -2,7 +2,7 @@
 importScripts('./offline-assets.js');
 
 // Bump this version whenever a deployed app or media file changes.
-const CACHE_NAME = 'bend-and-mend-offline-v1';
+const CACHE_NAME = 'bend-and-mend-offline-v2';
 const CORE_ASSETS = [
   './',
   './index.html',

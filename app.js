@@ -48,6 +48,110 @@
   const TIMER_TICK_MS = 250;
   const BEEP_LEAD_SECONDS = 0.6;
   const ADMIN_MEDIA_BUCKET = 'exercise-media';
+  // Dosages and demonstrations are taken from the supplied 13-movement video.
+  // For paired holds, one count is one side; for paired rotations, one rep
+  // includes the stated hold on both sides.
+  const MORNING_STRETCHES = [
+    {
+      id: 'morning-stretches-knee-to-chest', title: 'KNEE TO CHEST', media: 'knee_to_chest',
+      shortDescription: 'Draw both knees gently toward your chest; hold each rep for 20 seconds.',
+      description: 'Lie on your back, bend both knees, and wrap your hands around your shins. Draw the knees comfortably toward your chest without lifting your head or forcing the lower back. Release between holds. The video prescribes 3 sets of 10 repetitions, holding each for 20 seconds.',
+      alert: 'Hold behind your thighs if your knees are sensitive. Ease off if the position increases back or hip pain.',
+      reps: 10, pace: 20
+    },
+    {
+      id: 'morning-stretches-knee-rotations', title: 'KNEE ROTATIONS', media: 'knee_rotations',
+      shortDescription: 'Let both bent knees move gently to each side; hold 15 seconds per side.',
+      description: 'Lie on your back with knees bent and feet on the floor. Slowly lower both knees to one side while the shoulders stay relaxed, return to centre, then move to the other side. One counted rep includes both sides, with a 15-second hold on each. The video prescribes 3 sets of 10 reps per side.',
+      alert: 'Keep the range small and comfortable. Stop if the rotation causes sharp pain or symptoms down a leg.',
+      reps: 10, pace: 30
+    },
+    {
+      id: 'morning-stretches-back-extensions', title: 'BACK EXTENSIONS', media: 'back_extensions',
+      shortDescription: 'Press your chest gently up from your stomach; hold for 5 seconds.',
+      description: 'Lie face down with hands near the ribs. Press lightly through your palms to raise your chest while keeping the hips supported, then lower with control. The video prescribes 3 sets of 10 extensions, holding each for 5 seconds.',
+      alert: 'Use a modest lift and keep your neck long. Stop if you feel pinching or sharp pain in the lower back.',
+      reps: 10, pace: 5
+    },
+    {
+      id: 'morning-stretches-lower-back-rotations', title: 'LOWER BACK ROTATIONS', media: 'lower_back_rotations',
+      shortDescription: 'Guide one bent knee across your body; hold 15 seconds per side.',
+      description: 'Lie on your back, bend one knee, and guide it gently across your body while the opposite leg stays long. Keep your shoulders relaxed, then switch sides. One counted rep includes both sides, with a 15-second hold on each. The video prescribes 3 sets of 10 reps per side.',
+      alert: 'Do not force the knee to the floor. Reduce the twist if it causes back, hip, or knee discomfort.',
+      reps: 10, pace: 30
+    },
+    {
+      id: 'morning-stretches-cat-cow', title: 'CAT & COW', media: 'cat_cow',
+      shortDescription: 'Alternate a rounded back and a gentle arch, holding each for 5 seconds.',
+      description: 'Start on hands and knees. Round your back and gently tuck your chin for Cat, then let your belly lower and lift your chest for Cow. One rep includes both positions, held for 5 seconds each. The video prescribes 3 sets of 10 cycles.',
+      alert: 'Move only through a comfortable range. Add padding under your knees or use your forearms if wrists are sensitive.',
+      reps: 10, pace: 10
+    },
+    {
+      id: 'morning-stretches-childs-pose', title: "CHILD'S POSE", media: 'childs_pose',
+      shortDescription: 'Sit back toward your heels and reach forward for a 30-second hold.',
+      description: 'From hands and knees, sit your hips back toward your heels, reach your arms forward, and let your head relax. Breathe steadily for 30 seconds. The video prescribes 3 sets of one 30-second hold.',
+      alert: 'Place a towel behind the knees or shorten the reach if your knees, hips, or shoulders are uncomfortable.',
+      reps: 1, pace: 30, doseLabel: 'HOLDS'
+    },
+    {
+      id: 'morning-stretches-foam-roller', title: 'FOAM ROLLER BACK RELEASE', media: 'foam_roller',
+      shortDescription: 'Roll gently under the upper or middle back for one minute per area.',
+      description: 'Lie with a foam roller across the upper or middle back, knees bent and hands supporting the head. Lift the hips only as comfortable and make small controlled rolls over one area for one minute. Move to another area only if needed. The video prescribes 3 sets of one minute per area.',
+      alert: 'Avoid rolling directly over the neck or low back, and keep the movement gentle. Skip if the pressure is painful.',
+      reps: 1, pace: 60, doseLabel: 'HOLDS'
+    },
+    {
+      id: 'morning-stretches-bridge-lifts', title: 'BRIDGE LIFTS', media: 'bridge_lifts',
+      shortDescription: 'Lift your hips from a bent-knee position and lower with control.',
+      description: 'Lie on your back with knees bent, feet flat and about hip-width apart, and arms by your sides. Press through your feet to raise the hips without arching excessively, then lower slowly. The video prescribes 3 sets of 10 repetitions.',
+      alert: 'Keep your knees aligned with your feet and reduce the lift if you feel back or hamstring discomfort.',
+      reps: 10, pace: 4
+    },
+    {
+      id: 'morning-stretches-spiky-ball-glutes', title: 'SPIKY BALL GLUTE RELEASE', media: 'spiky_ball_glutes',
+      shortDescription: 'Use a small ball under one glute for one minute per side.',
+      description: 'Sit with hands behind you and place a small massage ball under one buttock, keeping the other foot planted for support. Make small, gentle shifts over the glute for one minute, then change sides. The video prescribes 3 sets of one minute per side.',
+      alert: 'Keep pressure away from the tailbone and bony hip. Stop if it causes sharp pain or tingling down the leg.',
+      reps: 2, pace: 60, doseLabel: 'HOLDS'
+    },
+    {
+      id: 'morning-stretches-hip-flexor-stretch', title: 'HIP FLEXOR STRETCH', media: 'hip_flexor_stretch',
+      shortDescription: 'Hold a gentle half-kneeling hip stretch for 30 seconds per side.',
+      description: 'Kneel with one foot in front and the other knee behind. Keep your torso upright and gently shift the hips forward until you feel a stretch at the front of the trailing hip. Hold for 30 seconds, then switch legs. The video prescribes 3 sets per side.',
+      alert: 'Pad the back knee and keep the front knee above the foot. Avoid leaning into lower-back pain.',
+      reps: 2, pace: 30, doseLabel: 'HOLDS'
+    },
+    {
+      id: 'morning-stretches-piriformis-stretch', title: 'PIRIFORMIS STRETCH', media: 'piriformis_stretch',
+      shortDescription: 'Cross one ankle over the other knee for a 30-second seated glute stretch.',
+      description: 'Sit with hands behind you and both knees bent. Cross one ankle over the opposite thigh, just above the knee, then gently bring the supporting leg toward you until you feel a stretch in the crossed-leg glute. Hold 30 seconds and switch sides. The video prescribes 3 sets per side.',
+      alert: 'Keep the crossed foot flexed and do not press directly on the knee. Ease off if your hip or knee pinches.',
+      reps: 2, pace: 30, doseLabel: 'HOLDS'
+    },
+    {
+      id: 'morning-stretches-thread-the-needle', title: 'THREAD THE NEEDLE', media: 'thread_the_needle',
+      shortDescription: 'Reach one arm beneath your body for 30 seconds on each side.',
+      description: 'From hands and knees, slide one arm under your chest while the other reaches forward. Lower your shoulder and head only as far as comfortable, hold for 30 seconds, then change sides. The video prescribes 3 sets per side.',
+      alert: 'Keep pressure off your neck and move gently through the shoulder. Stop if the position causes pain or numbness.',
+      reps: 2, pace: 30, doseLabel: 'HOLDS'
+    },
+    {
+      id: 'morning-stretches-hamstring-stretch', title: 'HAMSTRING STRETCH', media: 'hamstring_stretch',
+      shortDescription: 'Raise one leg with a strap and hold gently for 30 seconds per side.',
+      description: 'Lie on your back with one knee bent and foot on the floor. Loop a strap or towel around the other foot and raise that leg until you feel a gentle stretch behind the thigh. Hold for 30 seconds, then switch sides. The video prescribes 3 sets per side.',
+      alert: 'Keep the lifted knee slightly bent if needed. Do not pull through sharp pain or tingling.',
+      reps: 2, pace: 30, doseLabel: 'HOLDS'
+    }
+  ];
+  const MORNING_STRETCHES_BY_ID = Object.fromEntries(MORNING_STRETCHES.map((exercise, index) => [
+    exercise.id,
+    {
+      ...exercise,
+      thumbnail: `assets/images/morning_stretches_${String(index + 1).padStart(2, '0')}_${exercise.media}.jpg`,
+      video: `assets/videos/morning_stretches_${exercise.media}.mp4`
+    }
+  ]));
   const BUNDLED_DETAIL_VIDEO_BY_EXERCISE = Object.freeze({
     'extensor-stretch': 'assets/videos/wrist_extensor_stretch.mp4',
     'flexor-stretch': 'assets/videos/wrist_flexor_stretch.mp4',
@@ -72,7 +176,8 @@
     'morning-march-slaps': 'assets/videos/morning_march_slaps_tutorial.mp4',
     'morning-trunk-twists': 'assets/videos/morning_trunk_twists_tutorial.mp4',
     'morning-windmill': 'assets/videos/morning_windmill_tutorial.mp4',
-    'morning-plie-squats': 'assets/videos/morning_plie_squats_tutorial.mp4'
+    'morning-plie-squats': 'assets/videos/morning_plie_squats_tutorial.mp4',
+    ...Object.fromEntries(Object.values(MORNING_STRETCHES_BY_ID).map((exercise) => [exercise.id, exercise.video]))
   });
   let currentUser = null;
   let isAdmin = false;
@@ -437,6 +542,17 @@
       detailVideoUrl: 'assets/videos/morning_plie_squats_tutorial.mp4'
     }
   };
+  MORNING_STRETCHES.forEach((exercise) => {
+    const media = MORNING_STRETCHES_BY_ID[exercise.id];
+    exerciseDetails[exercise.id] = {
+      title: exercise.title,
+      description: exercise.description,
+      alert: exercise.alert,
+      thumbnail: media.thumbnail,
+      images: [media.thumbnail],
+      detailVideoUrl: media.video
+    };
+  });
 
   const dom = {
     // Landing page
@@ -547,7 +663,8 @@
     'STANDING EXERCISES': 'standing-exercises',
     'LYING IN BED': 'lying-in-bed',
     'FACE DOWN IN BED': 'face-down-in-bed',
-    'MORNING WARM UPS': 'morning-warm-ups'
+    'MORNING WARM UPS': 'morning-warm-ups',
+    'MORNING STRETCHES': 'morning-stretches'
   };
 
   function getRoutineIdFromPill(pill) {
@@ -659,6 +776,9 @@
     'morning-windmill': { ...exerciseDefault(1, 12), pace: 5 },
     'morning-plie-squats': { ...exerciseDefault(1, 12), pace: 5 },
   };
+  MORNING_STRETCHES.forEach((exercise) => {
+    exerciseDefaults[exercise.id] = { ...exerciseDefault(3, exercise.reps), pace: exercise.pace };
+  });
 
   let exerciseSettings = JSON.parse(JSON.stringify(exerciseDefaults));
 
@@ -735,6 +855,12 @@
         { id: 'morning-windmill', shortDescription: 'Reach toward the opposite leg while rotating through your upper body.' },
         { id: 'morning-plie-squats', shortDescription: 'Lower into a wide plié squat, then stand and sweep your arms overhead.' }
       ]
+    },
+    {
+      id: 'morning-stretches',
+      name: 'MORNING STRETCHES',
+      alwaysBundled: true,
+      exercises: MORNING_STRETCHES.map(({ id, shortDescription }) => ({ id, shortDescription }))
     }
   ];
 
@@ -766,7 +892,8 @@
     card.style.display = 'none';
 
     const thumbnail = sanitizeUrl(exercise.thumbnail);
-    const isTutorialCardAsset = /(?:tennis_elbow|cat_cow_routine|standing_exercises|lying_in_bed|face_down_in_bed|morning_warm_ups)_/.test(thumbnail);
+    const isTutorialCardAsset = /(?:tennis_elbow|cat_cow_routine|standing_exercises|lying_in_bed|face_down_in_bed|morning_warm_ups|morning_stretches)_/.test(thumbnail);
+    const doseLabel = MORNING_STRETCHES_BY_ID[exercise.id]?.doseLabel || 'REPS';
     const previewStyle = thumbnail
       ? `background-image: url('${thumbnail}'); background-size: ${isTutorialCardAsset ? 'contain' : 'cover'}; background-repeat: no-repeat; background-position: center;${isTutorialCardAsset ? ' background-color: #fff;' : ''}`
       : 'background: var(--bg-elevated);';
@@ -789,7 +916,7 @@
             <button class="exercise-step-btn" type="button" data-field="sets" data-dir="1">+</button>
           </div>
           <div class="exercise-dose" data-type="reps">
-            <button class="progressive-toggle-btn" type="button" data-type="reps">REPS</button>
+            <button class="progressive-toggle-btn" type="button" data-type="reps">${doseLabel}</button>
             <button class="exercise-step-btn" type="button" data-field="reps" data-dir="-1">−</button>
             <strong data-value="reps"></strong>
             <button class="exercise-step-btn" type="button" data-field="reps" data-dir="1">+</button>
@@ -3036,7 +3163,9 @@
     const paceText = endPace > startPace
       ? `${startPace.toFixed(1)}s–${endPace.toFixed(1)}s pace`
       : `${startPace.toFixed(1)}s pace`;
-    summary.textContent = `${state.totalSets} sets × ${state.totalReps} reps at ${paceText}`;
+    const exerciseId = state.selectedExercises[state.currentExerciseIndex];
+    const doseName = MORNING_STRETCHES_BY_ID[exerciseId]?.doseLabel === 'HOLDS' ? 'holds' : 'reps';
+    summary.textContent = `${state.totalSets} sets × ${state.totalReps} ${doseName} at ${paceText}`;
     requestAnimationFrame(() => overlay.classList.add('show'));
   }
 
@@ -3163,7 +3292,8 @@
     if (state.isRunning) return;
     const config = getCurrentExerciseConfig();
     if (!config) return;
-    config.pace = PACE_DEFAULT_SECONDS;
+    const exerciseId = state.selectedExercises[state.currentExerciseIndex];
+    config.pace = exerciseDefaults[exerciseId]?.pace || PACE_DEFAULT_SECONDS;
     saveExerciseSettings();
     updatePaceUI();
     updateTimerDuration();
@@ -3906,6 +4036,9 @@
       const config = exerciseSettings[exerciseId];
       state.totalSets = config.sets;
       state.totalReps = config.reps;
+      const isTimedHold = MORNING_STRETCHES_BY_ID[exerciseId]?.doseLabel === 'HOLDS';
+      document.getElementById('timer-reps-label').textContent = isTimedHold ? 'HOLDS' : 'REPS';
+      dom.btnResetPaceDefault.textContent = isTimedHold ? 'HOLD' : 'PACE';
 
       // Sync stepper UI to current exercise settings
       updateTimerDoseUI();

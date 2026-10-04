@@ -2,7 +2,7 @@
 
 1. Create a Supabase project.
 2. Open the SQL editor and run `schema.sql`.
-3. Run `seed.sql` to load the current routines and exercises.
+3. Run `seed.sql` to load the current routines and exercises, then run `add_morning_stretches.sql` to add the new Morning Stretches routine and its tutorial clips.
 4. After signing in once with `noelkiu@gmail.com`, run `admin.sql` to make that account an app admin.
 5. Copy your project URL and public anon key into `supabase-config.js`.
 6. In Supabase Auth, enable the providers you want to use:
